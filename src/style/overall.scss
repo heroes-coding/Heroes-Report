@@ -1,0 +1,12 @@
+@import "utilities/utilities.scss";
+
+body {
+  background-color:$BackgroundColor ;
+  font-family:$PrimaryFont;
+}
+
+#contentHolder {
+    padding: 2px;
+    background-color: $Container;
+    min-width: $MinWidth;
+}

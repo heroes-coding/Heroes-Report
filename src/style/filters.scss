@@ -1,0 +1,157 @@
+@import "utilities/utilities.scss";
+
+.timeHolder {
+    width: 230px;
+}
+
+.timeLabelHolder {
+    display: inline-table;
+    font-weight: 500;
+    font-size: 1.05em !important;
+}
+
+.timeInfoHolder {
+    display: inline-table;
+    float: right;
+    text-align: right;
+    font-size: 12px;
+}
+
+
+
+
+img.tinyHero {
+  margin-right: 10px;
+  margin-top: -5px;
+  clip-path: circle(12px at 50% 50%);
+}
+
+span.starHolder {
+    margin-right: 15px;
+}
+
+.fa-user-o {
+  color:$Highlight;
+}
+
+.dropdownButton {
+
+}
+
+.buttonSpacer {
+  @include hideWhenSmall;
+}
+
+form.input-group.filterGroup {
+    float: none;
+    background-color: lighten($Dark,5%);
+    display: inline-flex;
+    width: fit-content;
+    border: 1px solid $Dark;
+    margin: 1px;
+    padding: 0px 10px;
+    border-radius: 5px;
+    @include expandWhenTiny;
+}
+
+img.roundedPort {
+    height: 38;
+    width: 38;
+    border-radius: 50%;
+}
+
+
+.iconLabel {
+  color:white;
+  font-family: 'Roboto Mono', monospace;
+  vertical-align: bottom !important;
+  margin: 0px 5px;
+  font-size: 1.05em;
+  font-weight: normal;
+  color: white;
+}
+
+.iconFilter {
+    margin: 2px 2px;
+    padding: 0px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    max-height:35px;
+    @include expandWhenTiny;
+}
+.iconFilter:hover {
+    color: lighten($Highlight, 20%) ;
+    text-decoration: none;
+}
+
+.iconOnButton {
+  color: lighten($Highlight,20%);
+}
+
+.mainOption {
+  @extend .iconFilter;
+  margin: 0px 0px !important;
+}
+
+.mainOption:hover {
+  @extend .iconFilter:hover;
+}
+
+.heroFilters {
+  justify-content:flex-end;
+}
+.heroFilters, .dataFilters {
+  margin:0px;
+}
+
+
+.filtersHolder {
+  background-color: $Foreground;
+  margin: 0px 2px;
+  padding: 0px 5px;
+  border-radius: 5px;
+}
+
+img.iconBorder {
+
+}
+
+img.tinyMap {
+    margin-right: 15px;
+    border-radius: 5px;
+    border: 1px solid $Highlight;
+}
+
+.dropdown-menu {
+  background-color: black !important;
+  opacity: 0.95;
+  border: 2px solid #2A2931;
+}
+.dropdown-item {
+  color: white !important;
+}
+button.dropdown-item:hover {
+    background-color: $Highlight !important;
+    /*
+    color: #303541 !important;
+    */
+}
+
+.iconBorder:hover, .selectedImage {
+    filter: none;
+    -webkit-filter: grayscale(0%);
+    -moz-filter:    grayscale(0%);
+    -ms-filter:     grayscale(0%);
+    -o-filter:      grayscale(0%);
+
+}
+
+.unselectedImage {
+    filter: none;
+    -webkit-filter: grayscale(100%);
+    -moz-filter:    grayscale(100%);
+    -ms-filter:     grayscale(100%);
+    -o-filter:      grayscale(100%);
+    cursor: pointer;
+}

@@ -1,0 +1,173 @@
+@import "utilities/utilities.scss";
+
+.mainTableOptions {
+    background: $Foreground;
+    border-radius: 5px 5px 0px 0px;
+    margin: 0px;
+    border: none;
+}
+
+.-sort-asc:before, .-sort-desc:before {
+    position: absolute;
+    font-family: FontAwesome;
+    bottom: 8px;
+    right: 5px;
+    color: $Light  ;
+}
+.-sort-desc:before {
+  content: "\f161";
+}
+.-sort-asc:before {
+  content: "\f160";
+}
+
+
+.statBox {
+  font-family: $NumbersFont;
+  font-size: 0.9em;
+}
+
+svg.heroArc {
+  position: absolute;
+  left: 5px;
+  overflow: visible;
+}
+
+.rt-th.-cursor-pointer {
+    overflow: hidden;
+    -o-text-overflow: unset;
+    text-overflow: unset;
+    white-space: normal;
+    text-align: left;
+}
+
+path.heroArcPath {
+  fill-opacity:0.3;
+}
+
+path.percentPathHolder {
+    fill: #666 !important;
+    stroke: #000 !important;
+    stroke-opacity: 0.5;
+    fill-opacity: 1;
+}
+
+.-sort-asc, .-sort-desc {
+  box-shadow: none !important;
+  background-color:$Highlight;
+}
+
+.rt-tr {
+    background: $Foreground;
+}
+
+.iconFilter {
+    margin: 5px 2px;
+    padding: 0px;
+    /*border: 2px solid #6383C4 ;
+    border-radius: 35%;*/
+
+}
+
+line.percentPath {
+    stroke-width: 3px;
+    stroke: $Highlight;
+}
+
+path.percentPathHolder {
+    fill: #999 !important;
+    stroke: #000 !important;
+    stroke-opacity: 0.5;
+    fill-opacity: 0.3;
+}
+
+.statBoxLine {
+  margin: -20px !important;
+}
+
+img.roundedPort {
+    height: 38;
+    width: 38;
+    border-radius: 50%;
+}
+
+.iconLabel {
+  color:white;
+  font-family: Ropa Sans, sans-serif;
+}
+img.iconBorder {
+
+
+}
+
+.iconBorder:hover, .selectedImage {
+    filter: none;
+    -webkit-filter: grayscale(0%);
+    -moz-filter:    grayscale(0%);
+    -ms-filter:     grayscale(0%);
+    -o-filter:      grayscale(0%);
+    cursor: pointer;
+}
+
+.unselectedImage {
+    filter: none;
+    -webkit-filter: grayscale(100%);
+    -moz-filter:    grayscale(100%);
+    -ms-filter:     grayscale(100%);
+    -o-filter:      grayscale(100%);
+    cursor: pointer;
+}
+
+
+
+
+.rt-thead {
+  background-color: black  ;
+  color: white ;
+}
+.rt-resizable-header-content {
+    text-align: left;
+    margin: 0 0 0 0;
+}
+.-odd, .-even {
+  max-height: 55px;
+}
+
+.-odd {
+  background-color:lighten($Dark,3%)  !important;
+}
+.-even {
+  background-color:darken($Dark,3%) !important;
+}
+.rt-td {
+    text-align: left;
+    margin: 0px 0px 5px 0px;
+    vertical-align: bottom!important;
+    line-height: 38px;
+    padding: 5px 5px !important;
+    color: white;
+}
+
+
+.mainTable {
+  margin-top:15px;
+  padding: 1px;
+
+}
+
+.ReactTable .rt-tbody .rt-tr-group {
+  border-bottom: solid 1px black;
+  padding: 1px;
+}
+
+
+/*
+:root {
+    --haiti: #2A2931;
+    --trendy-pink: #8C5F8C;
+    --mantle: #A2A4A2;
+    --cadet-blue: #51A1A7;
+    --havelock-blue: #6383C4;
+    --apple-green: #E4E7E3;
+}
+*/
