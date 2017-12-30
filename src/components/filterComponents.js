@@ -20,7 +20,7 @@ export function renderPeeps(id) {
 }
 
 export function renderTinyHero(id) {
-  return <img className="tinyHero" src={`https://heroes.report/squareHeroes/${id}.jpg`}></img>
+  return <img alt={id} className="tinyHero" src={`https://heroes.report/squareHeroes/${id}.jpg`}></img>
 }
 
 export function renderTime(id) {
@@ -42,7 +42,7 @@ export function renderTime(id) {
 }
 
 export function renderTinyMap(id) {
-  return <img className="tinyMap" src={`https://heroes.report/mapPostsTiny/${id}.png`}></img>
+  return <img alt={id} className="tinyMap" src={`https://heroes.report/mapPostsTiny/${id}.png`}></img>
 }
 
 export function renderNothing() {

@@ -5,54 +5,6 @@ const UPDATE_MAIN_DATA = 'update_main_data'
 export { UPDATE_MAIN_DATA, getMainData }
 
 const totalStatsCount = 53
-const statNames = {
-  2: 'Matches Played',
-  3: '1st Round Bans',
-  4: '2nd Round Bans',
-  5: 'Ban Priority',
-  6: 'Avg. Length',
-  7: 'Short Game Δ',
-  8: 'Avg. Game Δ',
-  9: 'Long Game Δ',
-  10: '1st to 10 Δ',
-  11: '1st to 20 Δ',
-  12: 'First Fort Δ',
-  13: 'Winrate',
-  14: 'Deaths',
-  16: 'Solo Kill',
-  17: 'Assists',
-  18: 'Kill Streak',
-  19: 'Level',
-  20: 'Experience',
-  21: 'Hero Damage',
-  22: 'Damage Taken',
-  23: 'Structure Damage',
-  24: 'Siege Damage',
-  25: 'Healing',
-  26: 'Self Healing',
-  27: 'Time Spent Dead',
-  28: "Time CC'd Enemies",
-  29: 'Creep Damage',
-  30: 'Summon Damage',
-  31: 'Merc Captures',
-  33: 'Minion Damage',
-  34: 'Regen Globes',
-  36: 'TF Damage Taken',
-  37: 'TF Escapes',
-  38: 'Silenced Enemies',
-  39: 'Clutch Heals',
-  40: 'Outnumbered Deaths',
-  41: 'Escapes',
-  42: 'Stunned Enemies',
-  43: 'Vengeances',
-  44: 'TF Hero Damage',
-  45: 'Rooted Enemies',
-  46: 'Protection Given',
-  48: 'Pings',
-  50: 'Time on Fire',
-  51: 'Healing & Shielding',
-  52: 'KDA'
-}
 
 async function getMainData(prefs, rollbackState) {
   document.getElementById('loadingWrapper').style.visibility = 'visible'
@@ -168,7 +120,6 @@ function filterData(json,prefs) {
     const ranks = sortWithIndices(statsArray)
     for (let hero=0;hero<heroKeys.length;hero++) {
       const h = heroKeys[hero]
-      dData[h][s].name = statNames[s]
       dData[h][s].id = s
       const value = dData[h][s].value
       dData[h][s].percent = Math.min((value-min)/spread,1)

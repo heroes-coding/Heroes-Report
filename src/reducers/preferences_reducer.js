@@ -13,7 +13,7 @@ export default function(state = {...defaultPreferences}, action) {
     state = {...state}
     previousState = {...state}
     state[action.prefType] = action.prefID
-    if (action.prefType==='map' && brawlMapIDs.includes(parseInt(action.prefID))) {
+    if (action.prefType==='map' && brawlMapIDs.includes(parseInt(action.prefID,10))) {
       state.mode = 5 // make brawl selections less frustrating
     }
     return state

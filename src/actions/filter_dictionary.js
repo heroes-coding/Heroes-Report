@@ -31,7 +31,7 @@ async function getHOTSDictionary() {
   window.buildsData = buildsPromise.data
 
   const heroes = {}
-  const hKeys = Object.keys(HOTS.nHeroes).map(x => parseInt(x))
+  const hKeys = Object.keys(HOTS.nHeroes).map(x => parseInt(x,10))
   for (let h = 0; h < hKeys.length; h++) {
     const k = hKeys[h]
     heroes[k] = {

@@ -3,14 +3,15 @@ import 'react-table/react-table.css'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import _ from 'lodash'
-import Arc from '../components/arc'
-import StatBox from '../components/statBox'
-import { updateStatCat } from '../actions'
-import FilterDropDown from '../containers/filter_drop_down'
-import { renderNothing, renderCogs } from '../components/filterComponents'
-import { statCatChoices } from '../helpers/definitions'
-import DataFiltersBar from '../containers/data_filters_bar'
-import HeroFiltersBar from '../containers/hero_filters_bar'
+import Arc from '../../components/arc'
+import StatBox from '../../components/statBox'
+import { updateStatCat } from '../../actions'
+import FilterDropDown from '../filter_drop_down'
+import { renderNothing, renderCogs } from '../../components/filterComponents'
+import { statCatChoices } from '../../helpers/definitions'
+import DataFiltersBar from '../data_filters_bar'
+import HeroFiltersBar from '../hero_filters_bar'
+import DataTable from './data_table'
 
 const DEFAULT_N_HEROES = 75 // HANZO
 // import { Link } from 'react-router-dom'
@@ -43,22 +44,16 @@ class StatsTable extends Component {
           continue
         }
         const heroDic = heroes[h]
+        heroDic.stats = []
         for (let s = 0;s<statCatStats.length;s++) {
           let stat = statCatStats[s]
+          heroDic.stats.push(this.props.main[heroID][stat])
           heroDic[stat] = this.props.main[heroID][stat]
         }
         newHeroes.push(heroDic)
       }
       heroes = newHeroes
       nHeroes = heroes.length
-    } else {
-      const value = heroes[0].id === 666 ? 999999 : 0
-      for (let s = 0;s<statCatStats.length;s++) {
-        let stat = statCatStats[s]
-        for (let h = 0; h < nHeroes; h++) {
-          heroes[h][stat] = {id: stat, value, display: value, percent: 1}
-        }
-      }
     }
     const columns = [
       {
@@ -68,12 +63,7 @@ class StatsTable extends Component {
         maxWidth: 55,
         maxHeight: 38,
         Cell: row => (
-          <div
-            style={{
-              width: 38,
-              height: 38
-            }}
-          >
+          <div className="roundedPort">
             <img
               className='roundedPort'
               alt={row.original.name}
@@ -92,43 +82,48 @@ class StatsTable extends Component {
         className: 'd-none d-md-block',
         headerClassName: 'd-none d-md-block',
         accessor: 'name',
-        Cell: row => (
-          <span
-            className='heroName'
-            style={{'color': row.original.color}}
-          >{row.value}</span>
-        ),
+        Cell: row => {
+          const style = {'color': row.original.color}
+          return (
+            <span
+              className='heroName'
+              style={style}
+            >{row.value}</span>
+          )
+        },
         minWidth: 30
       }
     ]
-    for (let s = 0;s<statCatStats.length;s++) {
-      let stat = heroes[0][statCatStats[s]]
-      console.log()
-      let hideWhenSmall
-      if (this.props.statCat.cat==='Overall') {
-        hideWhenSmall = [14,16,17].includes(stat.id) ? 'd-none d-sm-block' : ''
-      } else {
-        hideWhenSmall = hiddenColumns.includes(stat.id) ? 'd-none d-sm-block' : ''
-      }
-      columns.push({
-        Header: stat.name,
-        accessor: stat.id.toString(),
-        defaultSortDesc: !descendingColumns.includes(stat.id),
-        className: hideWhenSmall,
-        headerClassName: hideWhenSmall,
-        Cell: row => (
-          <StatBox
-            display={row.value.display}
-            color={row.value.color}
-            barColor={row.row._original.color}
-            percent={row.value.percent}
-          />
-        ),
-        minWidth: 20,
-        sortMethod: (a, b) => {
-          return a.value > b.value ? 1 : -1
+    if (gotAll) {
+      for (let s = 0;s<statCatStats.length;s++) {
+        let stat = heroes[0][statCatStats[s]]
+        let hideWhenSmall
+        if (this.props.statCat.cat==='Overall') {
+          hideWhenSmall = [14,16,17].includes(stat.id) ? 'd-none d-sm-block' : ''
+        } else {
+          hideWhenSmall = hiddenColumns.includes(stat.id) ? 'd-none d-sm-block' : ''
         }
-      })
+        columns.push({
+          Header: stat.name,
+          accessor: stat.id.toString(),
+          defaultSortDesc: !descendingColumns.includes(stat.id),
+          className: hideWhenSmall,
+          headerClassName: hideWhenSmall,
+          Cell: row => (
+            <StatBox
+              display={row.value.display}
+              color={row.value.color}
+              barColor={row.row._original.color}
+              percent={row.value.percent}
+              id={stat.id}
+            />
+          ),
+          minWidth: 20,
+          sortMethod: (a, b) => {
+            return a.value > b.value ? 1 : -1
+          }
+        })
+      }
     }
     return (
       <div className="overall">
@@ -136,22 +131,7 @@ class StatsTable extends Component {
           <DataFiltersBar />
           <HeroFiltersBar />
         </div>
-        <div className="mainTable">
-          <ReactTable
-            pageSize={nHeroes}
-            showPagination={false}
-            className="-striped -highlight"
-            data={heroes}
-            resizable={false}
-            columns={columns}
-            defaultSorted={[
-              {
-                id: 'name',
-                desc: false
-              }
-            ]}
-          />
-        </div>
+        {gotAll && <DataTable rows={heroes} headers={this.props.statCat.headers} />}
       </div>
     )
   }

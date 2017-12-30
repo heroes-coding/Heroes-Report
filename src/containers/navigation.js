@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import BrightButton from '../components/bright_button'
 import { connect } from 'react-redux'
-import { renderNothing, renderCogs } from '../components/filterComponents'
 import FilterDropDown from '../containers/filter_drop_down'
 
 class Navigation extends Component {

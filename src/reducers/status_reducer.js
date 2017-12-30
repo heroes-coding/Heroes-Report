@@ -1,5 +1,4 @@
 import { UPDATE_MAIN_DATA } from '../actions'
-import asleep from '../helpers/asleep'
 
 export default async function(state = [], action) {
   if (action.type === UPDATE_MAIN_DATA) {

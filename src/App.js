@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import './App.css'
 import { connect } from 'react-redux'
 import { getHOTSDictionary, updatePreferences, getMainData, rollbackState } from './actions'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
-import OverallTable from './containers/overall_table'
+import OverallTable from './containers/table/overall_table'
+import OldTable from './containers/table/old_table'
 import HeroPage from './containers/hero_page'
 import NavigationBar from './containers/navigation'
 
@@ -23,7 +23,8 @@ class App extends Component {
             <div className="col-sm-12 col-lg-10 col-xl-8" id="contentHolder">
               <BrowserRouter>
                 <Switch>
-                  <Route path="/heroes" component={HeroPage} />
+                  <Route path="/heroes:id" component={HeroPage} />
+                  <Route path="/old" component={OldTable} />
                   <Route path="/" component={OverallTable} />
                 </Switch>
               </BrowserRouter>

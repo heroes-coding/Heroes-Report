@@ -1,7 +1,11 @@
 export function getRandomString() {return Math.random().toString(36).replace(/[^a-z]+/g, '')}
 
 export function commify(number) {
-  number = Math.round(number).toString().split('').reverse()
+  number = Math.round(number).toString()
+  if (number === 'Infinity') {
+    return "∞"
+  }
+  number = number.split('').reverse()
   const result = []
   for (let n = 0; n < number.length; n++) {
     if (n % 3 === 0 && n > 0) {

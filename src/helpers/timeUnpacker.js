@@ -5,7 +5,7 @@ const makeModern = function(oldDateString) {
 let reverseSeasons
 const getSeason = function(HOTS, build) {
   if (!reverseSeasons) {
-    reverseSeasons = HOTS.seasonCutoffs.slice(0, ).reverse()
+    reverseSeasons = HOTS.seasonCutoffs.slice(0,).reverse()
   }
   for (let s = 0; s < reverseSeasons.length; s++) {
     let cOff = reverseSeasons[s]
@@ -16,9 +16,7 @@ const getSeason = function(HOTS, build) {
 }
 
 export default function(HOTS, buildsData) {
-  const startTime = performance.now()
-
-  const bKeys = Object.keys(buildsData).map(x => parseInt(x))
+  const bKeys = Object.keys(buildsData).map(x => parseInt(x,10))
   const builds = {}
   const seasons = Object.values(HOTS.seasons).reverse()
   for (let s = 0; s < seasons.length; s++) {
@@ -27,7 +25,7 @@ export default function(HOTS, buildsData) {
     builds[season] = {name: season, id: season, count: 0, dates: [9999999999999, 0]}
   }
   builds['All'] = {name: 'All Time', id: 'All', count: 0, dates: [9999999999999, new Date()]}
-  let currentBuild = Object.keys(buildsData).map(function(x) { return parseInt(x) }).reduce(function(a, b) { return Math.max(a, b) })
+  let currentBuild = Object.keys(buildsData).map(function(x) { return parseInt(x,10) }).reduce(function(a, b) { return Math.max(a, b) })
   for (let b = 0; b < bKeys.length; b++) {
     let build = bKeys[b]
     let count = buildsData[build][1] / 10
