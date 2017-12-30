@@ -18,6 +18,10 @@ const hiddenColumns = [3,4,6,10,11,12,18,19,39,44,30,29,43,40,37,22,29]
 const descendingColumns = [5,6,14,40,27]
 
 class StatsTable extends Component {
+  componentDidMount() {
+    const {id} = this.props.match.params
+    console.log(id)
+  }
   render() {
     return (
       <div className="overall">

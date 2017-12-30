@@ -51,6 +51,14 @@ class StatsTable extends Component {
       }
       heroes = newHeroes
       nHeroes = heroes.length
+    } else {
+      const value = heroes[0].id === 666 ? 999999 : 0
+      for (let s = 0;s<statCatStats.length;s++) {
+        let stat = statCatStats[s]
+        for (let h = 0; h < nHeroes; h++) {
+          heroes[h][stat] = {id: stat, value, display: value, percent: 1}
+        }
+      }
     }
     const columns = [
       {
@@ -93,36 +101,34 @@ class StatsTable extends Component {
         minWidth: 30
       }
     ]
-    if (gotAll) {
-      for (let s = 0;s<statCatStats.length;s++) {
-        let stat = heroes[0][statCatStats[s]]
-        console.log()
-        let hideWhenSmall
-        if (this.props.statCat.cat==='Overall') {
-          hideWhenSmall = [14,16,17].includes(stat.id) ? 'd-none d-sm-block' : ''
-        } else {
-          hideWhenSmall = hiddenColumns.includes(stat.id) ? 'd-none d-sm-block' : ''
-        }
-        columns.push({
-          Header: stat.name,
-          accessor: stat.id.toString(),
-          defaultSortDesc: !descendingColumns.includes(stat.id),
-          className: hideWhenSmall,
-          headerClassName: hideWhenSmall,
-          Cell: row => (
-            <StatBox
-              display={row.value.display}
-              color={row.value.color}
-              barColor={row.row._original.color}
-              percent={row.value.percent}
-            />
-          ),
-          minWidth: 20,
-          sortMethod: (a, b) => {
-            return a.value > b.value ? 1 : -1
-          }
-        })
+    for (let s = 0;s<statCatStats.length;s++) {
+      let stat = heroes[0][statCatStats[s]]
+      console.log()
+      let hideWhenSmall
+      if (this.props.statCat.cat==='Overall') {
+        hideWhenSmall = [14,16,17].includes(stat.id) ? 'd-none d-sm-block' : ''
+      } else {
+        hideWhenSmall = hiddenColumns.includes(stat.id) ? 'd-none d-sm-block' : ''
       }
+      columns.push({
+        Header: stat.name,
+        accessor: stat.id.toString(),
+        defaultSortDesc: !descendingColumns.includes(stat.id),
+        className: hideWhenSmall,
+        headerClassName: hideWhenSmall,
+        Cell: row => (
+          <StatBox
+            display={row.value.display}
+            color={row.value.color}
+            barColor={row.row._original.color}
+            percent={row.value.percent}
+          />
+        ),
+        minWidth: 20,
+        sortMethod: (a, b) => {
+          return a.value > b.value ? 1 : -1
+        }
+      })
     }
     return (
       <div className="overall">
