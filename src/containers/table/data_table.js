@@ -10,7 +10,6 @@ import { updateMainSorting } from '../../actions'
 class DataTable extends Component {
   constructor(props) {
     super(props)
-    this.state = {rows: this.props.rows, order:'forward'}
     this.reorder = this.reorder.bind(this)
   }
   reorder(name,id) {
@@ -25,14 +24,19 @@ class DataTable extends Component {
         </div>
         <div className="ReactTable -striped -highlight">
           <div className="rt-table" >
-            <div className="rt-thead -header" key="thead">
-              <TableHeader key="header"
+            <div className="rt-thead -header">
+              <TableHeader
+                cat={this.props.data.cat}
                 headers={this.props.data.headers}
                 order={this.props.data.order}
                 reorder={this.reorder}
               />
             </div>
-            <TableBody rows={this.props.data.rows} prefsID={this.props.data.prefsID}/>
+            <TableBody
+              rows={this.props.data.rows}
+              prefsID={this.props.data.prefsID}
+              cat={this.props.data.cat}
+            />
           </div>
         </div>
       </div>

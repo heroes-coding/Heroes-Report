@@ -17,19 +17,19 @@ class DataFilters extends Component {
   }
   updateTime(newTime) {
     this.props.updatePreferences('time', newTime)
-    setTimeout(() => { this.props.getMainData(this.props.prefs, this.props.rollbackState) }, 10)
+    setTimeout(() => { this.props.getMainData(this.props.prefs, this.props.rollbackState) }, 50)
   }
   updateMode(newMode) {
     this.props.updatePreferences('mode', newMode)
-    setTimeout(() => { this.props.getMainData(this.props.prefs, this.props.rollbackState) }, 10)
+    setTimeout(() => { this.props.getMainData(this.props.prefs, this.props.rollbackState) }, 50)
   }
   updateMMR(newMMR) {
     this.props.updatePreferences('mmr', newMMR)
-    setTimeout(() => { this.props.getMainData(this.props.prefs, this.props.rollbackState) }, 10)
+    setTimeout(() => { this.props.getMainData(this.props.prefs, this.props.rollbackState) }, 50)
   }
   updateMap(newMap) {
     this.props.updatePreferences('map', newMap)
-    setTimeout(() => { this.props.getMainData(this.props.prefs, this.props.rollbackState) }, 10)
+    setTimeout(() => { this.props.getMainData(this.props.prefs, this.props.rollbackState) }, 50)
   }
   render() {
     return (

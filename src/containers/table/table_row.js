@@ -4,7 +4,8 @@ import StatBox from '../../components/statBox'
 
 export default class TableRow extends Component {
   shouldComponentUpdate(nextProps) {
-    if (nextProps.id !== this.props.id) {
+    if (nextProps.id !== this.props.id || this.props.id.length < 4) {
+      console.log('updating...')
       return true
     }
     return false
@@ -26,13 +27,20 @@ export default class TableRow extends Component {
               id={id}
             />
           </div>
-          <div className="rt-td d-none d-md-block">
+          <div className={`rt-td d-none d-md-block`} >
             <span
               className='heroName'
               style={nameStyle}
             >{name}</span>
           </div>
-          {stats && stats.map(stat => <StatBox key={stat.id} id={stat.id} display={stat.display} percent={stat.percent} />)}
+          {stats && stats.map(stat =>
+            <StatBox
+              key={stat.id}
+              id={stat.id}
+              cat={this.props.cat}
+              display={stat.display}
+              percent={stat.percent}
+            />)}
         </div>
       </div>
     )

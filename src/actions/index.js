@@ -50,6 +50,7 @@ export function updatePreferences(prefType, prefID) {
 }
 
 export function updateFilter(id, filterType) {
+  console.log(id,filterType)
   return {
     type: UPDATE_FILTER,
     payload: id,

@@ -11,7 +11,7 @@ class IconList extends Component {
   updateFilterAndHeroes(id) {
     this.props.updateFilter(id, this.props.updateType)
     // Somewhat hacky solution to make sure the state is updated first
-    setTimeout(() => { this.props.filterHeroes(this.props.store) }, 200)
+    setTimeout(() => { this.props.filterHeroes(this.props.store) }, 10)
   }
   renderIcon(d) {
     return (

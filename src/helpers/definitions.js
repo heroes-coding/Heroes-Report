@@ -1,5 +1,7 @@
 import _ from 'lodash'
 
+export const hiddenColumns = [3,4,6,10,11,12,18,19,39,44,30,29,43,40,37,22,29]
+
 export const statCatStats = {
   'Meta': [2, 52, 3, 4, 5, 6, 13],
   'Overall': [16, 17, 14, 24, 21, 51, 36, 20],
@@ -16,9 +18,9 @@ export const statCatChoices = statCats.map((x,i) => { return { name: x, id: x }}
 export const modeChoices = [
   {"name":"All except brawl","id":0},
   {"name":"Quick Match","id":1},
-  {"name":"Unranked Draft","id":3},
-  {"name":"Hero League","id":4},
-  {"name":"Team League","id":2},
+  {"name":"Unranked Draft","id":2},
+  {"name":"Hero League","id":3},
+  {"name":"Team League","id":4},
   {"name":"Brawl","id":5},
   {"name":"Casual (QM & UD)","id":6},
   {"name":"Ranked (HL & TL)","id":7}

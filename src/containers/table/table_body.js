@@ -22,9 +22,16 @@ export default class TableBody extends Component {
     return (
       <div className="rt-tbody">
         {this.props.rows.map((row,index) => {
-          const id = (row.id === 666 || row.name === "") ? row.id.toString() : `${this.props.prefsID}-${row.id}`
+          const id = (row.id === 666 || row.name === "") ? row.id.toString() : `${row.prefsID}-${this.props.cat}`
           return (
-            <TableRow index={index} key={id} id={id} row={row} rowID={`row${row.id}`} />
+            <TableRow
+              index={index}
+              key={id}
+              id={id}
+              row={row}
+              rowID={`row${row.id}`}
+              cat={this.props.cat}
+            />
           )
         }
         )}

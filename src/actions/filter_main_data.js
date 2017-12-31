@@ -1,5 +1,6 @@
 import axios from 'axios'
 import * as d3 from "d3"
+import asleep from '../helpers/asleep'
 import { getRandomString, sortWithIndices, roundedPercent, formatStat, sToM, Around50 } from '../helpers/smallHelpers'
 const UPDATE_MAIN_DATA = 'update_main_data'
 export { UPDATE_MAIN_DATA, getMainData }
@@ -7,14 +8,14 @@ export { UPDATE_MAIN_DATA, getMainData }
 const totalStatsCount = 53
 
 async function getMainData(prefs, rollbackState) {
+  // GET MAIN DATA IS WORKING.  THE PROBLEM IS ELSEWHERE
   document.getElementById('loadingWrapper').style.visibility = 'visible'
   const url = `https://heroes.report/stats/o/${prefs.time}/${prefs.mode}/${prefs.mmr}/${prefs.map}.json?${getRandomString()}`
   let mainData, dData
   try {
     mainData = await axios.get(url)
-    dData = filterData(mainData.data,prefs)
+    dData = await filterData(mainData.data,prefs)
   } catch (e) {
-    console.log(e)
     document.getElementById('loadingWrapper').style.visibility = 'hidden'
     return rollbackState()
   }
@@ -24,7 +25,7 @@ async function getMainData(prefs, rollbackState) {
   }
 }
 
-function filterData(json,prefs) {
+async function filterData(json,prefs) {
   let dData = {}
   let updatedMins
   if (typeof json[0] ==='number') {
@@ -144,6 +145,19 @@ function filterData(json,prefs) {
       }
     }
   }
+  while (!window.HOTS) {
+    console.log('sleeping...')
+    await asleep(10)
+  }
+  const hKeys = Object.keys(dData)
+  nHeroes = hKeys.length
+  for (let h=0;h<nHeroes;h++) {
+    const heroKey = hKeys[h]
+    dData[heroKey].name = window.HOTS.nHeroes[heroKey]
+    dData[heroKey].color = window.HOTS.ColorsDic[heroKey]
+    dData[heroKey].prefsID = `${Object.values(prefs).join("-")}-${heroKey}`
+  }
+
   return {dData, total, updatedMins}
 }
 

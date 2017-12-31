@@ -1,6 +1,7 @@
 const FILTER_HEROES = 'filter_heroes'
 
 function filterHeroes(store) {
+  console.log(store)
   const roles = store.roles.map(x => x.selected)
   const hasRole = roles.some(x => x)
 
@@ -10,7 +11,6 @@ function filterHeroes(store) {
   const oldHeroes = store.HOTS.heroes
   const heroKeys = Object.keys(oldHeroes)
   const filteredHeroes = {}
-
   for (let k = 0; k < heroKeys.length; k++) {
     const key = heroKeys[k]
     if ((hasRole && !roles[oldHeroes[key].role]) ||
