@@ -1,7 +1,6 @@
 const FILTER_HEROES = 'filter_heroes'
 
 function filterHeroes(store) {
-  console.log(store)
   const roles = store.roles.map(x => x.selected)
   const hasRole = roles.some(x => x)
 

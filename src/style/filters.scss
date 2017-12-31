@@ -38,9 +38,7 @@ span.starHolder {
 
 }
 
-.buttonSpacer {
-  @include hideWhenSmall;
-}
+
 
 form.input-group.filterGroup {
     float: none;
@@ -60,6 +58,21 @@ img.roundedPort {
     border-radius: 50%;
 }
 
+form.input-group.filterGroup.buttonSpacer {
+    background: $Highlight;
+}
+form.input-group.filterGroup.buttonSpacer:hover {
+  background-color:black;
+  color: $Highlight !important;
+  text-decoration: none;
+}
+
+i.fa.fa-download:hover {
+  color: $Dark !important;
+}
+i.fa.fa-download {
+    color: white;
+}
 
 .iconLabel {
   color:white;
@@ -80,6 +93,7 @@ img.roundedPort {
     max-height:35px;
     @include expandWhenTiny;
 }
+
 .iconFilter:hover {
     color: lighten($Highlight, 20%) ;
     text-decoration: none;

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Arc from '../../components/arc'
-import StatBox from '../../components/statBox'
+import StatBox from './statBox'
 
 export default class TableRow extends Component {
   shouldComponentUpdate(nextProps) {
@@ -40,7 +40,8 @@ export default class TableRow extends Component {
               cat={this.props.cat}
               display={stat.display}
               percent={stat.percent}
-            />)}
+            />
+          )}
         </div>
       </div>
     )

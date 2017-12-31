@@ -1,6 +1,6 @@
 import React from 'react'
-import PercentBar from '../components/percent_bar'
-import { hiddenColumns } from '../helpers/definitions'
+import PercentBar from '../../components/percent_bar'
+import { hiddenColumns } from '../../helpers/definitions'
 
 function percentBar(props) {
   if (props.id===13) {

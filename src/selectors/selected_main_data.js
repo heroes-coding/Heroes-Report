@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect'
 import _ from 'lodash'
-import asleep from '../helpers/asleep'
 
 const mainDataSelector = state => state.main
 const categoriesSelector = state => state.statCat
@@ -10,7 +9,6 @@ const DEFAULT_N_HEROES = 75
 
 const getMainData = (main, statCat, selectedHeroes, order) => {
   // This also receives the right data
-  console.log('entered get main data')
   const statCatStats = statCat.stats
   let heroes = _.values(selectedHeroes)
   let nHeroes

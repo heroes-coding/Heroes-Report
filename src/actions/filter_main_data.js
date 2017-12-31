@@ -146,7 +146,6 @@ async function filterData(json,prefs) {
     }
   }
   while (!window.HOTS) {
-    console.log('sleeping...')
     await asleep(10)
   }
   const hKeys = Object.keys(dData)

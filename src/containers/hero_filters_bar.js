@@ -11,7 +11,6 @@ class HeroFilters extends Component {
   render() {
     return (
       <div className="row heroFilters">
-        <ButtonLabeledSpacer filterName='Show' faIcon='fa-cog' />
         <IconList className='float-left' iconList={this.props.roles} updateType='ROLE' />
         <IconList className='float-right' iconList={this.props.franchises} updateType='UNIVERSE' />
         <FilterDropDown

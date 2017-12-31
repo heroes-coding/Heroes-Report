@@ -5,12 +5,12 @@ export default (props) => {
     <form className="input-group filterGroup buttonSpacer">
       <button
         className='btn btn-small btn-link iconFilter'
-        onClick={(event) => { event.preventDefault() }}
+        onClick={(event) => { event.preventDefault(); props.onPress() }}
       >
+        {props.filterName}:&nbsp;&nbsp;&nbsp;
         <span className="iconOnButton">
-          <i className={`fa ${props.faIcon}`} aria-hidden="true"></i>&nbsp;&nbsp;
+          <i className={`fa ${props.faIcon}`} aria-hidden="true"></i>
         </span>
-        {props.filterName}:
       </button>
     </form>
   )

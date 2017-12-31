@@ -12,10 +12,10 @@
 }
 
 .iconHeader {
-  flex: 55 0 auto;
-  width: 55px;
-  max-width: 55px;
+  width: 65px;
+  max-width: 65px;
 }
+
 
 .invisible {
   visibility: hidden;
@@ -51,16 +51,22 @@
 
 svg.heroArc {
   position: absolute;
-  left: 5px;
+  left: 10px;
   overflow: visible;
 }
+
+
+.ReactTable .rt-thead.-header, .rt-tr {
+    padding: 0px 10px 0px 0px !important;
+    text-align:left !important;
+}
+
 
 .rt-th.-cursor-pointer {
     overflow: hidden;
     -o-text-overflow: unset;
     text-overflow: unset;
     white-space: normal;
-    text-align: left;
 }
 
 path.heroArcPath {
@@ -108,11 +114,12 @@ img.roundedPort {
     height: 38;
     width: 38;
     border-radius: 50%;
+    padding: 0px 5px;
 
 }
 
 .roundedPort {
-  max-width: 55px;
+  max-width: 65px;
 }
 
 .iconLabel {
@@ -150,7 +157,6 @@ img.iconBorder {
 }
 
 .rt-resizable-header-content {
-    text-align: left;
     margin: 0 0 0 0;
 }
 .-odd, .-even {
@@ -164,7 +170,6 @@ img.iconBorder {
   background-color:darken($Dark,3%) !important;
 }
 .rt-td {
-    text-align: left;
     margin: 0px 0px 5px 0px;
     vertical-align: bottom!important;
     line-height: 38px;
