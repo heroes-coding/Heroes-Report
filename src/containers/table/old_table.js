@@ -42,7 +42,7 @@ class StatsTable extends Component {
         if (!this.props.main.hasOwnProperty(heroID)) {
           continue
         }
-        const heroDic = heroes[h]
+        const heroDic = {...heroes[h]}
         for (let s = 0;s<statCatStats.length;s++) {
           let stat = statCatStats[s]
           heroDic[stat] = this.props.main[heroID][stat]

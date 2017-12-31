@@ -24,7 +24,8 @@
     "react-scripts": "1.0.17",
     "react-table": "^6.7.6",
     "redux": "^3.7.2",
-    "redux-promise": "^0.5.3"
+    "redux-promise": "^0.5.3",
+    "reselect": "^3.0.1"
   },
   "scripts": {
     "build-css": "node-sass-chokidar src/ -o src/",

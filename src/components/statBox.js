@@ -19,6 +19,7 @@ export default (props) => {
       >
         <div>
           {props.display}
+          {console.log('stat box called')}
         </div>
         {percentBar(props)}
       </div>

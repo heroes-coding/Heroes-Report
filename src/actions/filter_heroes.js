@@ -13,14 +13,14 @@ function filterHeroes(store) {
 
   for (let k = 0; k < heroKeys.length; k++) {
     const key = heroKeys[k]
-    if (hasRole && !roles[oldHeroes[key].role]) {
+    if ((hasRole && !roles[oldHeroes[key].role]) ||
+        (hasFranchise && !franchises[oldHeroes[key].franchise])) {
+      filteredHeroes[key] = oldHeroes[key]
+      filteredHeroes[key].visible = false
       continue
     }
-    if (hasFranchise && !franchises[oldHeroes[key].franchise]) {
-      continue
-    }
-
     filteredHeroes[key] = oldHeroes[key]
+    filteredHeroes[key].visible = true
   }
   return {
     type: FILTER_HEROES,

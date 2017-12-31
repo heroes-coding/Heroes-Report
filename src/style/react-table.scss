@@ -17,6 +17,11 @@
   max-width: 55px;
 }
 
+.invisible {
+  visibility: hidden;
+  height: 0px !important;
+}
+
 .mainTableOptions {
     background: $Foreground;
     border-radius: 5px 5px 0px 0px;
@@ -74,9 +79,6 @@ path.percentPathHolder {
   background-color:$Highlight;
 }
 
-.rt-tr {
-    background: $Foreground;
-}
 
 .iconFilter {
     margin: 5px 2px;
@@ -177,11 +179,13 @@ img.iconBorder {
 
 }
 
-.ReactTable .rt-tbody .rt-tr-group {
+.rt-tbody {
+  overflow-y: hidden !important;
   border-bottom: solid 1px black;
   padding: 1px;
   min-width: $MinWidth;
 }
+
 
 
 /*

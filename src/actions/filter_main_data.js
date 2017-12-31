@@ -99,7 +99,6 @@ function filterData(json,prefs) {
     }
     for (let v=2;v<count+1;v++) {
       if (v === 52 && json[i][0] === 44) {
-        console.log('booya!')
         continue // don't add kda for abathur.  Not fair
       }
       const value = toPush[v].value

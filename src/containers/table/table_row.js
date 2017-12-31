@@ -1,14 +1,19 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import Arc from '../../components/arc'
 import StatBox from '../../components/statBox'
 
-class TableRow extends Component {
+export default class TableRow extends Component {
+  shouldComponentUpdate(nextProps) {
+    if (nextProps.id !== this.props.id) {
+      return true
+    }
+    return false
+  }
   render() {
     const { id, color, name, stats } = this.props.row
     const nameStyle = {'color': color}
     return (
-      <div className="rt-tr-group">
+      <div id={`row${id}`} className="rt-tr-group">
         <div className="rt-tr">
           <div className="rt-td roundedPort">
             <img
@@ -33,32 +38,3 @@ class TableRow extends Component {
     )
   }
 }
-
-function mapStateToProps(state, ownProps) {
-  return { ...ownProps }
-}
-
-
-/*
-<div className="roundedPort">
-
-</div>
-
-Header: 'Header',
-className: 'd-none d-md-block',
-headerClassName: 'd-none d-md-block',
-accessor: 'name',
-Cell: row => {
-const style = {'color': row.original.color}
-return (
-  <span
-    className='heroName'
-    style={style}
-  >{row.value}</span>
-)
-},
-minWidth: 30
-*/
-
-
-export default connect(mapStateToProps)(TableRow)

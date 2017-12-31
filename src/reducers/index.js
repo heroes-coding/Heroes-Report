@@ -5,6 +5,7 @@ import FranchisesActiveReducer from './franchises_active_reducer'
 import SelectedHeroesReducer from './selected_heroes_reducer'
 import PreferencesReducer from './preferences_reducer'
 import MainDataReducer from './main_data_reducer'
+import MainSortReducer from './main_sort_reducer'
 import StatusReducer from './status_reducer'
 import StatCatReducer from './stat_cat_reducer'
 
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
   prefs: PreferencesReducer,
   main: MainDataReducer,
   status: StatusReducer,
-  statCat: StatCatReducer
+  statCat: StatCatReducer,
+  mainOrder: MainSortReducer
 })
 
 export default rootReducer

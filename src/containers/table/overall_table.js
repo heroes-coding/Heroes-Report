@@ -13,6 +13,7 @@ import DataFiltersBar from '../data_filters_bar'
 import HeroFiltersBar from '../hero_filters_bar'
 import DataTable from './data_table'
 
+
 const DEFAULT_N_HEROES = 75 // HANZO
 // import { Link } from 'react-router-dom'
 const hiddenColumns = [3,4,6,10,11,12,18,19,39,44,30,29,43,40,37,22,29]
@@ -43,7 +44,7 @@ class StatsTable extends Component {
         if (!this.props.main.hasOwnProperty(heroID)) {
           continue
         }
-        const heroDic = heroes[h]
+        const heroDic = {...heroes[h]}
         heroDic.stats = []
         for (let s = 0;s<statCatStats.length;s++) {
           let stat = statCatStats[s]
@@ -125,20 +126,21 @@ class StatsTable extends Component {
         })
       }
     }
+    const prefsID = `${Object.values(this.props.prefs).join("-")}-${this.props.statCat.cat}`
     return (
       <div className="overall">
         <div className="filtersHolder">
           <DataFiltersBar />
           <HeroFiltersBar />
         </div>
-        {gotAll && <DataTable rows={heroes} headers={this.props.statCat.headers} />}
+        {gotAll && <DataTable rows={heroes} headers={this.props.statCat.headers} prefsID={prefsID}/>}
       </div>
     )
   }
 }
 
-function mapStateToProps({selectedHeroes, main, statCat}, ownProps) {
-  return { heroes: selectedHeroes, main, statCat }
+function mapStateToProps({selectedHeroes, main, statCat, prefs}, ownProps) {
+  return { heroes: selectedHeroes, main, statCat, prefs }
 }
 
 export default connect(mapStateToProps,{updateStatCat})(StatsTable)
