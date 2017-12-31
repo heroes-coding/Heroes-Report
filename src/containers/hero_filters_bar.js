@@ -4,7 +4,7 @@ import ButtonLabeledSpacer from '../components/button_labeled_spacer'
 import { connect } from 'react-redux'
 import { renderNothing, renderCogs } from '../components/filterComponents'
 import { statCatChoices } from '../helpers/definitions'
-import { updateStatCat } from '../actions'
+import { updateStatCat, updateFilter } from '../actions'
 import FilterDropDown from '../containers/filter_drop_down'
 
 class HeroFilters extends Component {
@@ -34,4 +34,4 @@ function mapStateToProps({roles, franchises, statCat}) {
   return {roles, franchises, statCat}
 }
 
-export default connect(mapStateToProps,{updateStatCat})(HeroFilters)
+export default connect(mapStateToProps,{updateStatCat, updateFilter})(HeroFilters)
