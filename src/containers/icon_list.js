@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import FilterIcon from '../components/filter_icon'
-import { updateFilter, filterHeroes } from '../actions'
+import { filterHeroes } from '../actions'
 
 class IconList extends Component {
   shouldComponentUpdate(nextProps) {
-    return false
-    //return nextProps.iconList !== this.props.iconList
+    return nextProps.iconList !== this.props.iconList
   }
   constructor(props) {
     super(props)
@@ -29,7 +28,6 @@ class IconList extends Component {
     )
   }
   render() {
-    console.log('icon_list render called',this.props.iconList)
     return (
       <form className="input-group filterGroup justify-content-center">
         <button
@@ -50,4 +48,4 @@ function mapStateToProps(state, ownProps) {
   return { ...ownProps, store: state }
 }
 
-export default connect(mapStateToProps, {filterHeroes, updateFilter})(IconList)
+export default connect(mapStateToProps, {filterHeroes})(IconList)
