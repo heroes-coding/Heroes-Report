@@ -12,9 +12,14 @@ export default function(state = initialRoleState.map(a => { return {...a} }), ac
     if (action.payload === 'A') {
       return initialRoleState.map(a => { return {...a} })
     }
-    const newRoleState = state.map(a => { return {...a} })
-    newRoleState[action.payload].selected = !newRoleState[action.payload].selected
-    return newRoleState
+    return state.map(a => {
+      if (a.id === action.payload) {
+        return Object.assign({}, a, {
+          selected: !a.selected
+        })
+      }
+      return a
+    })
   }
   return state
 }

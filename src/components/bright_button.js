@@ -1,17 +1,21 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 export default (props) => {
   return (
     <li className="nav-item active text-center">
-      <button
-        className='active nav-link navMenuText brightButton'
+      <Link
+        to={props.link}
+        className='nav-link navMenuText brightButton'
         onClick={(event) => {
-          event.preventDefault()
-          props.clickFunction()
+          if (props.clickFunction) {
+            event.preventDefault()
+            props.clickFunction()
+          }
         }}
       >
         {props.name}
-      </button>
+      </Link>
     </li>
   )
 }

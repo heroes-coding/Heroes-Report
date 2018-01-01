@@ -13,9 +13,14 @@ export default function(state = initialFranchiseState.map(a => { return {...a} }
       state = initialFranchiseState.map(a => { return {...a} })
       return state
     }
-    state = state.map(a => { return {...a} })
-    state[action.payload].selected = !state[action.payload].selected
-    return state
+    return state.map(a => {
+      if (a.id === action.payload) {
+        return Object.assign({}, a, {
+          selected: !a.selected
+        })
+      }
+      return a
+    })
   }
   return state
 }

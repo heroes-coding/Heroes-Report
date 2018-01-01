@@ -11,14 +11,16 @@ class Navigation extends Component {
           <span className="navbar-toggler-icon"></span>
         </button>
         <a className="navbar-brand mx-auto" id="brand">
-          <img src="tinyLogo.png" width="123" height="40" className="d-inline-block align-top-middle" alt="" />
+          <img src="/tinyLogo.png" width="123" height="40" className="d-inline-block align-top-middle" alt="" />
         </a>
-        <ul className="navbar-nav mx-auto" id="leftNav">
-          <BrightButton name="Overall" clickFunction={() => { console.log('overall') }} />
-        </ul>
-        <ul className="navbar-nav ml-auto" id="rightNav">
-          <BrightButton name="Heroes" clickFunction={() => {}} />
-        </ul>
+        <div className="navbar-collapse collapse container">
+          <ul className="navbar-nav mx-auto" id="leftNav">
+            <BrightButton name="Overall" link="/" />
+          </ul>
+          <ul className="navbar-nav ml-auto" id="rightNav">
+            <BrightButton name="Heroes" link="/heroes/butt" />
+          </ul>
+        </div>
       </nav>
     )
   }

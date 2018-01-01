@@ -14,23 +14,25 @@ class App extends Component {
   }
   render() {
     return (
-      <div>
-        <NavigationBar />
-        <div className="container-fluid" >
-          <div className="row">
-            <div className="col-lg-1 col-xl-2"></div>
-            <div className="col-sm-12 col-lg-10 col-xl-8" id="contentHolder">
-              <BrowserRouter>
+
+      <BrowserRouter>
+        <div>
+          <NavigationBar />
+          <div className="container-fluid" >
+            <div className="row">
+              <div className="col-lg-1 col-xl-2"></div>
+              <div className="col-sm-12 col-lg-10 col-xl-8" id="contentHolder">
                 <Switch>
-                  <Route path="/heroes:id" component={HeroPage} />
+                  <Route path="/heroes/:id" component={HeroPage} />
                   <Route path="/" component={DataTable} />
                 </Switch>
-              </BrowserRouter>
+              </div>
+              <div className="col-lg-1 col-xl-2"></div>
             </div>
-            <div className="col-lg-1 col-xl-2"></div>
           </div>
         </div>
-      </div>
+      </BrowserRouter>
+
     )
   }
 }

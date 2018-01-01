@@ -73,7 +73,12 @@ const getMainData = (main, statCat, selectedHeroes, order) => {
   } */
 
   if (visibleCount === 0) {
-    heroes.push({name: 'Mr. Bigglesworth', id: 666, visible:true})
+    const mrBig = {name: 'Mr. Bigglesworth', id: 666, visible:true,stats:[],prefsID:'MrBig'}
+    for (let s = 0;s<statCatStats.length;s++) {
+      const id = statCatStats[s]
+      mrBig.stats.push({id, value:999, percent:1, display:[14, 40, 27,6].includes(id) ? "☺" : "∞"})
+    }
+    heroes.push(mrBig)
   }
   const selectedStuff = {rows: heroes, headers: statCat.headers, cat:statCat.cat, order}
   return selectedStuff

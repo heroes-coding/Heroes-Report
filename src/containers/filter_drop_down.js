@@ -33,7 +33,7 @@ function renderButtonLabel(props) {
 
 export default (props) => {
   return (
-    <form className="input-group filterGroup">
+    <form className={`input-group filterGroup ${props.containerClass ? props.containerClass : ''}`}>
       <button
         className={`btn btn-small btn-link ${props.overClass ? props.overClass : 'iconFilter'}`}
         id={props.id}

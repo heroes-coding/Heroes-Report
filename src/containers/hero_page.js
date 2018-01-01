@@ -26,6 +26,7 @@ class StatsTable extends Component {
       <div className="overall">
         <div className="filtersHolder">
           <DataFiltersBar />
+          HEROES, BABY
         </div>
       </div>
     )
