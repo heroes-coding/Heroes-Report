@@ -33,4 +33,4 @@ function mapStateToProps({roles, franchises, statCat}) {
   return {roles, franchises, statCat}
 }
 
-export default connect(mapStateToProps,{updateStatCat, updateFilter})(HeroFilters)
+export default connect(mapStateToProps,{updateStatCat})(HeroFilters)
