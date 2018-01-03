@@ -26,6 +26,7 @@ async function getMainData(prefs, rollbackState) {
 }
 
 async function filterData(json,prefs) {
+  const startTime = window.performance.now()
   let dData = {}
   let updatedMins
   if (typeof json[0] ==='number') {
@@ -145,6 +146,7 @@ async function filterData(json,prefs) {
       }
     }
   }
+  window.debug(`Unpacking of main data took ${Math.round(window.performance.now()*100 - startTime*100)/100} ms`)
   while (!window.HOTS) {
     await asleep(10)
   }
@@ -156,7 +158,6 @@ async function filterData(json,prefs) {
     dData[heroKey].color = window.HOTS.ColorsDic[heroKey]
     dData[heroKey].prefsID = `${Object.values(prefs).join("-")}-${heroKey}`
   }
-
   return {dData, total, updatedMins}
 }
 

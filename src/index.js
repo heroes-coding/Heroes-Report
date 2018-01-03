@@ -9,6 +9,12 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import '../node_modules/font-awesome/css/font-awesome.min.css'
 import './style/style.css'
 
+window.debug = function(msg) {
+  if (process.env.NODE_ENV !== "production") {
+    console.log(msg)
+  }
+}
+
 const createStoreWithMiddleware = applyMiddleware(ReduxPromise)(createStore)
 
 ReactDOM.render(

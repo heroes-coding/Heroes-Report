@@ -10,6 +10,7 @@ export const TEST_URL = 'https://heroes.report/stats/o/52351/3/10/99.json'
 export * from './filter_heroes'
 export * from './filter_dictionary'
 export * from './filter_main_data'
+export * from './get_player_data'
 
 export function updateMainSorting(id) {
   return {

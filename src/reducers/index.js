@@ -7,6 +7,7 @@ import PreferencesReducer from './preferences_reducer'
 import MainDataReducer from './main_data_reducer'
 import MainSortReducer from './main_sort_reducer'
 import StatusReducer from './status_reducer'
+import PlayerDataReducer from './player_data_reducer'
 import StatCatReducer from './stat_cat_reducer'
 
 const rootReducer = combineReducers({
@@ -18,7 +19,8 @@ const rootReducer = combineReducers({
   main: MainDataReducer,
   status: StatusReducer,
   statCat: StatCatReducer,
-  mainOrder: MainSortReducer
+  mainOrder: MainSortReducer,
+  playerData: PlayerDataReducer
 })
 
 export default rootReducer

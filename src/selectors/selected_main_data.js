@@ -8,6 +8,7 @@ const mainOrderSelector = state => state.mainOrder
 const DEFAULT_N_HEROES = 75
 
 const getMainData = (main, statCat, selectedHeroes, order) => {
+  const startTime = window.performance.now()
   // This also receives the right data
   const statCatStats = statCat.stats
   let heroes = _.values(selectedHeroes)
@@ -81,6 +82,7 @@ const getMainData = (main, statCat, selectedHeroes, order) => {
     heroes.push(mrBig)
   }
   const selectedStuff = {rows: heroes, headers: statCat.headers, cat:statCat.cat, order}
+  window.debug(`Reslecting of main data took ${Math.round(window.performance.now()*100 - startTime*100)/100} ms`)
   return selectedStuff
 }
 

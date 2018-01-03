@@ -5,7 +5,7 @@ import { filterHeroes } from '../actions'
 
 class IconList extends Component {
   shouldComponentUpdate(nextProps) {
-    return nextProps.iconList !== this.props.iconList
+    return true
   }
   constructor(props) {
     console.log(props,'constructor for icon list')
@@ -15,20 +15,26 @@ class IconList extends Component {
     }
     this.updateFilterAndHeroes = this.updateFilterAndHeroes.bind(this)
   }
+
   updateFilterAndHeroes(id) {
     this.props.updateFilter(id, this.props.updateType)
-    // Updating through redux is not working.  Please let this work...
+    // Updating through redux is not working.  Please let this work... ffs
     this.setState((prevState,props) => {
       if (id==='A') {
         return {selected: prevState.selected.map(x => false)}
       } else {
-        const newState = {selected:[...prevState.selected]}
-        newState.selected[id] = !prevState.selected[id]
-        return newState
+        return {selected: prevState.selected.map((x,i) => i===id ? !x : x)}
       }
     })
     // Somewhat hacky solution to make sure the state is updated first
-    setTimeout(() => { this.props.filterHeroes(this.props.store); this.forceUpdate() }, 10)
+    setTimeout(() => {
+      this.props.filterHeroes(this.props.store)
+    },10)
+    setTimeout(() => {
+      this.setState((prevState,props) => {
+        return {selected:[...prevState.selected].concat(true)}
+      })
+    },3000)
   }
   renderIcon(d,index) {
     return (
