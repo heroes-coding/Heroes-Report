@@ -6,15 +6,16 @@ import timeUnpacker from '../helpers/timeUnpacker'
 const GET_HOTS_DATA = 'get_hots_data'
 
 async function getHOTSDictionary() {
-  const buildsPromise = await axios.get('https://heroes.report/stats/timeframes.json')
-  let HOTS, configCheck
+  const buildsPromise = axios.get('https://heroes.report/stats/timeframes.json')
+  let HOTS
   let version = 0
   if (window.localStorage.hasOwnProperty('HOTS')) {
     const configCheckPromise = axios.get(`https://heroes.report/stats/config.json?${getRandomString()}`)
     // should implement lzstring here
-    HOTS = window.localStorage.HOTS
-    configCheck = await configCheckPromise
+    HOTS = JSON.parse(window.localStorage.HOTS)
+    let configCheck = await configCheckPromise
     if (configCheck.status === 200) {
+      window.configCheck = configCheck.data
       version = parseFloat(configCheck.data.version)
     }
   }
@@ -24,11 +25,15 @@ async function getHOTSDictionary() {
     HOTS = HOTS.data
     HOTS.version = version
     window.localStorage.HOTS = JSON.stringify(HOTS)
-  } else {
-    HOTS = JSON.parse(HOTS)
   }
   window.HOTS = HOTS
-  window.buildsData = buildsPromise.data
+  window.buildsData = await buildsPromise
+  window.buildsData = window.buildsData.data
+
+  const uniqueKeys = Object.keys(HOTS.unique).map(x => parseInt(x))
+  const nUnique = uniqueKeys.length
+  HOTS.talentPics = {}
+  uniqueKeys.map(x => HOTS.unique[x].map(i => { HOTS.talentPics[i] = x }))
 
   const heroes = {}
   const hKeys = Object.keys(HOTS.nHeroes).map(x => parseInt(x,10))

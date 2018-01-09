@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import FilterDropDown from '../containers/filter_drop_down'
 import ButtonLabeledSpacer from '../components/button_labeled_spacer'
-
+import IconList from '../containers/icon_list'
 import { modeChoices, modeDic, mmrChoices, mmrDic } from '../helpers/definitions'
 import { renderTime, renderNothing, renderTinyMap, renderPeeps } from '../components/filterComponents'
 import { connect } from 'react-redux'
-import { updatePreferences, getMainData, rollbackState } from '../actions'
+import { updatePreferences, getMainData, rollbackState, updateFilter } from '../actions'
 
 class DataFilters extends Component {
   constructor(props) {
@@ -30,7 +30,9 @@ class DataFilters extends Component {
   render() {
     return (
       <div className="row dataFilters">
-        <FilterDropDown
+        {this.props.hideSome && <IconList className='float-left' iconList={this.props.roles} updateType='ROLE' updateFilter={this.props.updateFilter} />}
+        {this.props.hideSome && <IconList className='float-right' iconList={this.props.franchises} updateType='UNIVERSE' updateFilter={this.props.updateFilter} />}
+        {!this.props.hideSome && <FilterDropDown
           currentSelection=''
           name=''
           id='timeFrame'
@@ -41,7 +43,7 @@ class DataFilters extends Component {
           renderDropdownName={false}
           buttonLabel={window.builds ? window.builds[this.props.prefs.time].name : ''}
           currentID={this.props.prefs.time}
-        />
+        />}
         <FilterDropDown
           currentSelection={window.mapsDic ? window.mapsDic[this.props.prefs.map].name : ''}
           name=''
@@ -53,7 +55,7 @@ class DataFilters extends Component {
           renderDropdownName={true}
           currentID={window.mapsDic ? window.mapsDic[this.props.prefs.map].id : 99}
         />
-        <FilterDropDown
+        {!this.props.hideSome && <FilterDropDown
           currentSelection=""
           name='MMR'
           id='mmr'
@@ -63,7 +65,7 @@ class DataFilters extends Component {
           rightComponentRenderer={renderNothing}
           renderDropdownName={true}
           currentID={ mmrDic[this.props.prefs.mmr].id }
-        />
+        />}
         <FilterDropDown
           currentSelection={modeDic[this.props.prefs.mode].name}
           name='Game Mode: '
@@ -75,14 +77,14 @@ class DataFilters extends Component {
           renderDropdownName={true}
           currentID={modeDic[this.props.prefs.mode].id}
         />
-        <ButtonLabeledSpacer filterName='Update' faIcon='fa-download' onPress={() => { this.props.getMainData(this.props.prefs, this.props.rollbackState) }} />
+        {!this.props.hideSome && <ButtonLabeledSpacer filterName='Update' faIcon='fa-download' onPress={() => { this.props.getMainData(this.props.prefs, this.props.rollbackState) }} />}
       </div>
     )
   }
 }
 
-function mapStateToProps({HOTS, prefs, status}) {
-  return {HOTS, prefs, status}
+function mapStateToProps({HOTS, prefs, status, roles, franchises}) {
+  return {HOTS, prefs, status, roles, franchises}
 }
 
-export default connect(mapStateToProps, {updatePreferences, getMainData, rollbackState})(DataFilters)
+export default connect(mapStateToProps, {updatePreferences, getMainData, rollbackState, updateFilter})(DataFilters)

@@ -57,10 +57,14 @@ svg.heroArc {
 
 
 .ReactTable .rt-thead.-header, .rt-tr {
-    padding: 0px 10px 0px 0px !important;
     text-align:left !important;
+    margin-top: 0px;
+    padding: 1px;
 }
 
+.rt-table {
+    border-radius: 5px 5px 0px 0px;
+}
 
 .rt-th.-cursor-pointer {
     overflow: hidden;
@@ -97,7 +101,6 @@ path.percentPathHolder {
 
 line.percentPath {
     stroke-width: 3px;
-    stroke: $Highlight;
 }
 
 path.percentPathHolder {

@@ -2,10 +2,8 @@ import React, { Component } from 'react'
 import TableRow from './table_row'
 
 export default class TableBody extends Component {
-  componentWillUpdate() {
-    console.time('Sorting...')
-  }
-  componentDidUpdate() {
+  oddifyRows() {
+    // I THINK this is the only way to get rows to render with even - odd backgrounds without rerendering the entire component each time.
     let even = true
     const nHeroes = this.props.rows.length
     for (let h = 0; h < nHeroes; h++) {
@@ -16,6 +14,16 @@ export default class TableBody extends Component {
         document.getElementById(`row${this.props.rows[h].id}`).className = 'invisible'
       }
     }
+  }
+  componentDidMount() {
+    console.log('table body mounted')
+    this.oddifyRows()
+  }
+  componentWillUpdate() {
+    console.time('Sorting...')
+  }
+  componentDidUpdate() {
+    this.oddifyRows()
     console.timeEnd('Sorting...')
   }
   render() {

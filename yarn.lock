@@ -2929,6 +2929,12 @@ flux-standard-action@^0.6.1:
   dependencies:
     lodash.isplainobject "^3.2.0"
 
+fnv-plus@^1.2.12:
+  version "1.2.12"
+  resolved "https://registry.yarnpkg.com/fnv-plus/-/fnv-plus-1.2.12.tgz#00752fc2d80761bacda9bfb9ea098f44cb3746be"
+  dependencies:
+    jsbn "~0.0.0"
+
 follow-redirects@^1.2.5:
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.2.6.tgz#4dcdc7e4ab3dd6765a97ff89c3b4c258117c79bf"
@@ -4137,6 +4143,10 @@ js-yaml@~3.7.0:
   dependencies:
     argparse "^1.0.7"
     esprima "^2.6.0"
+
+jsbn@~0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.0.0.tgz#c52701bdcedbdf7084e1cfc701a7f86464ad7828"
 
 jsbn@~0.1.0:
   version "0.1.1"

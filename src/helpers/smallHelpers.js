@@ -1,4 +1,30 @@
-export function getRandomString() {return Math.random().toString(36).replace(/[^a-z]+/g, '')}
+export function getRandomString() { return Math.random().toString(36).replace(/[^a-z]+/g, '') }
+
+const fakeLaunchDate = (new Date(2015, 5, 1, 20, 0, 0, 0)).getTime()
+export const minSinceLaunchToDate = function(minSinceLaunch) {
+  return new Date(fakeLaunchDate + minSinceLaunch*60000)
+}
+
+export function formatNumber(num) {
+  switch (true) {
+    case num === Infinity:
+      return "∞"
+    case isNaN(num):
+      return num
+    case num < 10:
+      return Math.round(num*100)/100
+    case num < 100:
+      return Math.round(num*10)/10
+    case num < 1000:
+      return Math.round(num)
+    case num < 10000:
+      return Math.round(num/10)/100 + "K"
+    case num < 100000:
+      return Math.round(num/100)/10 + "K"
+    default:
+      return Math.round(num/1000) + "K"
+  }
+}
 
 export function commify(number) {
   number = Math.round(number).toString()

@@ -1,0 +1,33 @@
+@import "../style/utilities/utilities.scss";
+
+div#playerPageHolder {
+    margin-left: 0px;
+    margin-right: 0px;
+    /* display: flex; */
+}
+
+.statItem {
+  background: darken($Dark,3%);
+  border: 1px solid black;
+}
+
+.stat_item_container {
+  font-family: 'Ubuntu Mono', monospace;
+  max-width: none !important;
+  margin: 4px -12px 0px -8px;
+  color: $DimText;
+  font-size: 1em;
+}
+
+.statBarHolder {
+    /* margin: auto; */
+    text-align: center;
+}
+
+span.statValue {
+  color: $Color2;
+}
+
+span.stdValue {
+  color: $Color1;
+}

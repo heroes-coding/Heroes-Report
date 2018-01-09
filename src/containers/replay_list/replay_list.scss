@@ -1,0 +1,194 @@
+@import "../../style/utilities/utilities.scss";
+$minReplayWidth: 360px;
+
+
+.inner_list_item {
+  padding: 5px 0px;
+  margin: auto;
+}
+
+.noPadding {
+  padding: 0px;
+  display: flex;
+  font-family: 'Ubuntu Mono', monospace;
+  margin: auto;
+}
+
+.replay_item_container {
+  max-width: none !important;
+  margin: 4px 4px;
+  color: $DimText;
+  font-size: 0.7em;
+  min-width: $minReplayWidth;
+}
+
+.replay_item_container {
+
+}
+
+.longScroller::-webkit-scrollbar {
+  width: 12px;
+}
+.longScroller.container-fluid {
+    overflow-x: hidden !important;
+}
+
+.miniStatText {
+    position: relative;
+    font-size: 10px;
+    text-align: right;
+    right: 45px;
+    color: #ddd;
+    opacity:0.8;
+}
+
+svg.reportArc {
+    position: relative;
+    left: 0px;
+    overflow: visible;
+    margin: -20px -28px;
+    top: -8px;
+}
+
+span.victoryBox {
+    padding: 0px 10px;
+    font-size: 2.25em;
+    line-height: 0.5;
+    position: relative;
+    top: 5px;
+}
+
+span.gameLength {
+    font-size: 1.2em;
+    position: relative;
+    top: 2px;
+}
+
+
+img.tinyReplayMap {
+    margin-right: 0px;
+    border-radius: 5px;
+    padding-left: 30px;
+}
+
+img.tinyTalent {
+    height: 24px;
+    width: 24;
+    padding: 1px;
+    background: black;
+}
+
+.tinyTalentHolder {
+    display: inline-block;
+    background: black;
+    width: 26px !important;
+    height: 26px !important;
+    top: 5px;
+    position: relative;
+}
+
+
+
+.tinyHeroHolder {
+  position: relative;
+  padding: 0;
+  height: 19px;
+}
+
+.teamsHolder {
+    -ms-flex-direction: column;
+    flex-direction: column;
+    height: 38px;
+    display: inline-flex;
+    position: relative;
+    margin: -20px 0px -20px 12px;
+    padding: 0px;
+    top: -10px;
+}
+
+.miniStatsHolder {
+    -ms-flex-direction: column;
+    flex-direction: column;
+    height: 38px;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    position: relative;
+    margin: -20px 0px -20px -40px;
+    padding: 0px;
+    top: -2px;
+    width: 230px;
+}
+
+.miniStatBar {
+    position: relative;
+    padding: 0;
+    height: 14px;
+    margin: 0px 0px -6px 0px;
+}
+
+
+.firstsHolder {
+    -ms-flex-direction: column;
+    flex-direction: column;
+    height: 38px;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    position: relative;
+    margin: -10px 12px -20px -30px;
+    padding: 0px;
+    top: -7px;
+}
+
+.firsts {
+    line-height: 12px;
+    font-size: 12px;
+    margin-top: 3px;
+    text-align: center;
+}
+
+
+
+img.tinyHero {
+    margin: 0px 1px 0px 1px;
+    height: 25px;
+    width: 25px;
+    clip-path: circle(8px at 50% 50%);
+    margin: -3px;
+}
+
+.noPadding.listPart {
+    min-width: $minReplayWidth + 30;
+}
+
+img {
+    image-rendering: -webkit-optimize-contrast;
+}
+
+.talentsHolder {
+    position: relative;
+    padding: 2px;
+    display: inline;
+    top: -3px;
+}
+
+.replayItem {
+  background: darken($Dark,3%);
+  border: 1px solid black;
+}
+
+.gameModeBox {
+    font-size: 1.5em;
+    padding: 0px 10px 0px 8px;
+    position: relative;
+    top: 2px;
+    line-height: 1;
+}
+
+img.tinyReplayHero {
+    -webkit-clip-path: circle(16px at 50% 50%);
+    clip-path: circle(16px at 50% 50%);
+    position: relative;
+    left: -12px;
+    margin: -20px -10px;
+    top: 0px;
+}

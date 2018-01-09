@@ -19,6 +19,7 @@ class Navigation extends Component {
           </ul>
           <ul className="navbar-nav ml-auto" id="rightNav">
             <BrightButton name="Heroes" link="/heroes/butt" />
+            <BrightButton name="Your Stats" link="/players" />
           </ul>
         </div>
       </nav>

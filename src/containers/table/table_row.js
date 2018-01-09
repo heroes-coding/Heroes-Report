@@ -23,6 +23,8 @@ export default class TableRow extends Component {
               src={`https://heroes.report/squareHeroes/${id}.jpg`}
             />
             <Arc
+              dim={38}
+              translate="(20,21)"
               color={color}
               id={id}
             />
