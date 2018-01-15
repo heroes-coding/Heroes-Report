@@ -35,14 +35,13 @@ const modes = {
   1: "QM",
   2: "UD",
   3: "HL",
-  4: "BR",
-  5: "TL"
+  4: "TL",
+  5: "BR"
 }
 
 function getReplay(props) {
-  const { MSL, heroes, length, winners, mode, build, firstTo10, firstTo20, firstFort, region, map } = props
-  const fixedMode = mode === 4 ? 5 : mode === 5 ? 4 : mode
-  const hashInput = `${fixedMode}${Math.round(length/60)}${heroes.join("")}${winners}${MSL}${map}${build}`
+  const { MSL, heroes, length, winners, mode, build, FirstTo10, FirstTo20, FirstFort, region, map } = props
+  const hashInput = `${mode}${Math.round(length/60)}${heroes.join("")}${winners}${MSL}${map}${build}`
   const hashPath = `https://heroes.report/stats/replays/${hashString(hashInput)}.json`
   console.log(hashInput,hashPath)
 }
@@ -105,7 +104,7 @@ let left = props => {
     <ListPart
       extraClass='listPart'
       childComponent={
-        <div onClick={() => getReplay(props)} className="inner_list_item">
+        <div onClick={() => getReplay(props)} className="inner_list_item_left">
           <img
             className="tinyReplayHero"
             src={`https://heroes.report/squareHeroes/${props.hero}.jpg`}
@@ -160,13 +159,13 @@ export default (props) => {
       <ListPart
         extraClass='listPart'
         childComponent={
-          <div className="inner_list_item">
+          <div className="inner_list_item_right">
             <div className="miniStatsHolder">
               {props.stats.map((x,i) => statBar(props[x],i,props.ranges[i],x))}
             </div>
             <div className="firstsHolder">
-              {firsts(props.firstTo10,"10",props.team)}
-              {firsts(props.firstTo20,"20",props.team)}
+              {firsts(props.FirstTo10,"10",props.team)}
+              {firsts(props.FirstTo20,"20",props.team)}
             </div>
             <div className="talentsHolder">
               {props.talPics.map((x,i) => talentIcon(x,`${props.MSL}-${i}`))}

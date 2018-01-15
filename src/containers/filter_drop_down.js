@@ -33,7 +33,14 @@ function renderButtonLabel(props) {
 
 export default (props) => {
   return (
-    <form className={`input-group filterGroup ${props.containerClass ? props.containerClass : ''}`}>
+    <form className={`${props.containerClass ? props.containerClass : 'input-group filterGroup '}` + ' justify-content-center'}>
+      {props.resetFunction && <button
+        className='btn btn-small btn-link iconFilter'
+        onClick={(event) => {
+          event.preventDefault()
+          props.resetFunction('A')
+        }}
+      ><i className="fa fa-undo iconOnButton" aria-hidden="true"></i><span className=" d-none d-sm-block"> {props.updateType && `${props.updateType}:`}</span></button>}
       <button
         className={`btn btn-small btn-link ${props.overClass ? props.overClass : 'iconFilter'}`}
         id={props.id}
@@ -43,7 +50,7 @@ export default (props) => {
         onClick={(event) => { event.preventDefault() }}
       >
         {renderButtonLabel(props)}
-        <span className="iconOnButton"><i className="fa fa-chevron-circle-down" aria-hidden="true"></i></span>
+        {!props.hideArrow&&<span className="iconOnButton"><i className="fa fa-chevron-circle-down" aria-hidden="true"></i></span>}
       </button>
       <div className="dropdown-menu" aria-labelledby={props.id}>
         {props.dropdowns.map(d => renderDropdown(d, props.updateFunction, props.leftComponentRenderer, props.rightComponentRenderer, props.renderDropdownName))}

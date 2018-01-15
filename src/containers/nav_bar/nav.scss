@@ -1,0 +1,117 @@
+@import "../../style/utilities/utilities.scss";
+
+.allies {
+  color: #00ff00;
+}
+.enemies {
+  color: #ff0000;
+}
+.allies, .enemies {
+    margin-right: 10px;
+    margin-left: 5px;
+    margin-top: 10px;
+}
+
+input.searchInput {
+    background: $Dark;
+    height: 2.5em;
+    border: none;
+    border-radius: 0;
+    color: $Light;
+    position: relative;
+    top: 8px;
+    padding: 5px;
+    max-width: 85px;
+    border-radius: 5px 5px 0 0;
+    font-size: 0.8em;
+}
+
+.nav-link:hover, .nav-link.active {
+    text-decoration: none !important;
+    background: $Highlight !important;
+    color: $Light !important;
+    border: 1 px black !important;
+}
+
+.d-flex {
+    display: -ms-flexbox!important;
+    display: flex!important;
+    min-width: 425px;
+    border-bottom: 3px solid $Dark;
+}
+
+.nav-link {
+    color: $Highlight;
+    padding: 0.25rem 0.25rem 0.25rem 0.25rem;
+    margin: 0px 2px;
+    border-radius: 5px 5px 0px 0;
+    position: relative;
+    top: 8px;
+}
+
+.navbar-brand {
+  margin: 0rem 1rem;
+}
+
+ul {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+img.tinyHero.dropDownHero {
+    margin-right: 5px;
+    height: 30px;
+    width: 30px;
+    -webkit-clip-path: circle(8px at 50% 50%);
+    clip-path: circle(10px at 50% 50%);
+}
+
+.heroDropDown {
+    float: none;
+    background-color: #272b32;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    width: -webkit-fit-content;
+    width: -moz-fit-content;
+    width: fit-content;
+    border: 1px solid #1C1F24;
+    margin: 0px 2px;
+    padding: 0px 4px;
+    border-radius: 5px 5px 0px 0px;
+    position: relative;
+    top: 9px;
+    max-height: 34px;
+}
+
+
+.brightButton {
+  @include unselectable;
+  cursor: pointer;
+  background-color:lighten($Container,10%);
+  color: $Light !important;
+  margin:0px;
+  padding:5px 10px !important;
+  border-radius: 10px;
+  border: 1px solid darken($Highlight,20%)
+}
+
+.brightButton:active {
+  background-color:$Highlight;
+}
+.brightButton.active {
+  background-color:$Highlight;
+}
+
+.brightButton:focus {
+  outline:0;
+}
+
+
+a.nav-link.navMenuText {
+    white-space: nowrap;
+}
+ul.nav.nav-tabs {
+    padding: 12px 0 0px 0px;
+    background: #fafafa;
+    margin-bottom: 10px;
+}

@@ -18,7 +18,9 @@
 }
 
 
-
+.halfy {
+  max-width: 49.5% !important;
+}
 
 img.tinyHero {
   margin-right: 10px;
@@ -90,7 +92,6 @@ i.fa.fa-download {
     cursor: pointer;
     color: white;
     max-height:35px;
-    @include expandWhenTiny;
     margin: 0px 2px !important;
     padding: 0px;
     min-height: 34px;

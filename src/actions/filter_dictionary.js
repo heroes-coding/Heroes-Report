@@ -7,16 +7,15 @@ const GET_HOTS_DATA = 'get_hots_data'
 
 async function getHOTSDictionary() {
   const buildsPromise = axios.get('https://heroes.report/stats/timeframes.json')
-  let HOTS
+  let HOTS = window.loadLocal('HOTS')
   let version = 0
-  if (window.localStorage.hasOwnProperty('HOTS')) {
+  if (HOTS) {
     const configCheckPromise = axios.get(`https://heroes.report/stats/config.json?${getRandomString()}`)
     // should implement lzstring here
-    HOTS = JSON.parse(window.localStorage.HOTS)
     let configCheck = await configCheckPromise
     if (configCheck.status === 200) {
       window.configCheck = configCheck.data
-      version = parseFloat(configCheck.data.version)
+      version = parseFloat(configCheck.version)
     }
   }
 
@@ -24,7 +23,7 @@ async function getHOTSDictionary() {
     HOTS = await axios.get(`https://heroes.report/stats/HOTS.json?${getRandomString()}`)
     HOTS = HOTS.data
     HOTS.version = version
-    window.localStorage.HOTS = JSON.stringify(HOTS)
+    window.saveLocal(HOTS,'HOTS')
   }
   window.HOTS = HOTS
   window.buildsData = await buildsPromise
@@ -58,13 +57,16 @@ async function getHOTSDictionary() {
   maps[99] = {name: 'All Maps', id: 99}
   window.mapsDic = maps
   const sortedMaps = _.values(maps, 'id')
+  const sortedHeroes = _.values(heroes, 'id')
   sortedMaps.sort((x, y) => x.name < y.name ? -1 : 1)
+  sortedHeroes.sort((x, y) => x.name < y.name ? -1 : 1)
   const times = timeUnpacker(HOTS, window.buildsData)
   const d = {
     heroes,
     roles: HOTS.roles.map(x => { return {id: x} }),
     times,
-    sortedMaps
+    sortedMaps,
+    sortedHeroes
   }
   return {
     type: GET_HOTS_DATA,

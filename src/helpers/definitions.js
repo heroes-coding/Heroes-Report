@@ -2,6 +2,14 @@ import _ from 'lodash'
 
 export const hiddenColumns = [3,4,6,10,11,12,18,19,39,44,30,29,43,40,37,22,29]
 
+export const defaultPreferences = {
+  mode: 0,
+  mmr: 10,
+  time: 7,
+  map: 99,
+  bnetID: null
+}
+
 export const statCatStats = {
   'Meta': [2, 52, 3, 4, 5, 6, 13],
   'Overall': [16, 17, 14, 24, 21, 51, 36, 20],

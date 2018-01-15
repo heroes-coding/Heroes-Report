@@ -4,7 +4,6 @@ import TableHeader from './table_header'
 import TableBody from './table_body'
 import SelectedMainData from '../../selectors/selected_main_data'
 import DataFiltersBar from '../data_filters_bar'
-import HeroFiltersBar from '../hero_filters_bar'
 import { updateMainSorting } from '../../actions'
 
 class DataTable extends Component {
@@ -19,8 +18,7 @@ class DataTable extends Component {
     return (
       <div className="overall">
         <div className="filtersHolder">
-          <DataFiltersBar />
-          <HeroFiltersBar />
+          <DataFiltersBar menu={0} />
         </div>
         <div className="ReactTable -striped -highlight">
           <div className="rt-table" >

@@ -8,7 +8,6 @@ class IconList extends Component {
     return true
   }
   constructor(props) {
-    console.log(props,'constructor for icon list')
     super(props)
     this.state = {
       selected: props.iconList.map(x => x.selected)
@@ -51,12 +50,12 @@ class IconList extends Component {
     return (
       <form className="input-group filterGroup justify-content-center">
         <button
-          className='btn btn-small btn-link iconFilter  d-none d-sm-block'
+          className='btn btn-small btn-link iconFilter'
           onClick={(event) => {
             event.preventDefault()
             this.updateFilterAndHeroes('A')
           }}
-        ><i className="fa fa-undo iconOnButton" aria-hidden="true"></i> {this.props.updateType}:</button>
+        ><i className="fa fa-undo iconOnButton" aria-hidden="true"></i>{this.props.updateType}:</button>
         <span className="iconLabel"></span>
         {this.props.iconList.map((d,i) => this.renderIcon(d,i))}
       </form>

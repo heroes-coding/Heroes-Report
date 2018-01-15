@@ -9,6 +9,14 @@ div#playerPageHolder {
 .statItem {
   background: darken($Dark,3%);
   border: 1px solid black;
+  padding: 10px 0px;
+  margin-bottom: 5px;
+}
+
+span#winrate {
+    font-size: small;
+    display: block;
+    color: $Color2;
 }
 
 .stat_item_container {
@@ -17,12 +25,25 @@ div#playerPageHolder {
   margin: 4px -12px 0px -8px;
   color: $DimText;
   font-size: 1em;
+  min-width: 256px;
+}
+
+.statBarHolder.statBarTitle {
+    margin: 10px 0px;
 }
 
 .statBarHolder {
     /* margin: auto; */
     text-align: center;
 }
+
+.handleHolder {
+  font-family: $PrimaryFont;
+  font-size: 1.35em !important;
+  color: $Light;
+  margin-top: 0px !important;
+}
+
 
 span.statValue {
   color: $Color2;

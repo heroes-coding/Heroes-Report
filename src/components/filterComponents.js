@@ -10,6 +10,10 @@ export function renderCogs(selected, x) {
   return <span><i className="fa fa-cogs iconOnButton" key={x} aria-hidden="true"></i>&nbsp;&nbsp;</span>
 }
 
+export function renderTeam(teamArray) {
+  return teamArray.map((x,i) => renderTinyHero(x,i))
+}
+
 export function renderPeeps(id) {
   // {this.props.iconList.map(d => this.renderIcon(d))}
   return (
@@ -19,8 +23,8 @@ export function renderPeeps(id) {
   )
 }
 
-export function renderTinyHero(id) {
-  return <img alt={id} className="tinyHero" src={`https://heroes.report/squareHeroes/${id}.jpg`}></img>
+export function renderTinyHero(id,index) {
+  return <img alt={id} key={index} className="tinyHero dropDownHero" src={`https://heroes.report/${isNaN(id) ? `appIcons/${id}.png` : `squareHeroes/${id}.jpg`}`} />
 }
 
 export function renderTime(id) {

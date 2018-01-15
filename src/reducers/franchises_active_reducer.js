@@ -1,10 +1,10 @@
 import { UPDATE_FILTER } from '../actions'
 const initialFranchiseState = [
-  {id: 0, name: 'starcraft', selected: false},
-  {id: 1, name: 'warcraft', selected: false},
-  {id: 2, name: 'overwatch', selected: false},
-  {id: 3, name: 'retro', selected: false},
-  {id: 4, name: 'diablo', selected: false}
+  {id: 0, name: 'warcraft', selected: false},
+  {id: 1, name: 'diablo', selected: false},
+  {id: 2, name: 'starcraft', selected: false},
+  {id: 3, name: 'overwatch', selected: false},
+  {id: 4, name: 'retro', selected: false}
 ]
 
 export default function(state = initialFranchiseState.map(a => { return {...a} }), action) {

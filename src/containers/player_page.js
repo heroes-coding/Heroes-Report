@@ -4,16 +4,18 @@ import DataFiltersBar from './data_filters_bar'
 import _ from 'lodash'
 import ReplayList from './replay_list/replay_list'
 import StatList from './stat_list/stat_list'
+import { getPlayerData } from '../actions'
 
 class PlayerPage extends Component {
   componentDidMount() {
-    console.log('Player page mounted?',this.props.playerData)
+    const {id} = this.props.match.params
+    this.props.getPlayerData(id)
   }
   render() {
     return (
       <div className="overall">
         <div className="filtersHolder">
-          <DataFiltersBar hideSome={true} />
+          <DataFiltersBar menu={1} />
         </div>
         <div className="row" id="playerPageHolder">
           <StatList />
@@ -25,7 +27,7 @@ class PlayerPage extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  return {}
+  return ownProps
 }
 
-export default connect(mapStateToProps)(PlayerPage)
+export default connect(mapStateToProps,{getPlayerData})(PlayerPage)

@@ -5,7 +5,7 @@ const mainDataSelector = state => state.main
 const categoriesSelector = state => state.statCat
 const selectedHeroesSelector = state => state.selectedHeroes
 const mainOrderSelector = state => state.mainOrder
-const DEFAULT_N_HEROES = 75
+const DEFAULT_N_HEROES = 76
 
 const getMainData = (main, statCat, selectedHeroes, order) => {
   const startTime = window.performance.now()

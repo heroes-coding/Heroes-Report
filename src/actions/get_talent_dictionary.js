@@ -13,7 +13,7 @@ async function getTalentDic() {
   let version = parseFloat(window.configCheck.talentDicVersion)
   let needNew = true
   if (window.localStorage.hasOwnProperty('talentDic')) {
-    talentDic = JSON.parse(window.localStorage.talentDic)
+    talentDic = window.loadLocal('talentDic')
     if (talentDic.version === version) {
       needNew = false
     }
@@ -23,11 +23,10 @@ async function getTalentDic() {
     talentDic = talentDic.data
     talentDic.builds = _.invert(talentDic.builds)
     talentDic.version = version
-    window.localStorage.talentDic = JSON.stringify(talentDic)
+    window.saveLocal(talentDic,'talentDic')
   }
   window.talentDic = talentDic
   window.buildDic = talentDic.builds
-  console.log(talentDic)
   return {
     type: UPDATE_TALENT_DIC,
     talentDic

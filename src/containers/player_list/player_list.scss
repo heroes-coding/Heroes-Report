@@ -1,0 +1,14 @@
+@import "../../style/utilities/utilities.scss";
+$minReplayWidth: 360px;
+
+.handleList , .matchesList, .regionList, .mmrList {
+  text-align: center;
+}
+
+.handleList {
+  min-width: 150px;
+}
+
+form.regionList.-cursor-pointer {
+    flex: 1;
+}

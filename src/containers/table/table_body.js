@@ -16,7 +16,6 @@ export default class TableBody extends Component {
     }
   }
   componentDidMount() {
-    console.log('table body mounted')
     this.oddifyRows()
   }
   componentWillUpdate() {

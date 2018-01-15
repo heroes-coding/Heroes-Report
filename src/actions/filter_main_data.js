@@ -2,6 +2,8 @@ import axios from 'axios'
 import * as d3 from "d3"
 import asleep from '../helpers/asleep'
 import { getRandomString, sortWithIndices, roundedPercent, formatStat, sToM, Around50 } from '../helpers/smallHelpers'
+import { ROLLBACK_PREFERENCES } from './'
+import { defaultPreferences } from '../helpers/definitions'
 const UPDATE_MAIN_DATA = 'update_main_data'
 export { UPDATE_MAIN_DATA, getMainData }
 
@@ -9,19 +11,28 @@ const totalStatsCount = 53
 
 async function getMainData(prefs, rollbackState) {
   // GET MAIN DATA IS WORKING.  THE PROBLEM IS ELSEWHERE
+  window.saveLocal(prefs,'prefs')
   document.getElementById('loadingWrapper').style.visibility = 'visible'
   const url = `https://heroes.report/stats/o/${prefs.time}/${prefs.mode}/${prefs.mmr}/${prefs.map}.json?${getRandomString()}`
   let mainData, dData
+  let reset = false
   try {
     mainData = await axios.get(url)
     dData = await filterData(mainData.data,prefs)
   } catch (e) {
-    document.getElementById('loadingWrapper').style.visibility = 'hidden'
-    return rollbackState()
+    try {
+      reset = true
+      const defaultURL = `https://heroes.report/stats/o/${defaultPreferences.time}/${defaultPreferences.mode}/${defaultPreferences.mmr}/${defaultPreferences.map}.json?${getRandomString()}`
+      mainData = await axios.get(defaultURL)
+      dData = await filterData(mainData.data,defaultPreferences)
+    } catch (e) {
+      document.getElementById('loadingWrapper').style.visibility = 'hidden'
+    }
   }
   return {
     type: UPDATE_MAIN_DATA,
-    payload: dData
+    payload: dData,
+    reset
   }
 }
 

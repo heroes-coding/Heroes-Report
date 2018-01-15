@@ -9,7 +9,11 @@ import TalentDicReducer from './talent_dictionary_reducer'
 import MainSortReducer from './main_sort_reducer'
 import StatusReducer from './status_reducer'
 import PlayerDataReducer from './player_data_reducer'
+import PlayerInfoReducer from './player_info_reducer'
 import StatCatReducer from './stat_cat_reducer'
+import PlayerSearchList from './player_search_reducer'
+import UpdateReplayPage from './replay_page_reducer'
+import AddHeroFilter from './filter_heroes_reducer'
 
 const rootReducer = combineReducers({
   HOTS: HOTSDictionaryReducer,
@@ -22,7 +26,11 @@ const rootReducer = combineReducers({
   statCat: StatCatReducer,
   mainOrder: MainSortReducer,
   playerData: PlayerDataReducer,
-  talentDic: TalentDicReducer
+  playerInfo: PlayerInfoReducer,
+  talentDic: TalentDicReducer,
+  filterHeroes: AddHeroFilter,
+  playerSearchResults: PlayerSearchList,
+  replayPage: UpdateReplayPage
 })
 
 export default rootReducer

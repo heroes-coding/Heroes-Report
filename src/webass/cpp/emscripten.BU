@@ -1,0 +1,154 @@
+#include <emscripten.h>
+#include <memory>
+#include <iostream>
+using namespace std;
+
+int main(int argc, char const *argv[]) {
+    emscripten_run_script("typeof window!='undefined' && window.dispatchEvent(new CustomEvent('wasmLoaded'))");
+    return 0;
+}
+
+/*
+let test = new Uint32Array([1,2,3,4,5,6,7,8,9,10])
+let buf = Module._malloc(10,4)
+Module.HEAPU32.set(test,buf >> 2)
+let res = Module._testMultiHEAPU32(buf,5,10)
+console.log(Module.HEAPU32.slice(res/4,res/4+10))
+*/
+
+/*
+let test = new Uint32Array([1,2,3,4,5,6,7,8,9,10])
+let buf = Module._malloc(10,4)
+Module.HEAPU32.set(test,buf >> 2)
+let res = Module._divide(buf,5,2)
+*/
+
+extern "C" {
+
+EMSCRIPTEN_KEEPALIVE
+uint32_t * decodeReplays (
+  uint32_t *buf,
+  int nPackedInts,
+  int nDecoders,
+  int nReplays,
+  int nPredefined,
+  int nItemsToDecode
+) {
+
+  cout << "nPackedInts " << nPackedInts << endl;
+  cout << "nDecoders " << nDecoders << endl;
+  cout << "nReplays " << nReplays << endl;
+  cout << "nPackedInts " << nPackedInts << endl;
+  cout << "nItemsToDecode " << nItemsToDecode << endl;
+
+  int z = 0; // my real index in the buffer
+  // Determine how many things are packed in each int
+  int intLengths [nPackedInts];
+  for (int i=0;i<nPackedInts;i++) {
+    intLengths[i] = buf[z];
+    z++;
+  }
+
+  // Get the actual decoders
+  int decoderMaxes [nDecoders];
+  int decoderMults [nDecoders];
+  for (int i=0;i<nDecoders;i++) {
+    decoderMaxes[i] = buf[z];
+    decoderMults[i] = buf[z+1];
+    z += 2;
+  }
+
+  // Get the special cases
+  const int iSLOT = buf[z++];
+  const int iFIRST10 = buf[z++];
+  const int iFIRST20 = buf[z++];
+  const int iFIRSTFORT = buf[z++];
+  const int iHERO0 = buf[z++];
+  const int iHERO1 = buf[z++];
+  const int iHERO2 = buf[z++];
+  const int iHERO3 = buf[z++];
+  const int iHERO4 = buf[z++];
+  const int iHERO5 = buf[z++];
+  const int iHERO6 = buf[z++];
+  const int iHERO7 = buf[z++];
+  const int iHERO8 = buf[z++];
+  const int iHERO9 = buf[z++];
+  const int iTAL0 = buf[z++];
+  const int iTAL1 = buf[z++];
+  const int iTAL2 = buf[z++];
+  const int iTAL3 = buf[z++];
+  const int iTAL4 = buf[z++];
+  const int iTAL5 = buf[z++];
+  const int iTAL6 = buf[z++];
+
+  // And finally, to declare the buffer that will be pointed to when completely filled
+  uint32_t replays [nItemsToDecode*nReplays];
+
+
+
+  auto arrayPtr = &replays[0];
+  return arrayPtr;
+}
+
+    EMSCRIPTEN_KEEPALIVE
+    int32_t* get20Nums (void) {
+
+        int32_t *values = (int32_t*) std::malloc(sizeof(*values));
+
+        for (int i=0; i<20; i++) {
+            values[i] = i+1;
+            std::cout << i << std::endl;
+        }
+
+        auto arrayPtr = &values[0];
+        return arrayPtr;
+    }
+
+    EMSCRIPTEN_KEEPALIVE
+    int addNums (float *buf, int bufSize) {
+
+        int total = 0;
+
+        for (int i=0; i<bufSize; i++) {
+            total+= buf[i];
+        }
+
+        return total;
+    }
+
+    EMSCRIPTEN_KEEPALIVE
+    uint32_t* testHEAPU32 (uint32_t *buf, int bufSize) {
+
+        uint32_t values[bufSize];
+
+        for (int i=0; i<bufSize; i++) {
+            std::cout << buf[i] << std::endl;
+            values[i] = buf[i] * 2;
+        }
+
+        auto arrayPtr = &values[0];
+        return arrayPtr;
+    }
+
+    EMSCRIPTEN_KEEPALIVE
+    uint32_t * testMultiHEAPU32 (uint32_t *buf, int firstEnd, int secondEnd) {
+        uint32_t result [secondEnd];
+        cout << "first end " << firstEnd << endl;
+        cout << "second end " << secondEnd << endl;
+        for (int i=0; i<secondEnd; i++) {
+          if (i < firstEnd) {
+              cout << "First bunch" << i << endl;
+          } else if (i < secondEnd) {
+            cout << "Second bunch" << i << endl;
+          } else {
+            cout << "i is too big" << i << endl;
+          }
+          cout << buf[i] *2 << endl;
+          result[i] = buf[i] * 2;
+        }
+
+        auto arrayPtr = &result[0];
+        return arrayPtr;
+    }
+
+}

@@ -5,6 +5,41 @@ export const minSinceLaunchToDate = function(minSinceLaunch) {
   return new Date(fakeLaunchDate + minSinceLaunch*60000)
 }
 
+export function getCounts(array) {
+  const counts = {}
+  let n = array.length
+  for (let i=0;i<n;i++) {
+    const e = array[i]
+    if (!counts.hasOwnProperty(e)) {
+      counts[e] = 1
+    } else {
+      counts[e] += 1
+    }
+  }
+  return counts
+}
+
+export function binarySearch(array,value) {
+  let nVals = array.length
+  let x = Math.floor(nVals/2)
+  let i = 0
+  while (true) {
+    i += 1
+    console.log(x)
+    if (i===100) {
+      return false
+    }
+    if (array[x] <= value) {
+      if (value <= array[x+1]) {
+        return x + 1
+      }
+      x = Math.floor((nVals+x)/2)
+    } else {
+      x = Math.floor((0+x)/2)
+    }
+  }
+}
+
 export function formatNumber(num) {
   switch (true) {
     case num === Infinity:
@@ -75,8 +110,7 @@ export const Dark50 = function(percent) {
 }
 
 export const roundedPercent = function(data) {
-  return `${data < 0 ? Math.ceil(data/10) : Math.floor(data/10)}.
-          ${data < 0 ? -1*data%10 : data%10}%`
+  return `${data < 0 ? Math.ceil(data/10) : Math.floor(data/10)}.${data < 0 ? -1*data%10 : data%10}%`
 }
 
 export const formatStat = function(num) {
