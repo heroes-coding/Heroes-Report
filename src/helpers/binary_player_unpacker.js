@@ -2,85 +2,115 @@ import asleep from './asleep'
 import { replayVals, replayDecoder, indexes, replayDecoderLengths, slotIndex, heroIndexes, decoderDictionary, talentIndexes, firsts, decoderIndex, nPredefined, winners, specialLocations, decoderNumbers } from './binary_defs'
 window.binaryStuff = { replayVals, replayDecoder, indexes, replayDecoderLengths, slotIndex, heroIndexes, decoderDictionary, talentIndexes, firsts, decoderIndex, nPredefined, winners, specialLocations, decoderNumbers }
 
-
-function replayIntArraysFromBytes(buffer) {
-  const dataview = new DataView(buffer)
-  const nReplays = Math.floor(dataview.byteLength/50)
-  const replayIntArrays = []
-  for (let r=0;r<nReplays;r++) {
-    // all player replays have one baker's dozen of 32 bit / 4 byte unsigned integers.  This is hard coded and partial bit packed (with theoretically possible overflows) to save a crazy amount of space
-    const replayIntArray = []
-    for (let n=0;n<13;n++) {
-      if (n===0) {
-        const headerInt = dataview.getUint16(r*50)
-        replayIntArray.push(headerInt)
-      } else {
-        replayIntArray.push(dataview.getUint32(r*50+(n-1)*4+2))
-      }
-    }
-    replayIntArrays.push(replayIntArray)
-  }
-  return replayIntArrays
-}
-
 function heapFromBytes(buffer) {
-  const startTime = window.performance.now()
-  const dataview = new DataView(buffer)
-  const nReplays = Math.floor(dataview.byteLength/50)
-  const nHeroes = window.HOTS.fullHeroNames.length
-  const offset = specialLocations.length+nHeroes
-  let intsArray = new Uint32Array(offset + nReplays*13)
-  intsArray.set(specialLocations.concat(Object.values(window.HOTS.roleN)))
-  for (let r=0;r<nReplays;r++) {
-    // all player replays have one baker's dozen of 32 bit / 4 byte unsigned integers.  This is hard coded and partial bit packed (with theoretically possible overflows) to save a crazy amount of space
-    for (let n=0;n<13;n++) {
-      let int
-      if (n===0) {
-        int = dataview.getUint16(r*50)
-      } else {
-        int = dataview.getUint32(r*50+(n-1)*4+2)
-      }
-      intsArray[offset+r*13+n] = int
+  let promise = new Promise(async function(resolve, reject) {
+
+    const dataview = new DataView(buffer)
+    window.dataview = dataview
+    const nReplays = Math.floor(dataview.byteLength/48)
+    while (!window.HOTS) {
+      // need to get access to some stuff from the dictionary to proceed
+      await asleep(10)
     }
-  }
-  const buf = window.Module._malloc(offset + nReplays*13,4)
-  window.Module.HEAP32.set(intsArray,buf >> 2)
-  console.log(`It took ${Math.round(window.performance.now()*100 - 100*startTime)/100} ms to unpack binary data into buffer`)
+    const startTime = window.performance.now()
+    const nHeroes = window.HOTS.fullHeroNames.length
+    const offset = specialLocations.length+nHeroes
 
-  let startTime5 = window.performance.now()
-  const replaysPointer = window.Module._decodeReplays(buf, replayDecoderLengths.length, replayDecoder.length/2, nReplays, nPredefined, decoderIndex, nHeroes)
-  console.log(`It took ${Math.round(window.performance.now()*100 - 100*startTime5)/100} ms to DECODE REPLAYS`)
-  console.log(replaysPointer,'pointer')
-
-
-  const heap = window.Module.HEAPU32
-  const startTime7 = window.performance.now()
-  const replays = heap.slice(replaysPointer/4,replaysPointer/4+nReplays*decoderIndex)
-  /* THIS IS TOO SLOW!
-  for (let r=0;r<nReplays;r++) {
-    const off = r*decoderIndex +replaysPointer/4
-    replays.push(heap.slice(off, off+decoderIndex))
+    let initialArray = specialLocations.concat(Object.values(window.HOTS.roleN))
+    let intsArray = new Uint32Array(offset +nReplays*12)
+    intsArray.set(initialArray)
+    let realInts = new Uint32Array(buffer)
+    intsArray.set(realInts,offset)
     /*
-    const rep = [
-      heap[off], // you
-      heap[off+28], // won,
-      heap.slice(off+33,off+40), // talents
-      heap.slice(off+nPredefined,off+decoderIndex), // other stats
-      heap[off+29], // winners,
-      heap.slice(off+30,off+33), // firsts
-      heap.slice(off,off+10), // heroes
-      heap.slice(off+10,off+15), // allies
-      heap.slice(off+15,off+20), // enemies
-      heap.slice(off+20,off+24), // ally role counts
-      heap.slice(off+24,off+28) // enemy role counts
-    ]
-    replays.push(rep)
+    window.Buffer = Buffer
+    for (let r=0;r<nReplays;r++) {
+      // all player replays have one baker's dozen of 32 bit / 4 byte unsigned integers.  This is hard coded and partial bit packed (with theoretically possible overflows) to save a crazy amount of space // This is done in a loop because of your implementation of a two byte header - if you fix that this will be faster.
+      for (let n=0;n<12;n++) {
+        let int = dataview.getUint32(r*48+n*4)
+        intsArray[offset+r*12+n] = int
+        if (r === 0) {
+          console.log(int,realInts.slice(n*4,n*4+4))
+        }
+      }
+    }
+    //
+    */
+    /*
+    let intsArray = new Uint32Array(buffer)
+    window.intsArray = intsArray
+    console.log(intsArray)
+    let intsArray = new Uint32Array(offset +nReplays*12)
+    intsArray.set(specialLocations.concat(Object.values(window.HOTS.roleN)))
+    for (let r=0;r<nReplays;r++) {
+      // all player replays have one baker's dozen of 32 bit / 4 byte unsigned integers.  This is hard coded and partial bit packed (with theoretically possible overflows) to save a crazy amount of space // This is done in a loop because of your implementation of a two byte header - if you fix that this will be faster.
+      for (let n=0;n<13;n++) {
+        let int
+        if (n===0) {
+          int = dataview.getUint16(r*50)
+        } else {
+          int = dataview.getUint32(r*50+(n-1)*4+2)
+        }
+        intsArray[offset+r*13+n] = int
+      }
+    }
+    */
+    console.log(`It took ${Math.round(window.performance.now()*100 - 100*startTime)/100} ms to unpack ints`)
+    while (!window.Module || !window.Module.HEAP32) {
+      // need to get access to some stuff from the dictionary to proceed
+      await asleep(10)
+    }
 
-  }*/
-  console.log(`It took ${Math.round(window.performance.now()*100 - 100*startTime7)/100} ms to unpack returned data`)
+    /*
+    const crazyTime = window.performance.now()
+    let crazyInts = new Uint32Array(buffer)
+    console.log(`It took ${Math.round(window.performance.now()*100 - 100*crazyTime)/100} ms to unpack crazy ints`)
+    */
 
-  window.decoderReplays = replays
+    const bufferTime = window.performance.now()
+    const buf = window.Module._malloc(offset + nReplays*12,4)
+    window.Module.HEAP32.set(intsArray,buf >> 2)
+    //window.Module._decodeInts(buf,offset+2)
+    console.log(`It took ${Math.round(window.performance.now()*100 - 100*bufferTime)/100} ms to move ints into buffer`)
 
+    let startTime5 = window.performance.now()
+    console.log(replayDecoder.length/2)
+    const replaysPointer = window.Module._decodeReplays(buf, replayDecoderLengths.length, replayDecoder.length/2, nReplays, nPredefined, decoderIndex, nHeroes)
+    console.log(`It took ${Math.round(window.performance.now()*100 - 100*startTime5)/100} ms to DECODE REPLAYS`)
+    console.log(replaysPointer,'pointer')
+    const replays = []
+    const heap = window.Module.HEAPU32
+    const startTime7 = window.performance.now()
+    for (let r=0;r<nReplays;r++) {
+      const rep = {}
+      const off = r*decoderIndex +replaysPointer/4
+      rep.allies= heap.slice(off+10,off+15)
+      rep.stats = heap.slice(off+nPredefined,off+decoderIndex)
+      rep.hero = rep.allies[0]
+      rep.franchise = window.HOTS.franchiseN[rep.hero]
+      rep.role = window.HOTS.roleN[rep.hero]
+      rep.heroes= heap.slice(off,off+10)
+      rep.enemies = heap.slice(off+15,off+20)
+      rep.allyRoleCounts = heap.slice(off+20,off+24)
+      rep.enemyRoleCounts = heap.slice(off+24,off+28)
+      rep.Won = heap[off+28]
+      rep.map = rep.stats[decoderNumbers.map]
+      rep.mode = rep.stats[decoderNumbers.mode]
+      rep.Winners = heap[off+29]
+      rep.FirstTo10 = heap[off+30]
+      rep.FirstTo20 = heap[off+31]
+      rep.FirstFort = heap[off+32]
+      rep.talents = heap.slice(off+33,off+40)
+      rep.MSL = rep.stats[decoderNumbers.MSL]
+      rep.KDA = (rep.stats[decoderNumbers.Kills] + rep.stats[decoderNumbers.Assists])/rep.stats[decoderNumbers.Deaths]
+      rep.buildIndex = rep.stats[decoderNumbers.buildIndex]
+      replays.push(rep)
+    }
+    console.log(`It took ${Math.round(window.performance.now()*100 - 100*startTime7)/100} ms to unpack returned data`)
+
+    window.decoderReplays = replays
+    resolve(replays)
+  })
+  return promise
 }
 
 export default async function getPlayerBinary(bnetID) {
@@ -89,28 +119,9 @@ export default async function getPlayerBinary(bnetID) {
     binaryReq.open("GET", `https://heroes.report/stats/players/${bnetID}`, true)
     binaryReq.responseType = "arraybuffer"
     binaryReq.onload = async function(oEvent) {
-      const startTime = window.performance.now()
       const arrayBuffer = binaryReq.response
       if (arrayBuffer) {
-        const startTime1 = window.performance.now()
-        const replayIntArrays = replayIntArraysFromBytes(arrayBuffer)
-        console.log(`It took ${Math.round(window.performance.now()*100 - 100*startTime1)/100} ms to unpack binary data normally`)
-        while (!window.HOTS) {
-          // need to get access to some stuff from the dictionary to proceed
-          await asleep (20)
-        }
-        heapFromBytes(arrayBuffer)
-        const newReplays = []
-        const startTime3 = window.performance.now()
-        for (let r=0;r<replayIntArrays.length;r++) {
-          try {
-            newReplays.push(unpackReplay(replayIntArrays[r]))
-          } catch (e) {
-            console.log(e)
-          }
-        }
-        console.log(`It took ${Math.round(window.performance.now()*100 - 100*startTime3)/100} ms to unpack binary data`)
-        console.log(newReplays[0])
+        const newReplays = await heapFromBytes(arrayBuffer)
         newReplays.sort((a,b) => a.MSL < b.MSL ? 1 : -1)
         window.newReplays = newReplays
         resolve(newReplays)

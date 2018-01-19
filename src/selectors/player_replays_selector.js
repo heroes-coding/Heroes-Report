@@ -30,15 +30,15 @@ const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises,
   const aRoleKeys = Object.keys(allyRoles)
   const enemyRoles = getCounts(filterHeroes[1].filter(x => isNaN(x)).map(x => roleDic[x]))
   const eRoleKeys = Object.keys(enemyRoles)
-  const allies = getCounts(filterHeroes[0].filter(x => !isNaN(x)))
+  const allies = filterHeroes[0].filter(x => !isNaN(x))
   const aKeys = Object.keys(allies)
-  const enemies = getCounts(filterHeroes[1].filter(x => !isNaN(x)))
+  const enemies = filterHeroes[1].filter(x => !isNaN(x))
   const eKeys = Object.keys(enemies)
   const keys = [aRoleKeys,eRoleKeys,aKeys,eKeys]
-  const counts = [allyRoles,enemyRoles,allies,enemies]
+  const counts = [allyRoles,enemyRoles]
   let missingHeroes = function(rep) {
-    const repcounts = [rep.allyRoleCounts, rep.enemyRoleCounts, rep.allyCounts, rep.enemyCounts]
-    for (let c=0;c<4;c++) {
+    const repcounts = [rep.allyRoleCounts, rep.enemyRoleCounts]
+    for (let c=0;c<2;c++) {
       const KEYS = keys[c]
       if (!KEYS.length) {
         continue
@@ -47,9 +47,21 @@ const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises,
       const count = counts[c]
       for (let k=0;k<KEYS.length;k++) {
         const key = KEYS[k]
-        if (!repCount.hasOwnProperty(key) || repCount[key] < count[key]) {
+        if (repCount[key] < count[key]) {
           return true
+        } else if (count[key] > 3) {
+          console.log(repCount,count,key,rep)
         }
+      }
+    }
+    for (let a=0;a<allies.length;a++) {
+      if (rep.allies.indexOf(allies[a])===-1) {
+        return true
+      }
+    }
+    for (let a=0;a<enemies.length;a++) {
+      if (rep.enemies.indexOf(enemies[a])===-1) {
+        return true
       }
     }
     return false

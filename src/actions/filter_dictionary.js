@@ -1,5 +1,6 @@
 import axios from 'axios'
 import _ from 'lodash'
+import asleep from '../helpers/asleep'
 import { getRandomString } from '../helpers/smallHelpers'
 import timeUnpacker from '../helpers/timeUnpacker'
 
@@ -28,12 +29,11 @@ async function getHOTSDictionary() {
   window.HOTS = HOTS
   window.buildsData = await buildsPromise
   window.buildsData = window.buildsData.data
-
   const uniqueKeys = Object.keys(HOTS.unique).map(x => parseInt(x))
   const nUnique = uniqueKeys.length
   HOTS.talentPics = {}
   uniqueKeys.map(x => HOTS.unique[x].map(i => { HOTS.talentPics[i] = x }))
-
+  await asleep(1) // give other processes a chance to move forward
   const heroes = {}
   const hKeys = Object.keys(HOTS.nHeroes).map(x => parseInt(x,10))
   for (let h = 0; h < hKeys.length; h++) {

@@ -7,6 +7,7 @@ import PlayerReplaysSelector from '../../selectors/player_replays_selector'
 import { updatePreferences, updateReplayPage } from '../../actions'
 import FilterDropDown from '../../containers/filter_drop_down'
 import { renderNothing } from '../../components/filterComponents'
+import { decoderDictionary, nPredefined, decoderNumbers } from '../../helpers/binary_defs'
 let currentPage
 
 // import { hashString } from '../../helpers/hasher'
@@ -25,7 +26,13 @@ class ReplayList extends React.Component {
     this.props.updateReplayPage(page)
   }
   renderItem(index, key) {
-    const { MSL, heroes, map, slot, length, winners, Kills, Assists, Deaths, mode, build, fullTals,FirstTo10,FirstTo20,FirstFort, Experience, Globes, KDA, hero, Won } = this.props.playerData[index]
+    const rep = this.props.playerData[index]
+    const replayValues = {}
+    rep.stats.map((x,i) => {
+      replayValues[decoderDictionary[i+nPredefined]] = x
+    })
+    const { map, length, Kills, Assists, Deaths, mode, Experience, Globes } = replayValues
+    const { heroes, Won, hero, fullTals, FirstTo10, FirstTo20, FirstFort, Winners, KDA, MSL, build, allies, enemies } = rep
     const region = 1 // NEED TO INTEGRATE THIS INTO THE SEARCH SCRIPT DOWN THE LINE
     let talPics
     if (window.HOTS) {
@@ -33,12 +40,8 @@ class ReplayList extends React.Component {
     } else {
       talPics = Array(7).fill(null)
     }
-    /* If you wanted, you could add hot loading here for extra information, but that is a little extreme =0
-    const fixedMode = mode === 4 ? 5 : mode === 5 ? 4 : mode
-    const hashInput = `${fixedMode}${Math.round(length/60)}${heroes.join("")}${winners}${firstTo10}${firstTo20}${firstFort}${MSL}${region}${build}`
-    */
     const ranges = this.stats.map(x => {
-      const statVals = this.props.playerData.map(y => y[x])
+      const statVals = this.props.playerData.map(y => x === 'KDA' ? y.KDA : y.stats[decoderNumbers[x]])
       let max = d3.max(statVals)
       max = max === Infinity ? 20 : max
       return [d3.min(statVals),max]
@@ -53,16 +56,16 @@ class ReplayList extends React.Component {
           FirstFort={FirstFort}
           date={minSinceLaunchToDate(MSL)}
           heroes={heroes}
+          allies={allies}
+          enemies={enemies}
           hero={hero}
           won={Won}
+          winners={Winners}
           map={map}
           mode={mode}
           talents={fullTals}
           talPics={talPics}
           length={length}
-          slot={slot}
-          team={Math.floor(slot/5)}
-          winners={winners}
           assists={Assists}
           kills={Kills}
           deaths={Deaths}
@@ -83,7 +86,7 @@ class ReplayList extends React.Component {
     }
     const { page, replaysPerPage, nReplays, pageNames } = this.props
     return (
-      <div className="container-fluid col-12 col-md-12 col-lg-9">
+      <div className="container-fluid col-12 col-md-12 col-lg-9 order-lg-last">
         {this.props.playerData.slice(page*replaysPerPage,(page+1)*replaysPerPage).map((x,i) => this.renderItem(page*replaysPerPage+i,x.MSL))}
         <FilterDropDown
           currentSelection={`${1+page*replaysPerPage} - ${Math.min((page+1)*replaysPerPage,nReplays)} out of ${nReplays} filtered replays`}

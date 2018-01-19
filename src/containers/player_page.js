@@ -17,9 +17,10 @@ class PlayerPage extends Component {
         <div className="filtersHolder">
           <DataFiltersBar menu={1} />
         </div>
-        <div className="row" id="playerPageHolder">
-          <StatList />
+        <div className="row d-flex justify-content-end" id="playerPageHolder">
           <ReplayList />
+          <StatList />
+
         </div>
       </div>
     )

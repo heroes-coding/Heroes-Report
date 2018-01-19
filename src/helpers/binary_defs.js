@@ -1,8 +1,5 @@
 import _ from 'lodash'
 const replayVals = [
-  // Header
-  [['mapStatID1',40,1], ['HighestKillStreak',72,1], ['parseVersion',21,1]],
-  // Replay ints
   [['buildIndex',321,1], ['map',35,1], ['length', 2520, 1], ['hero0',147,1]],
   [['MSL',4860000,1], ['mode',6,1], ['hero1',147,1]],
   [['hero2',147,1],['hero3',147,1],['hero4',147,1], ['hero5',147,1], ['FirstTo10',3,1], ['winners',2,1]],
@@ -10,7 +7,7 @@ const replayVals = [
   // 0
   [['Vengeances',23,1], ['Kills',57,1], ['mapStatID0',40,1], ['talent0',5,1], ['talent1',5,1], ['talent2',5,1], ['talent3',5,1], ['talent4',5,1], ['talent5',5,1], ['talent6',5,1]],
   // 1
-  [['SiegeDamage',307,1000],['MercenaryCampCaptures',34,1],['WatchTowerCaptures',70,1], ['Experience',50,1000], ['Assists',99,1]],
+  [['SiegeDamage',307,1000],['MercenaryCampCaptures',34,1],['mapStatID1',40,1], ['Experience',50,1000], ['Assists',99,1]],
   // 2
   [['SecondsofRoots', 91,1], ['SecondsSpentDead',646,1], ['SelfHealing',69,1000], ['Team0End',30,1], ['Team1End',30,1]],
   // 3
@@ -77,6 +74,8 @@ const decoderDictionary = {
   39: 'Talent6',
 }
 
+const talentSlots = [33,34,35,36,37,38,39]
+
 // nPredefined is determined by the beginning of the decoder dictionary + 1 above!
 let slotIndex, winners
 const nPredefined = 40
@@ -114,4 +113,4 @@ Object.keys(decoderDictionary).filter(x => x >= nPredefined).map(x => { decoderN
 // This has to match the order of unpacking in the binary unpacker (emscriptten decodeReplays)
 const specialLocations = [].concat(replayDecoderLengths,replayDecoder,[slotIndex, winners],firsts,heroIndexes,talentIndexes)
 
-export { replayVals, replayDecoder, indexes, replayDecoderLengths, slotIndex, heroIndexes, decoderDictionary, talentIndexes, firsts, decoderIndex, nPredefined, winners, specialLocations, decoderNumbers }
+export { replayVals, replayDecoder, indexes, replayDecoderLengths, slotIndex, heroIndexes, decoderDictionary, talentIndexes, firsts, decoderIndex, nPredefined, winners, specialLocations, decoderNumbers, talentSlots }

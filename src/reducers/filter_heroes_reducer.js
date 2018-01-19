@@ -7,6 +7,8 @@ export default function(state = [[],[]], action) {
       newState[action.team] = []
     } else if (state[action.team].length===5) {
       return state
+    } else if (state[action.team].indexOf(action.hero)!==-1 && !isNaN(action.hero)) {
+      return state
     } else {
       newState[action.team].push(action.hero)
     }

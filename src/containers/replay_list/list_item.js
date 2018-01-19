@@ -40,7 +40,7 @@ const modes = {
 }
 
 function getReplay(props) {
-  const { MSL, heroes, length, winners, mode, build, FirstTo10, FirstTo20, FirstFort, region, map } = props
+  const { MSL, heroes, winners, length, mode, build, map } = props
   const hashInput = `${mode}${Math.round(length/60)}${heroes.join("")}${winners}${MSL}${map}${build}`
   const hashPath = `https://heroes.report/stats/replays/${hashString(hashInput)}.json`
   console.log(hashInput,hashPath)
@@ -64,6 +64,7 @@ let statBar = (statValue,index,statRange, statName) => {
 }
 
 let talentIcon = (talentIcon,key) => {
+  talentIcon = talentIcon.toString()
   return (
     <div className='tinyTalentHolder' key={key}>
       <img
@@ -80,18 +81,18 @@ let tinyHero = (hero,key) => {
   return (
     <img
       key={key}
-      className="tinyHero"
+      className={`tinyHero ${hero}`}
       src={`https://heroes.report/squareHeroes/${hero}.jpg`}
       alt={hero}
     ></img>
   )
 }
 
-let firsts = (first,text,team) => {
+let firsts = (first,text) => {
   return (
     <div
       className="firsts"
-      style={{color: team === first? '#00ff00' : first !==2 ? '#ff0000' : '#333'}}
+      style={{color: first === 1 ? '#00ff00' : first === 0 ? '#ff0000' : '#333'}}
     >
       {text}
     </div>
@@ -99,7 +100,6 @@ let firsts = (first,text,team) => {
 }
 
 let left = props => {
-  const color = window.HOTS.ColorsDic[props.hero]
   return (
     <ListPart
       extraClass='listPart'
@@ -140,10 +140,10 @@ let left = props => {
           </span>
           <div className="teamsHolder">
             <div className="tinyHeroHolder" style={{background: "#022c02"}}>
-              {props.heroes.filter((x,i) => Math.floor(i/5)===props.team).map((x,i) => tinyHero(x,`${props.MSL}-${i}`))}
+              {[0,1,2,3,4].map((x) => tinyHero(props.allies[x],`${props.MSL}-${x}`))}
             </div>
             <div className="tinyHeroHolder" style={{background: "#350101"}}>
-              {props.heroes.filter((x,i) => Math.floor(i/5)!==props.team).map((x,i) => tinyHero(x,`${props.MSL}-${i}`))}
+              {[0,1,2,3,4].map((x) => tinyHero(props.enemies[x],`${props.MSL}-${x}`))}
             </div>
           </div>
         </div>
@@ -164,11 +164,11 @@ export default (props) => {
               {props.stats.map((x,i) => statBar(props[x],i,props.ranges[i],x))}
             </div>
             <div className="firstsHolder">
-              {firsts(props.FirstTo10,"10",props.team)}
-              {firsts(props.FirstTo20,"20",props.team)}
+              {firsts(props.FirstTo10,"10")}
+              {firsts(props.FirstTo20,"20")}
             </div>
             <div className="talentsHolder">
-              {props.talPics.map((x,i) => talentIcon(x,`${props.MSL}-${i}`))}
+              {[0,1,2,3,4,5,6].map((x) => talentIcon(props.talPics[x],`${props.MSL}-${x}`))}
             </div>
           </div>
         }

@@ -25,11 +25,9 @@ class DataFilters extends Component {
     this.props.updatePreferences('time', newTime)
   }
   updateAllies(hero) {
-    console.log('updating allies with ', hero)
     this.props.addHeroFilter(0, hero)
   }
   updateEnemies(hero) {
-    console.log('updating enemies with ', hero)
     this.props.addHeroFilter(1, hero)
   }
   updateMode(newMode) {

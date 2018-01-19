@@ -49,7 +49,6 @@ class PlayerPage extends Component {
     }
   }
   reorder(id, reverse) {
-    console.log('Should be reordering by: ',id)
     if (this.state.sort === id) {
       this.setState({...this.state,reverse:!this.state.reverse})
     } else {
@@ -88,7 +87,6 @@ class PlayerPage extends Component {
   render() {
     const status = this.props.playerSearchResults.status
     const results = this.props.playerSearchResults
-    console.log(results)
     if (!status && results) {
       if (this.state.sort===4) {
         results.sort((x,y) => {

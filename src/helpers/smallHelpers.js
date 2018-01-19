@@ -1,8 +1,15 @@
 export function getRandomString() { return Math.random().toString(36).replace(/[^a-z]+/g, '') }
 
-const fakeLaunchDate = (new Date(2015, 5, 1, 20, 0, 0, 0)).getTime()
+let fakeLaunchDate = (new Date(2015, 5, 1, 20, 0, 0, 0)).getTime()
 export const minSinceLaunchToDate = function(minSinceLaunch) {
   return new Date(fakeLaunchDate + minSinceLaunch*60000)
+}
+
+let daysAndMinutesSinceLaunch = function(minSinceLaunch) {
+  let time = minSinceLaunch - 240
+  let days = Math.floor(time/(1440))
+  let mins = time%(1440)
+  return [days,mins]
 }
 
 export function getCounts(array) {
@@ -20,12 +27,12 @@ export function getCounts(array) {
 }
 
 export function binarySearch(array,value) {
-  let nVals = array.length
-  let x = Math.floor(nVals/2)
+  let max = array.length
+  let min = 0
+  let x = Math.floor(max/2)
   let i = 0
   while (true) {
     i += 1
-    console.log(x)
     if (i===100) {
       return false
     }
@@ -33,9 +40,13 @@ export function binarySearch(array,value) {
       if (value <= array[x+1]) {
         return x + 1
       }
-      x = Math.floor((nVals+x)/2)
+      const tempMin = x
+      x = Math.floor((max+x)/2)
+      min = tempMin
     } else {
-      x = Math.floor((0+x)/2)
+      const tempMax = x
+      x = Math.floor((min+x)/2)
+      max = tempMax
     }
   }
 }
