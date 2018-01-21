@@ -64,13 +64,13 @@ let statBar = (statValue,index,statRange, statName) => {
 }
 
 let talentIcon = (talentIcon,key) => {
-  talentIcon = talentIcon.toString()
+  talentIcon = `${talentIcon || talentIcon === 0 ? `${talentIcon}.jpg` : 'empty.png'}`
   return (
     <div className='tinyTalentHolder' key={key}>
       <img
         key={key}
         className="tinyTalent"
-        src={`https://heroes.report/singleTalentsTiny/${talentIcon || talentIcon === 0 ? `${talentIcon}.jpg` : 'empty.png'}`}
+        src={`https://heroes.report/singleTalentsTiny/${talentIcon}`}
         alt={talentIcon}
       ></img>
     </div>

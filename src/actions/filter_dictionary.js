@@ -15,11 +15,11 @@ async function getHOTSDictionary() {
     // should implement lzstring here
     let configCheck = await configCheckPromise
     if (configCheck.status === 200) {
-      window.configCheck = configCheck.data
+      configCheck = configCheck.data
+      window.configCheck = configCheck
       version = parseFloat(configCheck.version)
     }
   }
-
   if (!HOTS || HOTS.version < version) {
     HOTS = await axios.get(`https://heroes.report/stats/HOTS.json?${getRandomString()}`)
     HOTS = HOTS.data

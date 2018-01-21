@@ -147,10 +147,10 @@
       }
     </style>
     <script type='text/javascript'>
-
+      window.moduleLoaded = false
       var Module = {
         preRun: [],
-        postRun: [],
+        postRun: [() => {window.moduleLoaded=true}],
         print: (function() {
           return function(text) {
             if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');

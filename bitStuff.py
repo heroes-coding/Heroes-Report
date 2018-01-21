@@ -187,13 +187,14 @@ getBytes(30*147*60*147*100),
 ['pGlobes[6]', 'pGlobes6', 1, 60, 1],
 
 #10 Player 10 Talents 7  + Globes 9, Mercs 8, 10, player8 structures 8, Percentile 10
-getBytes(147*5*5*4*2*1440*100),
+getBytes(147*5*5*4*2*60*24*100),
 ['heroes[4]', 'Player4', 9, 147, 1],
 ['pTalents[5][5]', 'talent55', 9, 5, 1],
 ['pTalents[5][6]', 'talent56', 9, 5, 1],
 ['minusOneRegion', 'minusOneRegion', 9, 4, 1],
 ['winners', 'Winners', 9, 2, 1],
-['minSinceDay','MSD', 9, 1440,1],
+['minSinceDay','MSD', 9, 60,1],
+['hoursSinceDay','HSD',9,24,1]
 ['mmrPercentiles[5]', 'mmrPercentiles5', 9, 100, 1],
 
 #7  + Percentile 4 + avg lev diff
@@ -207,12 +208,12 @@ getBytes(100**3*70*5*12),
 
 ]
 
+
 import numpy as np
 np.exp(np.log(your_array).sum())
 
 def multiplyAll(array):
     return getBytes(np.exp(np.log(array).sum()))
-
 
 # CHECKS
 for term in 'pGlobes', 'pStructures', 'pMercs', 'heroes', 'KDA', 'mmrPercentiles':
@@ -220,30 +221,97 @@ for term in 'pGlobes', 'pStructures', 'pMercs', 'heroes', 'KDA', 'mmrPercentiles
     
 print([ "{}[{}][{}]".format('pTalents',i,t) in sorted([el[0] for els in replayBits.values() for el in els if 'pTalents' in el[0]]) for i in range(10) for i in range(10) for t in range(7) ])
     
-    
-    
 
+
+# Loading up the whole thing
+replayBits = {i:[el for el in replayBitDic if el[2]==i ] for i in range(16)}
+# Counts
 {index:multiplyAll([i[3] for i in ints])[1] for index,ints in replayBits.items()}
+# Wasted total bytes - LOL HOLY CRAP LESS THAN ONE BOOL I AM AMAZING
+sum([4-t[1] for t in replayBitDic if type(t)==tuple and t[1] > 3])
 
-replayBits = {i:[el for el in replayBitDic if el[2]==i ] for i in range(17)}
+# Server side packing code
 for i in range(16):
     print( "[{}],".format( ", ".join(
             ["[{},{},{}]".format(el[0],el[3],el[4]) for el in replayBits[i]]
             )))
 
-sum([4-t[1] for t in replayBitDic if type(t)==tuple and t[1] > 3])
 
 
-import os, tqdm
-files = {}
-for build in tqdm.tqdm(os.listdir('H:/Archived')):
-    for f in os.listdir(os.path.join('H:/Archived',build)):
-        files[f] = os.path.join('H:/Archived',build,f)
+ranges = {
+    'heroes':range(10),
+    'KDA':range(10,20),
+    'pGlobes':range(20,30),
+    'pStructures':range(30,40),
+    'mmrPercentiles':range(40,50),
+    'pMercs':range(50,60),
+    'pTalents[0]':range(60,67),
+    'pTalents[1]':range(67,74),
+    'pTalents[2]':range(74,81),
+    'pTalents[3]':range(81,88),
+    'pTalents[4]':range(88,95),
+    'pTalents[5]':range(95,102),
+    'pTalents[6]':range(102,109),
+    'pTalents[7]':range(109,116),
+    'pTalents[8]':range(116,123),
+    'pTalents[9]':range(123,130)  
+    }
+
+
+position = 130
+decoderVals = []
+decoderList = [ [] for i in range(16) ]
+
+for byte, vals in replayBits.items():
+    rev = vals[::-1]
+    for v in rev:
+        key, name, byteN, MAX, MULT = v
+        if any([term in key for term in terms]):
+            termy = key[:-3]
+            inty = int(key[-2])
+            pos = ranges[termy][inty]
+        else:
+            pos = position
+            position += 1
+        decoderList[byte].append((MAX,MULT,pos))
+        decoderVals.append((name,byte,MAX,MULT,pos))
+
+
+lengths = [len(r) for r in decoderList]
+
+print("const int nInts = {};".format(len(lengths)))
+
+print("const int nOuts = {};".format(sum(lengths)))
+
+print ("const int intLengths[{}] = {{ {} }};".format(len(lengths),", ".join([str(l) for l in lengths])))
+
+print ("const int decoders[{}][{}][{}] = {{ {} }};".format(len(lengths),max(lengths),3,
+       ", ".join([ "{{ {} }}".format( 
+               ", ".join(
+    ["{{ {} }}".format(", ".join([str(x) for x in e])) for e in decoderList[i]]
+)) for i in range(len(lengths))])))
+
+decoderList
+
+print ("[]{ {24, 25, 26, 27}, {20, 21, 22, 23} };
+
+
+sorted(decoderVals,key=lambda x: x[-1])
+
+
+    "pTalents[7][6]"[-2]
+replayBits
+
+terms = 'pGlobes', 'pStructures', 'pMercs', 'heroes', 'KDA', 'mmrPercentiles', "pTalents[0]", "pTalents[1]", "pTalents[2]", "pTalents[3]", "pTalents[4]", "pTalents[5]", "pTalents[6]", 
 
 
 
+for p in range(10):
+    print("'pTalents[{}]':range({},{}),".format(p,60+p*7,60+(p+1)*7))
+print(", ".join(['"pTalents[{}]"'.format(p) for p in range(10)]))
 
-2176/64
+
+
 
 
 import os, tqdm
@@ -407,6 +475,9 @@ for f in tqdm.tqdm(files):
     os.remove(os.path.join('/files/stats/compressed',f))
 
 import os
-files = os.listdir('/files/stats/replays')
-f2 = [f for f in files if '.json' in f]
-print(len(files),len(f2))
+base = '/files/stats/compressed'
+files = os.listdir(base)
+sorted([(f,os.stat(os.path.join(base,f)).st_size/1024/1024) for f in files], key=lambda x: x[1])
+
+
+

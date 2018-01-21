@@ -9,6 +9,11 @@ import NavigationBar from './containers/nav_bar/nav_bar'
 import PlayerPage from './containers/player_page'
 import PlayerList from './containers/player_list/player_list'
 import YourPage from './containers/your_page'
+import getReplayBinary from './helpers/binary_replay_unpacker'
+import unpackTalents from './helpers/unpack_talents'
+unpackTalents(20)
+
+window.getReplayBinary = getReplayBinary
 
 class App extends Component {
   componentDidMount() {

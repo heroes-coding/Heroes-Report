@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import { updatePreferences, getMainData, dispatchPlayerSearch } from '../../actions'
 import { NavLink, withRouter } from 'react-router-dom'
 import _ from 'lodash'
+import unpackTalents from '../../helpers/unpack_talents'
 
 const linkFunction= (match, location) => {
   return match && match.isExact
@@ -44,7 +45,7 @@ class Nav extends React.Component {
             name=''
             id='gameMap'
             dropdowns={this.props.HOTS.sortedHeroes ? this.props.HOTS.sortedHeroes : []}
-            updateFunction={() => console.log('hiya')}
+            updateFunction={unpackTalents}
             leftComponentRenderer={renderTinyHero}
             rightComponentRenderer={renderNothing}
             renderDropdownName={true}

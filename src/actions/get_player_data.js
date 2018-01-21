@@ -1,6 +1,7 @@
 import getPlayerBinary from '../helpers/binary_player_unpacker'
 import asleep from '../helpers/asleep'
 import axios from 'axios'
+import _ from 'lodash'
 const GET_PLAYER_DATA = 'get_player_data'
 export { GET_PLAYER_DATA, getPlayerData }
 
@@ -24,8 +25,20 @@ async function getPlayerData(bnetID) {
       console.log('MISSING A BUILD!')
       continue
     }
+    rep.fullTals = Array(7).fill(null)
     try {
-      rep.fullTals = rep.talents.map((x,i) => window.talentDic[rep.build][rep.hero][i][x])
+      rep.talents.map((x,i) => {
+        // Need to fix this somewhere else
+        let tal = window.talentDic[rep.build][rep.hero][i][x]
+        if (tal && isNaN(tal)) {
+          if (!window.HOTS.talentsN) {
+            window.HOTS.talentsN = _.invert(window.HOTS.nTalents)
+          }
+          tal = parseInt(window.HOTS.talentsN[tal])
+          window.talentDic[rep.build][rep.hero][i][x] = tal
+        }
+        rep.fullTals[i] = tal
+      })
     } catch (e) {
       console.log('Something wrong with replay',rep.build,rep.hero,window.talentDic[rep.build][rep.hero],rep.talents,rep)
       rep.fullTals = Array(7).fill(null)

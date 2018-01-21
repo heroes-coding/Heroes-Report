@@ -5,6 +5,10 @@ export const minSinceLaunchToDate = function(minSinceLaunch) {
   return new Date(fakeLaunchDate + minSinceLaunch*60000)
 }
 
+export const dateToDSL = function(date) {
+  return Math.floor((date - 60000*240 - fakeLaunchDate)/(60000*1440))
+}
+
 let daysAndMinutesSinceLaunch = function(minSinceLaunch) {
   let time = minSinceLaunch - 240
   let days = Math.floor(time/(1440))

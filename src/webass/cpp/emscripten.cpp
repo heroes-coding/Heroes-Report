@@ -2,6 +2,9 @@
 #include <math.h>
 #include "get20.h"
 #include "playerparser.h"
+#include "replayparser.h"
+#include "talentsUnpacker.h"
+#include "getTalentWinrates.h"
 #include <memory>
 #include <iostream>
 

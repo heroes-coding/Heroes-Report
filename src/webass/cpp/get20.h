@@ -1,6 +1,12 @@
 #include <memory>
 #include <iostream>
 
+
+void printNumber (int num) {
+  std::cout << "HELPER FUNCTION" << std::endl;
+  std::cout << num << std::endl;
+}
+
 extern "C" {
 
   EMSCRIPTEN_KEEPALIVE
@@ -10,7 +16,7 @@ extern "C" {
 
       for (int i=0; i<20; i++) {
           values[i] = i+1;
-          std::cout << i << std::endl;
+          printNumber(i);
       }
 
       auto arrayPtr = &values[0];
