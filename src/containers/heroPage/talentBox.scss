@@ -1,0 +1,70 @@
+@import "../../style/utilities/utilities.scss";
+@import "../replay_list/replay_list.scss";
+
+
+.untouchable {
+  @include  unselectable;
+}
+
+text.tText {
+  fill:$Light;
+  font-size:0.8;
+  font-family: $NumbersFont;
+  @include unselectable;
+}
+text.tIcon {
+    fill: $Color1;
+    font-family: FontAwesome;
+    font-size:0.8;
+    @include unselectable;
+}
+
+.buildGraphTal {
+    fill: lighten($Dark,5%);
+    @include unselectable;
+}
+
+svg.CalcTalentHolder {
+  width:70px;
+  height: 130px;
+  margin: 5px 0px;
+  @include unselectable;
+}
+
+.talentRow {
+  @extend .replayItem;
+  justify-content: space-evenly;
+  margin-bottom: 2px;
+  padding-top: 5px;
+}
+
+.talentCalcHeader {
+  @extend .talentRow;
+  justify-content: center;
+  font-size: 1.2em;
+  padding: 8px 0px;
+}
+
+
+.talentPopup {
+  @extend .replayItem;
+  position: absolute;
+  transition: opacity 0.5s;
+  opacity: 0;
+  background-color: black;
+  padding: 10px;
+  @include unselectable;
+  z-index: 5;
+  border: 1px solid $Dark;
+}
+
+.quest {
+  color: $Highlight;
+}
+.popupAlive {
+  opacity: 0.95;
+}
+
+.popupHolder {
+  height: 0px !important;
+}

@@ -17,6 +17,7 @@ $tiny-width: 480px;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  pointer-events: none;
 }
 
 @mixin expandWhenTiny {

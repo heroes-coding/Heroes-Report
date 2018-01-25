@@ -131,7 +131,6 @@ getBytes(5**4*5*5*147*12*147),
 ['pTalents[5][3]', 'talent63', 5, 5, 1],
 ['heroes[3]', 'Player3', 5, 147, 1],
 
-
 #8 Player 9 Talents 1-6 + Player Six + Mercs 7 + Player Seven
 getBytes(5**6*147 * 12 * 147),
 ['pTalents[8][0]', 'talent80', 7, 5, 1],
@@ -159,7 +158,7 @@ getBytes(3*12*12*5*5**7*25),
 ['pTalents[7][5]', 'talent75', 15, 5, 1],
 ['pTalents[7][6]', 'talent76', 15, 5, 1],
 ['KDA[8]', 'KDA8', 15, 25, 1],
-
+1127/0.04
 #15 + Player Five + Player 6 Talents 6-7 percentiles 2-4 
 getBytes(100**4*42),
 ['choppedGameLengthMinutesMinusOne', 'GameLengthMinsMinusOne', 14, 42, 1],
@@ -479,5 +478,5 @@ base = '/files/stats/compressed'
 files = os.listdir(base)
 sorted([(f,os.stat(os.path.join(base,f)).st_size/1024/1024) for f in files], key=lambda x: x[1])
 
-
-
+max(HOTS['nTalents'])
+HOTS['cTalents'][20]

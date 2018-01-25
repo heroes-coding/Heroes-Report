@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import DataFiltersBar from './data_filters_bar'
-import _ from 'lodash'
 import ReplayList from './replay_list/replay_list'
+import PlayerStatList from './stat_list/player_stats'
 import StatList from './stat_list/stat_list'
 import { getPlayerData } from '../actions'
 
@@ -19,8 +19,7 @@ class PlayerPage extends Component {
         </div>
         <div className="row d-flex justify-content-end" id="playerPageHolder">
           <ReplayList />
-          <StatList />
-
+          <PlayerStatList />
         </div>
       </div>
     )

@@ -1,13 +1,16 @@
 import React from 'react'
 import * as d3 from 'd3'
 import { connect } from 'react-redux'
-import { minSinceLaunchToDate } from '../../helpers/smallHelpers'
+import { minSinceLaunchToDate, MSLToDateString, simplePercent } from '../../helpers/smallHelpers'
 import ListItem from './list_item'
 import PlayerReplaysSelector from '../../selectors/player_replays_selector'
 import { updatePreferences, updateReplayPage } from '../../actions'
 import FilterDropDown from '../../containers/filter_drop_down'
 import { renderNothing } from '../../components/filterComponents'
 import { decoderDictionary, nPredefined, decoderNumbers } from '../../helpers/binary_defs'
+import Graph from '../../components/graph/graph'
+import { exponentialSmoothing } from '../../helpers/exponential_smoother'
+import Popup from '../../components/popup'
 let currentPage
 
 // import { hashString } from '../../helpers/hasher'
@@ -18,6 +21,40 @@ class ReplayList extends React.Component {
     this.stats = ['KDA','Experience','Globes']
     this.renderItem = this.renderItem.bind(this)
     this.flipPage = this.flipPage.bind(this)
+    this.state = {
+      popupOpen:false,
+      popupX:0,
+      popupY:5,
+      popupName: '',
+      popupDesc: '',
+      popupPic: ''
+    }
+    this.openPopup = this.openPopup.bind(this)
+    this.closePopup = this.closePopup.bind(this)
+    this.messagePopup = this.messagePopup.bind(this)
+  }
+  openPopup(row,col, popupName, popupDesc, popupPic) {
+    if (this.popupTimeout) {
+      clearTimeout(this.popupTimeout)
+      this.popupTimeout = null
+    }
+    let offsetHeight = document.getElementsByClassName('replayItem')[0].offsetHeight
+    this.setState({
+      popupOpen:true,
+      popupX:100,
+      popupY:(offsetHeight+4)*row+offsetHeight,
+      popupName,
+      popupDesc,
+      popupPic
+    })
+  }
+  messagePopup() {
+    this.popupTimeout = setTimeout(this.closePopup, 500)
+  }
+  closePopup() {
+    this.setState({
+      popupOpen:false
+    })
   }
   flipPage(page) {
     if (currentPage === page) {
@@ -25,7 +62,7 @@ class ReplayList extends React.Component {
     }
     this.props.updateReplayPage(page)
   }
-  renderItem(index, key) {
+  renderItem(index, key, row, handle) {
     const rep = this.props.playerData[index]
     const replayValues = {}
     rep.stats.map((x,i) => {
@@ -49,6 +86,7 @@ class ReplayList extends React.Component {
     return (
       <div key={index} className="replay_item_container">
         <ListItem
+          handle={handle}
           MSL={MSL}
           region={region}
           FirstTo10={FirstTo10}
@@ -76,6 +114,9 @@ class ReplayList extends React.Component {
           build={build}
           stats={this.stats}
           ranges={ranges}
+          openPopup={this.openPopup}
+          messagePopup={this.messagePopup}
+          row={row}
         />
       </div>
     )
@@ -84,10 +125,21 @@ class ReplayList extends React.Component {
     if (!this.props.playerData || !this.props.talentDic.version) {
       return <div></div>
     }
-    const { page, replaysPerPage, nReplays, pageNames } = this.props
+    const { page, replaysPerPage, nReplays, pageNames, playerData } = this.props
+    const timedData = exponentialSmoothing(playerData.map(x => { return [x.MSL,x.Won] }).reverse())
     return (
       <div className="container-fluid col-12 col-md-12 col-lg-9 order-lg-last">
-        {this.props.playerData.slice(page*replaysPerPage,(page+1)*replaysPerPage).map((x,i) => this.renderItem(page*replaysPerPage+i,x.MSL))}
+        <Popup
+          name={this.state.popupName}
+          desc={this.state.popupDesc}
+          extendedDesc={this.state.popupExtendedDesc}
+          classo="talentPopup"
+          open={this.state.popupOpen}
+          x={this.state.popupX}
+          y={this.state.popupY}
+          pic={this.state.popupPic}
+        />
+        {this.props.playerData.slice(page*replaysPerPage,(page+1)*replaysPerPage).map((x,i) => this.renderItem(page*replaysPerPage+i,x.MSL,i,this.props.playerInfo.handle))}
         <FilterDropDown
           currentSelection={`${1+page*replaysPerPage} - ${Math.min((page+1)*replaysPerPage,nReplays)} out of ${nReplays} filtered replays`}
           buttonLabel=''
@@ -118,7 +170,7 @@ class ReplayList extends React.Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  return PlayerReplaysSelector(state)
+  return {...PlayerReplaysSelector(state), ...ownProps}
 }
 
 export default connect(mapStateToProps, {updatePreferences, updateReplayPage})(ReplayList)

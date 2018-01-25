@@ -6,10 +6,33 @@
 .enemies {
   color: #ff0000;
 }
-.allies, .enemies {
+.self {
+  color: $Color2;
+}
+
+.allies, .enemies, .self {
+    display: block;
     margin-right: 10px;
     margin-left: 5px;
-    margin-top: 10px;
+    margin-top: 1px;
+}
+
+.teamFilterHolder {
+    display: flex;
+    flex-direction: row;
+    padding-top: 4px;
+}
+
+.leftTeamFilter {
+    display: flex;
+    flex-direction: column;
+}
+.filterLabel {
+    display: block;
+    font-size: 0.7em;
+    text-align: center;
+    width: 30px;
+    margin: 0px 0px 0px -2px;
 }
 
 input.searchInput {

@@ -16,6 +16,38 @@ let daysAndMinutesSinceLaunch = function(minSinceLaunch) {
   return [days,mins]
 }
 
+export function formatDate(value) {
+  let month = value.getMonth()+1
+  month = month < 10 ? `0${month}` : month
+  let day = value.getDate()
+  day = day < 10 ? `0${day}` : day
+  return `${month}/${day}/${value.getYear()-100}`
+}
+export function formatTime(value) {
+  let hours = value.getHours()
+  const dayNight = hours > 11 ? 'pm' : 'am'
+  hours = hours%12
+  hours = hours === 0 ? 12 : hours
+  let minutes = value.getMinutes()
+  minutes = minutes > 9 ? minutes : `0${minutes}`
+  return `${hours}:${minutes}${dayNight}`
+}
+export function formatLength(length, longForm) {
+  let minutes = Math.floor(length/60)
+  let seconds = Math.floor(length%60)
+  minutes = minutes < 10 ? `0${minutes}` : minutes
+  seconds = seconds < 10 ? `0${seconds}` : seconds
+  return longForm ? `${minutes} minutes and ${seconds} seconds` : `${minutes}m${seconds}s`
+}
+
+export function MSLToDateString(d) {
+  return formatDate(minSinceLaunchToDate(d))
+}
+export function simplePercent (p) {
+  return `${Math.round(p*100)}%`
+}
+
+
 export function getCounts(array) {
   const counts = {}
   let n = array.length

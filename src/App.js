@@ -4,14 +4,12 @@ import Storage from './helpers/storage'
 import { getHOTSDictionary, updatePreferences, getMainData, rollbackState, getTalentDic } from './actions'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import DataTable from './containers/table/data_table'
-import HeroPage from './containers/hero_page'
+import HeroPage from './containers/heroPage/hero_page'
 import NavigationBar from './containers/nav_bar/nav_bar'
 import PlayerPage from './containers/player_page'
 import PlayerList from './containers/player_list/player_list'
 import YourPage from './containers/your_page'
 import getReplayBinary from './helpers/binary_replay_unpacker'
-import unpackTalents from './helpers/unpack_talents'
-unpackTalents(20)
 
 window.getReplayBinary = getReplayBinary
 

@@ -2,13 +2,17 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import PlayerReplaysSelector from '../../selectors/player_replays_selector'
 import * as d3 from 'd3'
-import { formatNumber, roundedPercent } from '../../helpers/smallHelpers'
+import KDensity from '../../components/graph/kdensity'
+import Graph from '../../components/graph/graph'
+import { formatNumber, roundedPercent, minSinceLaunchToDate, formatDate, formatLength, simplePercent, MSLToDateString } from '../../helpers/smallHelpers'
 import { decoderNumbers } from '../../helpers/binary_defs'
 import { formatPercentile } from '../player_list/player_list'
+import { exponentialSmoothing } from '../../helpers/exponential_smoother'
+window.exponentialSmoothing = exponentialSmoothing
 const mmrNames = {q: 'Quick Match', h: 'Hero League', t: 'Team League', u: "Urnk. Draft"}
+
 const spacesLeft = 18
 const spacesMiddle = 7
-let statTime
 
 let getSpace = function(spaces) {
   if (spaces<0) {
@@ -35,6 +39,7 @@ let stat = (statName,playerData,providedStats,shortName) => {
   const spaceMiddle = spacesMiddle-std.toString().length
   return (
     <div className='statBarHolder' key={statName}>
+      <i className="fa fa-area-chart" aria-hidden="true"></i>&nbsp;
       <span className="statName">{statName}:</span>{getSpace(spaceLeft)}<span className="statValue">{mean}</span>{getSpace(spaceMiddle)}(<span className="stdValue">{std}</span>)
     </div>
   )
@@ -50,11 +55,11 @@ let percent = (statName,playerData) => {
   statName = statName.replace('To',' To ').replace('Fort',' Fort')
   const allyMean = stats.length > 0 ? roundedPercent(Math.round(d3.mean(stats)*1000)) : '-----'
   const enemyMean = negStats.length > 0 ? roundedPercent(Math.round(d3.mean(negStats)*1000)) : '-----'
-  statTime += window.performance.now() - startTime
   const spaceLeft = spacesLeft - statName.length - allyMean.toString().length + 2
   const spaceMiddle = spacesMiddle-enemyMean.toString().length
   return (
     <div className='statBarHolder' key={statName}>
+      <i className="fa fa-area-chart" aria-hidden="true"></i>&nbsp;
       <span className="statName">{statName}:</span>{getSpace(spaceLeft)}<span className="statValue">{allyMean}</span>{getSpace(spaceMiddle)}<span className="stdValue">{enemyMean}</span>
     </div>
   )
@@ -78,7 +83,6 @@ let percentStat = (statName,playerData) => {
   }
   const mean = formatNumber(d3.mean(stats))
   const std = stats.length > 1 ? formatNumber(d3.deviation(stats)) : '---'
-  statTime += window.performance.now() - startTime
   const spaceLeft = spacesLeft - statName.length - mean.toString().length
   const spaceMiddle = spacesMiddle-std.toString().length
   return (
@@ -93,9 +97,15 @@ class StatList extends Component {
     super(props)
   }
   render() {
+    const { playerData } = this.props
     if (this.props.playerData.length === 0) {
       return <div></div>
     }
+    let data = playerData.map(x => { return [x.MSL,x.Won] }).reverse()
+    let expTime = window.performance.now()
+    const timedData = exponentialSmoothing(data)
+    console.log(`It took ${Math.round(window.performance.now()*100 - 100*expTime)/100} ms to calculate exponentially smoothed line`)
+
     const { h, q, u, t, handle } = this.props.playerInfo
     const outcomes = this.props.playerData.map(x => x.Won)
     return (
@@ -105,18 +115,44 @@ class StatList extends Component {
             <div className='handleHolder statBarHolder statBarTitle'>
               {handle}
               <br />
-              {(statTime = 0)}
               <span id="winrate">Won {roundedPercent(Math.round(d3.mean(outcomes)*1000))} ({d3.sum(outcomes)}/{outcomes.length}  matches)</span>
             </div>
+            <Graph
+              graphClass="winrateGraph"
+              linePoints={timedData}
+              xLabel="Date"
+              yLabel="Win rate"
+              title="Win rate over time"
+              xRatio={500}
+              yRatio={290}
+              xOff={70}
+              yOff={90}
+              noArea={true}
+              formatter={MSLToDateString}
+              yFormatter={simplePercent}
+            />
+            <KDensity
+              graphClass="winrateGraph"
+              X={this.props.playerData.map(x => x.Won)}
+              xLabel="Deaths"
+              title={'K Density Death Plot'}
+              xRatio={500}
+              yRatio={250}
+              xOff={70}
+              yOff={40}
+              formatter={formatNumber}
+            />
             <div className='statBarHolder statBarTitle'>
-              Event{getSpace(spacesLeft-6)}Ally{getSpace(spacesMiddle-5)}Enemy
-            </div>
+              {getSpace(3)}Who Got It ----- {getSpace(spacesLeft-18)}Ally{getSpace(spacesMiddle-5)}Enemy
+              <br/>
+              {getSpace(3)}<span className="underline">What Event</span>{getSpace(spacesLeft+spacesMiddle-19)}(<span className="underline">Your Win %</span>)
 
+            </div>
             {percent('FirstTo10', this.props.playerData)}
             {percent('FirstTo20', this.props.playerData)}
             {percent('FirstFort', this.props.playerData)}
             <div className='statBarHolder statBarTitle'>
-              Stat{getSpace(spacesLeft-7)}Mean{getSpace(spacesMiddle-3)}Sigma
+              {getSpace(3)}Stat{getSpace(spacesLeft-7)}Mean{getSpace(spacesMiddle-3)}Sigma
             </div>
             {stat('KDA',this.props.playerData,this.props.playerData.map(x => x.KDA === Infinity ? 20 : x.KDA))}
             {stat('Kills',this.props.playerData)}

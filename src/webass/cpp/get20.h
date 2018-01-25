@@ -1,11 +1,8 @@
 #include <memory>
 #include <iostream>
+#include "printNumber.h"
 
 
-void printNumber (int num) {
-  std::cout << "HELPER FUNCTION" << std::endl;
-  std::cout << num << std::endl;
-}
 
 extern "C" {
 

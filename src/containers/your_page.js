@@ -13,7 +13,6 @@ class YourPage extends Component {
     this.setNewPlayer = this.setNewPlayer.bind(this)
   }
   componentDidMount() {
-    console.log(this.props)
     const bnetID = this.props.prefs.bnetID
     if (bnetID) {
       this.props.history.push(`/players/${bnetID}`)

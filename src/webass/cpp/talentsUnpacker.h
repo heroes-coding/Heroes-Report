@@ -4,6 +4,7 @@
 #include <vector>
 
 
+
 void printBuild(int build[]) {
     for (int t=0;t<7;t++) {
       std::cout << "[ " << build[t] << " ]";
@@ -13,9 +14,9 @@ void printBuild(int build[]) {
 
 void printBuildKeyDic(std::vector< std::vector< std::vector<int> > > BKD) {
   for (int l=0;l<BKD.size();l++) {
-    std::cout << "Level " << l << std::endl;
+    std::cout << "Level " << l << ", length: " << BKD[l].size() << std::endl;
     for (int t=0;t<BKD[l].size();t++) {
-      std::cout << "Talent " << t << ": " << std::endl;
+      std::cout << "Talent " << t << ", length: " << BKD[l][t].size() << std::endl;
       for (int b=0;b<BKD[l][t].size();b++) {
         std::cout << "[ " << BKD[l][t][b] << " ]";
       }
@@ -68,6 +69,7 @@ uint32_t * sortTalents (int partialBuilds[][9], int fullBuilds[][11], int nParti
     }
   }
 
+  // printBuildKeyDic(buildKeyDic);
 
 
   std::vector< std::vector<int> > partialMatches;
@@ -75,10 +77,12 @@ uint32_t * sortTalents (int partialBuilds[][9], int fullBuilds[][11], int nParti
   for (int p=0;p<nPartial;p++) {
     int indexKey;
     for (int t=0;t<realTalents[0].size();t++) {
-      if (partialBuilds[p][0] == t) {
+      // std::cout << "[" << t << ":" << partialBuilds[p][0] << "]";
+      if (partialBuilds[p][0] == realTalents[0][t]) {
         indexKey = t;
       }
     }
+    // std::cout << "**** INDEX KEY ***** (" << indexKey << ")" << std::endl;
     std::vector<int> potentialMatches = buildKeyDic[0][indexKey];
     for (int l=0;l<7;l++) {
       int bKey = partialBuilds[p][l];
@@ -92,10 +96,12 @@ uint32_t * sortTalents (int partialBuilds[][9], int fullBuilds[][11], int nParti
           break;
         }
       }
+      /*
       if (l==0) {
         // first level is only for assigning partials above
         continue;
       }
+      */
       std::vector<int> potMatches;
       int nPots = potentialMatches.size();
       for (int m=0;m<nPots;m++) {
@@ -114,6 +120,7 @@ uint32_t * sortTalents (int partialBuilds[][9], int fullBuilds[][11], int nParti
     partialMatches.push_back(potentialMatches);
     partialCounts.push_back(total);
   }
+  // std::cout << nPartial << "N PARTIAL" << std::endl;
   for (int p=0;p<nPartial;p++) {
     int total = partialCounts[p];
     float wins = partialBuilds[p][7];
@@ -124,28 +131,28 @@ uint32_t * sortTalents (int partialBuilds[][9], int fullBuilds[][11], int nParti
     for (int m=0;m<nPots;m++) {
       int bKey = potMatches[m];
       float percent = 1.0*fullBuilds[bKey][8]/total;
+      // std::cout << "[bKey:" << bKey << "] ";
+      /*
+      for (int q=0;q<11;q++) {
+        std::cout << "[" << fullBuilds[bKey][q] << "]";
+      }
+      std::cout << std::endl;
+      */
       // std::cout << " PERCENT: " << percent;
       fullBuilds[bKey][9] += int(1000*wins*percent);
       fullBuilds[bKey][10] += int(1000*count*percent);
 
     }
-    // std::cout << std::endl;
+
   }
 
   for (int b=0;b<nFull;b++) {
     for (int l=0;l<7;l++) {
       for (int t=0;t<realTalents[l].size();t++) {
         if (realTalents[l][t] == fullBuilds[b][l]) {
-          /*if (l==0) {
-            std::cout << "(TRUE - " << t << "|" << fullBuilds[b][9] << "|" << fullBuilds[b][10] << ")";
-          }*/
-          if (l==0) {
-            talentResults[l][t][0] = talentResults[l][t][2]*1000;
-            talentResults[l][t][1] = talentResults[l][t][3]*1000;
-          } else {
           talentResults[l][t][0] += fullBuilds[b][9];
           talentResults[l][t][1] += fullBuilds[b][10];
-          }
+
           break;
         }
       }
@@ -180,6 +187,12 @@ uint32_t * sortTalents (int partialBuilds[][9], int fullBuilds[][11], int nParti
 
   // Then full builds
   for (int b=0;b<nFull;b++) {
+    /* std::cout << "[Build:" << b << "]:::";
+    for (int q=0;q<11;q++) {
+      std::cout << "[" << fullBuilds[b][q] << "]";
+    }
+    std::cout << std::endl;
+    */
     for (int k=0;k<11;k++) {
       returneeBuilds[o++] = fullBuilds[b][k];
     }

@@ -16,7 +16,7 @@ let roleDic
 const modeDic = {0:[1,2,3,4],1:[1],2:[2],3:[3],4:[4],5:[5],6:[1,2],7:[3,4]}
 
 const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises, roles, filterHeroes) => {
-
+  const playerHero = filterHeroes[2][0]
   const startTime = window.performance.now()
   const nReplays = playerData.length
   const filteredReplays = []
@@ -70,6 +70,7 @@ const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises,
   for (let r=0;r<nReplays;r++) {
     const rep = playerData[r]
     if (
+      (playerHero && rep.hero !== playerHero) ||
       (prefs.map !== 99 && rep.map !== prefs.map) ||
       (!modeDic[prefs.mode].includes(rep.mode)) ||
       (!allFranchises && !franchises[rep.franchise].selected) ||

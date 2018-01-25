@@ -1,8 +1,9 @@
 import asleep from './asleep'
+import { getRandomString } from './smallHelpers'
 
-function heapFromBytes(response) {
+function heapFromBytes(response, hero) {
   let promise = new Promise(async function(resolve, reject) {
-    const replayTime = response[0]
+    const dataTime = new Date(response[0])
     let unpackTime = window.performance.now()
     const data = [].concat.apply([1,2,3,4,5,6,7].map(x => response[x].length), response.slice(1,))
     window.response = response
@@ -38,41 +39,19 @@ function heapFromBytes(response) {
     const fullBuilds = window.Module.HEAPU32.slice(o,o+nFull*11)
     const partialBuilds = window.Module.HEAPU32.slice(o+nFull*11,o+nFull*11+nPartial*9)
     console.log(`It took ${Math.round(window.performance.now()*100 - 100*decodeTime)/100} ms to decode talents`)
-    window.returnedTals=[nTalents,nFull,nPartial,talentCounts,talents,fullBuilds,partialBuilds]
-    // getTalentWinrates(allBuilds, nFull, nPartial, nTals,tals)
-    /*
-    const copyTime = window.performance.now()
-    const heap = window.Module.HEAPU8
-    const unpackedReplays = heap.slice(replaysPointer,replaysPointer+141*nReplays)
-    window.unpackedReplays = unpackedReplays
-    console.log(`It took ${Math.round(window.performance.now()*100 - 100*copyTime)/100} ms to copy replay buffer`)
-
-    resolve(unpackedReplays)
-    */
+    const results = {nTalents,nFull,nPartial,talentCounts,talents,fullBuilds,partialBuilds,dataTime, hero}
+    window.talentResults = results
+    resolve(results)
   })
   return promise
 }
 
-function getTalentWinrates(allBuilds, nFull, nPartial, nTals,tals) {
-  let selectTime = window.performance.now()
-  let startArray = new Int32Array([].concat.apply(nTals,tals))
-  let totalLength = startArray.length+allBuilds.length
-  let buildsData = new Int32Array(totalLength)
-  buildsData.set(startArray)
-  buildsData.set(allBuilds,startArray.length)
-  const buf = window.Module._malloc(totalLength*4,4)
-  window.Module.HEAP32.set(buildsData,buf >> 2)
-  const replaysPointer = window.Module._getTalentWinrates(buf,nFull,nPartial)
-  const results = window.Module.HEAPU32.slice(replaysPointer/4,replaysPointer/4+nTals.reduce((x,y) => x+y)*7)
-  console.log(`It took ${Math.round(window.performance.now()*100 - 100*selectTime)/100} ms to get talent winrates`)
-}
-
-export default async function getPackedTalents(hero) {
-  console.log('get packed talents called for ',hero)
+export default async function getPackedTalents(hero, prefs) {
   let promise = new Promise(function(resolve, reject) {
     const binaryReq = new window.XMLHttpRequest()
-    binaryReq.open("GET", `https://heroes.report/stats/z/61361/0/10/99/${hero}.json`, true)
-    
+    const url =`https://heroes.report/stats/z/${prefs.time}/${prefs.mode}/${prefs.mmr}/${prefs.map}/${hero}.json?${getRandomString()}`
+    console.log('downloading ',url)
+    binaryReq.open("GET",url, true)
     binaryReq.onload = async function(oEvent) {
       let response = binaryReq.response
       if (response) {
@@ -86,7 +65,7 @@ export default async function getPackedTalents(hero) {
           }
         }
       }
-      heapFromBytes(response)
+      resolve(await heapFromBytes(response,hero))
     }
     binaryReq.send(null)
   })

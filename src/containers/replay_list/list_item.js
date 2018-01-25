@@ -3,33 +3,10 @@ import ListPart from './list_part'
 import DoubleCell from '../../components/double_cell'
 import Arc from '../../components/arc'
 import { hashString } from '../../helpers/hasher'
-import { formatNumber } from '../../helpers/smallHelpers'
+import { formatNumber, formatDate, formatTime, formatLength } from '../../helpers/smallHelpers'
 import PercentBar from '../../components/percent_bar'
 const barColors = ['#8C5F8C','#51A1A7','#6383C4']
 
-function formatDate(value) {
-  let month = value.getMonth()+1
-  month = month < 10 ? `0${month}` : month
-  let day = value.getDate()
-  day = day < 10 ? `0${day}` : day
-  return `${month}/${day}/${value.getYear()-100}`
-}
-function formatTime(value) {
-  let hours = value.getHours()
-  const dayNight = hours > 11 ? 'pm' : 'am'
-  hours = hours%12
-  hours = hours === 0 ? 12 : hours
-  let minutes = value.getMinutes()
-  minutes = minutes > 9 ? minutes : `0${minutes}`
-  return `${hours}:${minutes}${dayNight}`
-}
-function formatLength(length) {
-  let minutes = Math.floor(length/60)
-  let seconds = Math.floor(length%60)
-  minutes = minutes < 10 ? `0${minutes}` : minutes
-  seconds = seconds < 10 ? `0${seconds}` : seconds
-  return `${minutes}m${seconds}s`
-}
 
 const modes = {
   1: "QM",
@@ -62,11 +39,29 @@ let statBar = (statValue,index,statRange, statName) => {
     </div>
   )
 }
-
-let talentIcon = (talentIcon,key) => {
+let talentIcon = (talentIcon,key,row,openPopup,messagePopup,talent,hero) => {
   talentIcon = `${talentIcon || talentIcon === 0 ? `${talentIcon}.jpg` : 'empty.png'}`
   return (
-    <div className='tinyTalentHolder' key={key}>
+    <div
+      className='tinyTalentHolder'
+      key={key}
+      onMouseEnter={(event) => {
+        if (!talent) {
+          return
+        }
+        const name = window.HOTS.cTalents[hero][talent][0]
+        const desc = window.HOTS.cTalents[hero][talent][1]
+        event.preventDefault()
+        openPopup(row,key,name,desc,`https://heroes.report/singleTalents/${talentIcon}`)
+      }}
+      onMouseLeave={(event) => {
+        if (!talent) {
+          return
+        }
+        event.preventDefault()
+        messagePopup()
+      }}
+    >
       <img
         key={key}
         className="tinyTalent"
@@ -77,9 +72,19 @@ let talentIcon = (talentIcon,key) => {
   )
 }
 
-let tinyHero = (hero,key) => {
+let tinyHero = (hero,key,openPopup,row,messagePopup) => {
   return (
     <img
+      onMouseEnter={(event) => {
+        const name = window.HOTS.nHeroes[hero]
+        const desc = ''
+        event.preventDefault()
+        openPopup(row,key,name,desc,`https://heroes.report/squareHeroes/${hero}.jpg`)
+      }}
+      onMouseLeave={(event) => {
+        event.preventDefault()
+        messagePopup()
+      }}
       key={key}
       className={`tinyHero ${hero}`}
       src={`https://heroes.report/squareHeroes/${hero}.jpg`}
@@ -106,6 +111,16 @@ let left = props => {
       childComponent={
         <div onClick={() => getReplay(props)} className="inner_list_item_left">
           <img
+            onMouseEnter={(event) => {
+              const name = window.HOTS.nHeroes[props.hero]
+              const desc = ''
+              event.preventDefault()
+              props.openPopup(props.row,props.key,name,desc,`https://heroes.report/squareHeroes/${props.hero}.jpg`)
+            }}
+            onMouseLeave={(event) => {
+              event.preventDefault()
+              props.messagePopup()
+            }}
             className="tinyReplayHero"
             src={`https://heroes.report/squareHeroes/${props.hero}.jpg`}
             alt={props.slot}
@@ -118,6 +133,18 @@ let left = props => {
             extraClass="reportArc"
           />
           <img
+            onMouseEnter={(event) => {
+              const mapName = window.HOTS.nMaps[props.map]
+              const pName = props.handle.split('#')[0]
+              const name = `${mapName} | ${props.won ? 'Victory' : 'Defeat'}`
+              const desc = `${pName} ${props.won ? 'won' : 'lost'} a${props.mode === 2 ? 'n' :''} ${window.HOTS.nModes[props.mode]}${props.mode === 1 || props.mode === 5 ? '' : ' match'} on ${mapName} as ${window.HOTS.nHeroes[props.hero]} in ${formatLength(props.length,true)} on ${props.date.toString().slice(0,10)} at ${formatTime(props.date)}.`
+              event.preventDefault()
+              props.openPopup(props.row,props.key,name,desc,`https://heroes.report/mapPosts/${props.map}.jpg`)
+            }}
+            onMouseLeave={(event) => {
+              event.preventDefault()
+              props.messagePopup()
+            }}
             className="tinyReplayMap"
             src={`https://heroes.report/mapPostsTiny/${props.map}.png`}
             alt={props.map}
@@ -140,10 +167,10 @@ let left = props => {
           </span>
           <div className="teamsHolder">
             <div className="tinyHeroHolder" style={{background: "#022c02"}}>
-              {[0,1,2,3,4].map((x) => tinyHero(props.allies[x],`${props.MSL}-${x}`))}
+              {[0,1,2,3,4].map((x) => tinyHero(props.allies[x],`${props.MSL}-${x}`,props.openPopup,props.row,props.messagePopup))}
             </div>
             <div className="tinyHeroHolder" style={{background: "#350101"}}>
-              {[0,1,2,3,4].map((x) => tinyHero(props.enemies[x],`${props.MSL}-${x}`))}
+              {[0,1,2,3,4].map((x) => tinyHero(props.enemies[x],`${props.MSL}-${x}`,props.openPopup,props.row,props.messagePopup))}
             </div>
           </div>
         </div>
@@ -168,7 +195,7 @@ export default (props) => {
               {firsts(props.FirstTo20,"20")}
             </div>
             <div className="talentsHolder">
-              {[0,1,2,3,4,5,6].map((x) => talentIcon(props.talPics[x],`${props.MSL}-${x}`))}
+              {[0,1,2,3,4,5,6].map((x) => talentIcon(props.talPics[x],`${props.MSL}-${x}`,props.row,props.openPopup,props.messagePopup,props.talents[x],props.hero))}
             </div>
           </div>
         }

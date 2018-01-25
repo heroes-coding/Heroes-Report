@@ -3,7 +3,7 @@ import FilterDropDown from '../../containers/filter_drop_down'
 import { renderNothing, renderTinyHero } from '../../components/filterComponents'
 import SearchBar from '../../components/search_bar'
 import { connect } from 'react-redux'
-import { updatePreferences, getMainData, dispatchPlayerSearch } from '../../actions'
+import { updatePreferences, selectTalent, getMainData, dispatchPlayerSearch, getHeroTalents } from '../../actions'
 import { NavLink, withRouter } from 'react-router-dom'
 import _ from 'lodash'
 import unpackTalents from '../../helpers/unpack_talents'
@@ -15,6 +15,15 @@ class Nav extends React.Component {
   constructor(props) {
     super(props)
     this.playerSearch = this.playerSearch.bind(this)
+    this.updateHero = this.updateHero.bind(this)
+  }
+  updateHero(newHero) {
+    this.props.updatePreferences('hero', newHero)
+    this.props.selectTalent('reset')
+    if (this.props.history.location.pathname.includes('heroes')) {
+      this.props.getHeroTalents(newHero,this.props.prefs)
+    }
+    this.props.history.push(`/heroes/${newHero}`)
   }
   playerSearch(player) {
     console.log(`Searching for ${player}...`)
@@ -45,7 +54,7 @@ class Nav extends React.Component {
             name=''
             id='gameMap'
             dropdowns={this.props.HOTS.sortedHeroes ? this.props.HOTS.sortedHeroes : []}
-            updateFunction={unpackTalents}
+            updateFunction={this.updateHero}
             leftComponentRenderer={renderTinyHero}
             rightComponentRenderer={renderNothing}
             renderDropdownName={true}
@@ -76,4 +85,4 @@ function mapStateToProps({HOTS, prefs}, ownProps) {
   return {...ownProps, HOTS, prefs}
 }
 
-export default withRouter(connect(mapStateToProps, {updatePreferences, dispatchPlayerSearch, getMainData})(Nav))
+export default withRouter(connect(mapStateToProps, {updatePreferences, dispatchPlayerSearch, getMainData, selectTalent, getHeroTalents})(Nav))

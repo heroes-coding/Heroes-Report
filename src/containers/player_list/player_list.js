@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom'
 import FilterDropDown from '../../containers/filter_drop_down'
 import { renderNothing } from '../../components/filterComponents'
 
-
 const regions = ['NOWHERE','US','EU','KR','TW','CN']
 const MMRDropdowns = [
   {name: 'QM MMR | Perc.', id: 'q'},

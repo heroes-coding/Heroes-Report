@@ -1,0 +1,76 @@
+@import "../../style/utilities/utilities.scss";
+
+.graphPoint {
+    r: 8px;
+    fill: $Color3;
+}
+
+.graphHolder {
+  padding: 10px 10px;
+}
+
+.fa-area-chart, .fa-line-chart {
+    cursor: pointer;
+    color: darken($Highlight,10%);
+}
+
+.axisLine {
+  stroke: $Light;
+  stroke-width: 2px;
+  fill: none;
+}
+
+.graphRect {
+  fill: lighten($Dark,4%);
+}
+
+.tickLine {
+  stroke: darken($Dark,6%);
+  stroke-width: 1px;
+}
+
+
+.tick {
+  stroke: $Light;
+  stroke-width: 2px;
+}
+
+.tickText {
+  fill: $Light;
+  font-size: 1.5em;
+  text-anchor: end;
+  opacity:1;
+  font-family: $NumbersFont;
+}
+
+
+.areaLine {
+  stroke: $Color1;
+  stroke-width: 2px;
+  fill: $Color1;
+}
+
+.line {
+  stroke: $Highlight;
+  stroke-width: 2px;
+  fill: none;
+}
+
+
+.axisText {
+  fill: $Light;
+  font-size:1.5em;
+  font-family: $PrimaryFont;
+  text-anchor: beginning;
+  opacity:0.6;
+}
+
+.graphTitle {
+  fill: $Light;
+  font-size:1.75em;
+  font-weight: 800;
+  font-family: $NumbersFont;
+  text-anchor: middle;
+  font-decoration: underline;
+  opacity:0.8;
+}

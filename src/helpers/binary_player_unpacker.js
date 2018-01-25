@@ -33,10 +33,8 @@ function heapFromBytes(buffer) {
     console.log(`It took ${Math.round(window.performance.now()*100 - 100*bufferTime)/100} ms to move ints into buffer`)
 
     let startTime5 = window.performance.now()
-    console.log(replayDecoder.length/2)
     const replaysPointer = window.Module._decodeReplays(buf, replayDecoderLengths.length, replayDecoder.length/2, nReplays, nPredefined, decoderIndex, nHeroes)
     console.log(`It took ${Math.round(window.performance.now()*100 - 100*startTime5)/100} ms to DECODE REPLAYS`)
-    console.log(replaysPointer,'pointer')
     const replays = []
     const heap = window.Module.HEAPU32
     const startTime7 = window.performance.now()

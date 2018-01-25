@@ -7,6 +7,7 @@ export const defaultPreferences = {
   mmr: 10,
   time: 7,
   map: 99,
+  hero: 8,
   bnetID: null
 }
 
@@ -21,7 +22,7 @@ export const statCatStats = {
   'Extra': [31, 34, 50, 19, 48]
 }
 export const statCats = Object.keys(statCatStats)
-export const statCatChoices = statCats.map((x,i) => { return { name: x, id: x }})
+export const statCatChoices = statCats.map((x,i) => { return { name: x, id: x } })
 
 export const modeChoices = [
   {"name":"All except brawl","id":0},
