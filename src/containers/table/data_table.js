@@ -10,6 +10,11 @@ class DataTable extends Component {
   constructor(props) {
     super(props)
     this.reorder = this.reorder.bind(this)
+    this.showWL = this.showWL.bind(this)
+    this.state = {showWL:false}
+  }
+  showWL() {
+    this.setState({...this.state,showWL:!this.state.showWL})
   }
   reorder(name,id) {
     this.props.updateMainSorting(id)
@@ -24,6 +29,8 @@ class DataTable extends Component {
           <div className="rt-table" >
             <div className="rt-thead -header">
               <TableHeader
+                showWLFunction={this.showWL}
+                showWL={this.state.showWL}
                 cat={this.props.data.cat}
                 headers={this.props.data.headers}
                 order={this.props.data.order}
@@ -34,6 +41,7 @@ class DataTable extends Component {
               rows={this.props.data.rows}
               prefsID={this.props.data.prefsID}
               cat={this.props.data.cat}
+              showWL={this.state.showWL}
             />
           </div>
         </div>

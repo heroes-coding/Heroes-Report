@@ -5,6 +5,9 @@ export default (props) => {
   const { points, linePoints, graphClass, yLabel, xLabel, xRatio, yRatio, xOff, yOff, title, formatter, noArea, yFormatter, multiLines, colors, lineLabels } = props
   const xStart = 70
   const toMap = points || linePoints || [].concat(...multiLines)
+  if (!toMap.length) {
+    return <div></div>
+  }
   const xs = toMap.map(e => e[0])
   const ys = toMap.map(e => e[1])
   const xMin = d3.min(xs)
@@ -16,7 +19,9 @@ export default (props) => {
   const xPad = xRange*0.0
   const yPad = yRange*0.0
   const xScale = d3.scaleLinear().range([xOff+1, xRatio]).domain([xMin-xPad,xMax+xPad])
-  const xTicks = xScale.ticks(10)
+  const xTicks = xScale.ticks(8)
+  const xTickOffset = xTicks[xTicks.length-1].toString().length > 2 ? 13 : 0
+  const xTickRotation = xTicks[xTicks.length-1].toString().length <= 2 ? "rotate(-90)" : "rotate(-45)"
   const yScale =
   d3.scaleLinear().range([yRatio-yOff-1, 0]).domain([yMin-yPad,yMax+yPad])
   const yTicks = yScale.ticks(5)
@@ -49,10 +54,10 @@ export default (props) => {
               <g key={x} transform={`translate(${x},0)`}>
                 {i && <line x1={x} y1={yRatio-yOff} x2={x} y2={yRatio-yOff+5} className="tick" />}
                 <text
-                  y={tick.length<3 ? 0 : 13}
-                  x={tick.length<3 ? 0 : 13}
+                  y={xTickOffset}
+                  x={xTickOffset}
                   className="tickText"
-                  transform={tick.length<3 ? "rotate(-90)" : "rotate(-45)"}
+                  transform={xTickRotation}
                   dy=".4em"
                   dx="-.8em"
                 >

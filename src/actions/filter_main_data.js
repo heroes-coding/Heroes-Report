@@ -136,24 +136,11 @@ async function filterData(json,prefs) {
       const value = dData[h][s].value
       dData[h][s].percent = Math.min((value-min)/spread,1)
       if (s === 5) {
-        // ban rec rankings
-        dData[h][s].display = value
         dData[h][s].percent = 1 - dData[h][s].percent
-      } else if (s === 6) {
-        // time
-        dData[h][s].display = sToM(value)
-      } else if (s < 6) {
-        // unchanged
-        dData[h][s].display = formatStat(value)
       } else if (s < 14) {
-        // percents
-        dData[h][s].display = roundedPercent(value)
         if (s === 13 || s < 10) {
           dData[h][s].color = Around50((dData[h][s].percent-0.5)/3*100+50)
         }
-      } else {
-        // raw stats
-        dData[h][s].display = formatStat(value/100)
       }
     }
   }

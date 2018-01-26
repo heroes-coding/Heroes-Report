@@ -49,6 +49,27 @@
   font-size: 0.9em;
 }
 
+.WLBox {
+  font-family: $NumbersFont;
+  color: $Light;
+  font-size: 0.9em;
+  display:flex;
+  flex-direction:column;
+  margin: -1px 0 0 0;
+}
+
+.WBox, .LBox {
+  line-height:1.6em;
+}
+.WBox {
+}
+.LBox {
+  font-size:0.9em;
+  color: #ff0000;
+}
+
+
+
 svg.heroArc {
   position: absolute;
   left: 10px;

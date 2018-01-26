@@ -126,9 +126,9 @@ class PlayerStatList extends Component {
           xLabel={statName}
           title={`${statName} Distribution Plot`}
           xRatio={500}
-          yRatio={250}
+          yRatio={280}
           xOff={70}
-          yOff={40}
+          yOff={70}
           formatter={yFormatter}
         />}
       </div>
@@ -137,42 +137,78 @@ class PlayerStatList extends Component {
   render() {
     const { playerData } = this.props
     const { mmr, stat, percent } = this
-    if (this.props.playerData.length === 0) {
+    if (playerData.length === 0) {
       return <div></div>
     }
     const { h, q, u, t, handle } = this.props.playerInfo
-    const outcomes = this.props.playerData.map(x => x.Won)
+    const outcomes = playerData.map(x => x.Won)
     const mmrData = [h&&mmr(mmrNames.h,h),q&&mmr(mmrNames.q,q),t&&mmr(mmrNames.t,t),u&&mmr(mmrNames.u,u)].filter(x => x)
-
     return (
-      <StatListTemplate
-        clickFunction={this.changeGraph}
-        title={handle}
-        subTitle={`Won ${roundedPercent(Math.round(d3.mean(outcomes)*1000))} (${d3.sum(outcomes)}/${outcomes.length}  matches)`}
-        graphs={this.getGraphs()}
-        data={[
-          {category: 'Event & Win %',
-            left:'Ally',
-            right: 'Enemy',
-            hasGraphs: true,
-            stats:['FirstTo10','FirstTo20'].map(s => { return percent(s,playerData) })
-          },
-          {category: 'Overall Stats',
-            left:'Mean',
-            right: 'Sigma',
-            hasGraphs: true,
-            stats:[
-              stat('KDA',playerData,playerData.map(x => x.KDA === Infinity ? 20 : x.KDA)),
-              ...[['Kills',null],['Deaths',null],['Assists',null],['Globes',null],['Experience',null],['MercenaryCampCaptures','Mercs'],['SiegeDamage','Siege Dam.'],['StructureDamage','Build. Dam.'],['SecondsSpentDead','Dead Time'],['Vengeances',null],['SecondsofRoots','Root Time']].map(s => { return stat(s[0],playerData,null,s[1]) })
-            ]},
-          {category: 'MMR Type',
-            left:'MMR',
-            right: 'Perc.',
-            hasGraphs: false,
-            stats: mmrData
-          },
-        ]}
-      />
+      <div className='container-fluid statsList col-12 col-md 6 col-lg-3 order-lg-first'>
+        <StatListTemplate
+          clickFunction={this.changeGraph}
+          title={handle}
+          subTitle={`Won ${roundedPercent(Math.round(d3.mean(outcomes)*1000))} (${d3.sum(outcomes)}/${outcomes.length}  matches)`}
+          graphs={this.getGraphs()}
+          data={[
+            {category: 'Event & Win %',
+              left:'Ally',
+              right: 'Enemy',
+              hasGraphs: true,
+              stats:['FirstTo10','FirstTo20'].map(s => { return percent(s,playerData) })
+            },
+            {category: 'Overall Stats',
+              left:'Mean',
+              right: 'Sigma',
+              hasGraphs: true,
+              stats:[
+                stat('KDA',playerData,playerData.map(x => x.KDA === Infinity ? 20 : x.KDA)),
+                ...[['Globes',null],['Experience',null],['Player Town Kills','Town Kills'],['Team Town Kills','Team T.Kills'],['Mercs Captured','Mercs'],['Team Merc Captures','Team Mercs'],['Length','Match Length'],['Time on Fire',null],['Escapes',null]].map(s => { return stat(s[0],playerData,null,s[1]) })
+              ]}
+          ]}
+        />
+        <StatListTemplate
+          clickFunction={this.changeGraph}
+          data={[
+            {category: 'Death Stats',
+              left:'Mean',
+              right: 'Sigma',
+              hasGraphs: true,
+              stats:[
+                ...[['Kills',null],['Deaths',null],['Outnumbered Deaths','Out#d Deaths'],['Assists',null],['Dead Time','Dead Time'],['Vengeances',null]].map(s => { return stat(s[0],playerData,null,s[1]) })
+              ]},
+            {category: 'Sustain Stats',
+              left:'Mean',
+              right: 'Sigma',
+              hasGraphs: true,
+              stats:[
+                ...[['Teamfight Damage Taken','TF Dam.Rec.'],['Healing',null],['Self Healing','Self Healing'],['Protection Given','Protection']].map(s => { return stat(s[0],playerData,null,s[1]) })
+              ]},
+            {category: 'Damage Stats',
+              left:'Mean',
+              right: 'Sigma',
+              hasGraphs: true,
+              stats:[
+                stat('KDA',playerData,playerData.map(x => x.KDA === Infinity ? 20 : x.KDA)),
+                ...[['Hero Damage',null],['Teamfight Hero Damage','TF Hero Dam.'],['Structure Damage','Build. Dam.'],['Minion Damage','Minion Dam.'],['Siege Damage','Siege Dam.']].map(s => { return stat(s[0],playerData,null,s[1]) })
+              ]},
+            {category: 'CC Stats',
+              left:'Mean',
+              right: 'Sigma',
+              hasGraphs: true,
+              stats:[
+                stat('KDA',playerData,playerData.map(x => x.KDA === Infinity ? 20 : x.KDA)),
+                ...[['Crowd Control Time','CC Seconds'],['Stun Time','Stun Seconds'],['Root Time','Root Time'],['Silence Time','Silence Time']].map(s => { return stat(s[0],playerData,null,s[1]) })
+              ]},
+            {category: 'MMR Type',
+              left:'MMR',
+              right: 'Perc.',
+              hasGraphs: false,
+              stats: mmrData
+            },
+          ]}
+        />
+      </div>
     )
   }
 }

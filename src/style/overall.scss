@@ -6,7 +6,9 @@ body {
   color: $Light;
 }
 
-
+.highlight {
+  color: $Highlight !important;
+}
 
 #contentHolder {
     padding: 2px;

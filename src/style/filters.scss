@@ -100,6 +100,13 @@ i.fa.fa-download {
     font-size: 0.85em;
 }
 
+.toggleFilter {
+    display: inline-block;
+    margin: -7px 0px 0px -1px !important;
+    padding: 0px 10px !important;
+    color: #f3f3f3 !important;
+}
+
 
 .iconFilter:hover {
     color: lighten($Highlight, 20%) ;

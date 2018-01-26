@@ -8,7 +8,8 @@ export const defaultPreferences = {
   time: 7,
   map: 99,
   hero: 8,
-  bnetID: null
+  bnetID: null,
+  sortStats: ['KDA','Experience', 'Globes']
 }
 
 export const statCatStats = {

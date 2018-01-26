@@ -109,73 +109,71 @@ class StatList extends Component {
     const { h, q, u, t, handle } = this.props.playerInfo
     const outcomes = this.props.playerData.map(x => x.Won)
     return (
-      <div className='container-fluid statsList col-12 col-md 6 col-lg-3 order-lg-first'>
-        <div className='stat_item_container row'>
-          <div className='statItem col-12 col-sm-6 col-lg-12'>
-            <div className='handleHolder statBarHolder statBarTitle'>
-              {handle}
-              <br />
-              <span id="winrate">Won {roundedPercent(Math.round(d3.mean(outcomes)*1000))} ({d3.sum(outcomes)}/{outcomes.length}  matches)</span>
-            </div>
-            <Graph
-              graphClass="winrateGraph"
-              linePoints={timedData}
-              xLabel="Date"
-              yLabel="Win rate"
-              title="Win rate over time"
-              xRatio={500}
-              yRatio={290}
-              xOff={70}
-              yOff={90}
-              noArea={true}
-              formatter={MSLToDateString}
-              yFormatter={simplePercent}
-            />
-            <KDensity
-              graphClass="winrateGraph"
-              X={this.props.playerData.map(x => x.Won)}
-              xLabel="Deaths"
-              title={'K Density Death Plot'}
-              xRatio={500}
-              yRatio={250}
-              xOff={70}
-              yOff={40}
-              formatter={formatNumber}
-            />
-            <div className='statBarHolder statBarTitle'>
-              {getSpace(3)}Who Got It ----- {getSpace(spacesLeft-18)}Ally{getSpace(spacesMiddle-5)}Enemy
-              <br/>
-              {getSpace(3)}<span className="underline">What Event</span>{getSpace(spacesLeft+spacesMiddle-19)}(<span className="underline">Your Win %</span>)
-
-            </div>
-            {percent('FirstTo10', this.props.playerData)}
-            {percent('FirstTo20', this.props.playerData)}
-            {percent('FirstFort', this.props.playerData)}
-            <div className='statBarHolder statBarTitle'>
-              {getSpace(3)}Stat{getSpace(spacesLeft-7)}Mean{getSpace(spacesMiddle-3)}Sigma
-            </div>
-            {stat('KDA',this.props.playerData,this.props.playerData.map(x => x.KDA === Infinity ? 20 : x.KDA))}
-            {stat('Kills',this.props.playerData)}
-            {stat('Deaths',this.props.playerData)}
-            {stat('Assists',this.props.playerData)}
-            {stat('Globes',this.props.playerData)}
-            {stat('Experience',this.props.playerData)}
-            {stat('MercenaryCampCaptures',this.props.playerData,null,'Mercs')}
-            {stat('SiegeDamage',this.props.playerData,null,'Siege Dam.')}
-            {stat('StructureDamage',this.props.playerData,null,'Build. Dam.')}
-            {stat('SecondsSpentDead',this.props.playerData,null,'DeadTime')}
-            {stat('Vengeances',this.props.playerData)}
-            {stat('SecondsofRoots',this.props.playerData,null,'Root Time')}
-            <div className='statBarHolder statBarTitle'>
-              MMR Type{getSpace(spacesLeft-11)}MMR{getSpace(spacesMiddle-2)}Perc.
-            </div>
-            {h&&mmr(mmrNames.h,h)}
-            {q&&mmr(mmrNames.q,q)}
-            {t&&mmr(mmrNames.t,t)}
-            {u&&mmr(mmrNames.u,u)}
+      <div className='stat_item_container row'>
+        <div className='statItem col-12 col-sm-6 col-lg-12'>
+          <div className='handleHolder statBarHolder statBarTitle'>
+            {handle}
+            <br />
+            <span id="winrate">Won {roundedPercent(Math.round(d3.mean(outcomes)*1000))} ({d3.sum(outcomes)}/{outcomes.length}  matches)</span>
           </div>
+          <Graph
+            graphClass="winrateGraph"
+            linePoints={timedData}
+            xLabel="Date"
+            yLabel="Win rate"
+            title="Win rate over time"
+            xRatio={500}
+            yRatio={290}
+            xOff={70}
+            yOff={90}
+            noArea={true}
+            formatter={MSLToDateString}
+            yFormatter={simplePercent}
+          />
+          <KDensity
+            graphClass="winrateGraph"
+            X={this.props.playerData.map(x => x.Won)}
+            xLabel="Deaths"
+            title={'K Density Death Plot'}
+            xRatio={500}
+            yRatio={250}
+            xOff={70}
+            yOff={40}
+            formatter={formatNumber}
+          />
+          <div className='statBarHolder statBarTitle'>
+            {getSpace(3)}Who Got It ----- {getSpace(spacesLeft-18)}Ally{getSpace(spacesMiddle-5)}Enemy
+            <br/>
+            {getSpace(3)}<span className="underline">What Event</span>{getSpace(spacesLeft+spacesMiddle-19)}(<span className="underline">Your Win %</span>)
 
+          </div>
+          {percent('FirstTo10', this.props.playerData)}
+          {percent('FirstTo20', this.props.playerData)}
+          {percent('FirstFort', this.props.playerData)}
+          <div className='statBarHolder statBarTitle'>
+            {getSpace(3)}Stat{getSpace(spacesLeft-7)}Mean{getSpace(spacesMiddle-3)}Sigma
+          </div>
+          {stat('KDA',this.props.playerData,this.props.playerData.map(x => x.KDA === Infinity ? 20 : x.KDA))}
+          {stat('Kills',this.props.playerData)}
+          {stat('Deaths',this.props.playerData)}
+          {stat('Assists',this.props.playerData)}
+          {stat('Globes',this.props.playerData)}
+          {stat('Experience',this.props.playerData)}
+          {stat('Mercs Captured',this.props.playerData,null,'Mercs')}
+          {stat('Siege Damage',this.props.playerData,null,'Siege Dam.')}
+          {stat('Structure Damage',this.props.playerData,null,'Build. Dam.')}
+          {stat('Dead Time',this.props.playerData,null,'DeadTime')}
+          {stat('Vengeances',this.props.playerData)}
+          {stat('Root Time',this.props.playerData,null,'Root Time')}
+          <div className='statBarHolder statBarTitle'>
+            MMR Type{getSpace(spacesLeft-11)}MMR{getSpace(spacesMiddle-2)}Perc.
+          </div>
+          {h&&mmr(mmrNames.h,h)}
+          {q&&mmr(mmrNames.q,q)}
+          {t&&mmr(mmrNames.t,t)}
+          {u&&mmr(mmrNames.u,u)}
         </div>
+
       </div>
     )
   }

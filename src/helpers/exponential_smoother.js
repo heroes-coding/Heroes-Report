@@ -12,6 +12,7 @@ for (let i=1;i<=ALPHAcutoff;i++) {
 
 export function exponentialSmoothing(timedData) {
   const nTime = timedData.length
+  timedData.sort((x,y) => x[0] < y[0] ? -1 : 1)
   if (nTime>500) {
     let minTime = timedData[0][0]
     let maxTime = timedData[nTime-1][0]

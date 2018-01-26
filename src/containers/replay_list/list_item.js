@@ -17,8 +17,8 @@ const modes = {
 }
 
 function getReplay(props) {
-  const { MSL, heroes, winners, length, mode, build, map } = props
-  const hashInput = `${mode}${Math.round(length/60)}${heroes.join("")}${winners}${MSL}${map}${build}`
+  const { MSL, heroes, winners, Length, mode, build, map } = props
+  const hashInput = `${mode}${Math.round(Length/60)}${heroes.join("")}${winners}${MSL}${map}${build}`
   const hashPath = `https://heroes.report/stats/replays/${hashString(hashInput)}.json`
   console.log(hashInput,hashPath)
 }
@@ -30,7 +30,7 @@ let statBar = (statValue,index,statRange, statName) => {
   return (
     <div className={`miniStatBar ${percent}`} key={`${index}${statValue}`}>
       <PercentBar
-        percent = {Math.min(1, percent)}
+        percent = {Math.min(1, isNaN(percent) ? 0 : percent)}
         barColor = {barColors[index]}
       />
       <div className='miniStatText' style={{'top': `${-22 + index*3}px`}}>
@@ -137,7 +137,7 @@ let left = props => {
               const mapName = window.HOTS.nMaps[props.map]
               const pName = props.handle.split('#')[0]
               const name = `${mapName} | ${props.won ? 'Victory' : 'Defeat'}`
-              const desc = `${pName} ${props.won ? 'won' : 'lost'} a${props.mode === 2 ? 'n' :''} ${window.HOTS.nModes[props.mode]}${props.mode === 1 || props.mode === 5 ? '' : ' match'} on ${mapName} as ${window.HOTS.nHeroes[props.hero]} in ${formatLength(props.length,true)} on ${props.date.toString().slice(0,10)} at ${formatTime(props.date)}.`
+              const desc = `${pName} ${props.won ? 'won' : 'lost'} a${props.mode === 2 ? 'n' :''} ${window.HOTS.nModes[props.mode]}${props.mode === 1 || props.mode === 5 ? '' : ' match'} on ${mapName} as ${window.HOTS.nHeroes[props.hero]} in ${formatLength(props.Length,true)} on ${props.date.toString().slice(0,10)} at ${formatTime(props.date)}.`
               event.preventDefault()
               props.openPopup(props.row,props.key,name,desc,`https://heroes.report/mapPosts/${props.map}.jpg`)
             }}
@@ -163,7 +163,7 @@ let left = props => {
             {props.won ? 'V' : 'D'}
           </span>
           <span className="gameLength">
-            {formatLength(props.length)}
+            {formatLength(props.Length)}
           </span>
           <div className="teamsHolder">
             <div className="tinyHeroHolder" style={{background: "#022c02"}}>
@@ -188,7 +188,7 @@ export default (props) => {
         childComponent={
           <div className="inner_list_item_right">
             <div className="miniStatsHolder">
-              {props.stats.map((x,i) => statBar(props[x],i,props.ranges[i],x))}
+              {props.stats.map((x,i) => statBar(props.statValues[i],i,props.ranges[i],x))}
             </div>
             <div className="firstsHolder">
               {firsts(props.FirstTo10,"10")}

@@ -8,7 +8,7 @@ function renderDropdown(d, updateFunction, leftComponentRenderer, rightComponent
       key={d.id}
       onClick={(event) => {
         event.preventDefault()
-        updateFunction(d.id)
+        updateFunction(d.data ? d.data : d.id)
       }}
     >
       {leftComponentRenderer(d.id)}
@@ -23,7 +23,7 @@ function renderButtonLabel(props) {
     return <span>{props.buttonLabel}&nbsp;&nbsp;</span>
   }
   return (
-    <span>
+    <span className={props.textClass}>
       {props.leftComponentRenderer(props.currentID)}
       {props.name}{props.currentSelection}&nbsp;&nbsp;
       {props.rightComponentRenderer(props.currentID)}

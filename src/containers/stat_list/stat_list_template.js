@@ -12,17 +12,17 @@ let getSpace = function(spaces) {
 export default (props) => {
   const { title, subTitle, data, graphs, clickFunction } = props
   return (
-    <div className='container-fluid statsList col-12 col-md 6 col-lg-3 order-lg-first'>
+    <div className='statsList col-12 col-md 6 col-lg-3 order-lg-first'>
       <div className='stat_item_container row'>
         <div className='statItem col-12 col-sm-6 col-lg-12'>
           <div className='handleHolder statBarHolder statBarTitle'>
             {title}
-            <br />
-            <span id="winrate"><i
+            {title&&<br />}
+            {subTitle&&<span id="winrate"><i
               className="fa fa-line-chart"
               aria-hidden="true"
               onClick={() => clickFunction('winrate', 'Win rate')}
-            />&nbsp;{subTitle}</span>
+            />&nbsp;{subTitle}</span>}
           </div>
           {graphs}
           {data.map((c,ci) => {

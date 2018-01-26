@@ -38,6 +38,7 @@ export default class TableBody extends Component {
               row={row}
               rowID={`row${row.id}`}
               cat={this.props.cat}
+              showWL={this.props.showWL}
             />
           )
         }

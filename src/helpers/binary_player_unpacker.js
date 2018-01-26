@@ -40,7 +40,7 @@ function heapFromBytes(buffer) {
     const startTime7 = window.performance.now()
     for (let r=0;r<nReplays;r++) {
       const rep = {}
-      const off = r*decoderIndex +replaysPointer/4
+      const off = r*(decoderIndex) +replaysPointer/4
       rep.allies= heap.slice(off+10,off+15)
       rep.stats = heap.slice(off+nPredefined,off+decoderIndex)
       rep.hero = rep.allies[0]

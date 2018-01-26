@@ -9,7 +9,13 @@ const brawlMapIDs = [11, 13, 15, 16, 18]
 export default function(state = oldPreferences || {...defaultPreferences}, action) {
   if (action.type === UPDATE_PREFERENCES) {
     state = {...state}
-    state[action.prefType] = action.prefID
+    if (action.prefType === 'sortStats') {
+      const { slot, stat } = action.prefID
+      state.sortStats = [...state.sortStats]
+      state.sortStats[slot] = stat
+    } else {
+      state[action.prefType] = action.prefID
+    }
     if (action.prefType==='map' && brawlMapIDs.includes(parseInt(action.prefID,10))) {
       state.mode = 5 // make brawl selections less frustrating
     }

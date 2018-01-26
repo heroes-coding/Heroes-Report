@@ -11,6 +11,24 @@ $minReplayWidth: 360px;
   margin-right: auto;
 }
 
+.filterText {
+  @extend .iconFilter;
+  margin: 6px 5px -5px 20px!important;
+}
+
+span.color1 {
+  color: $Color1;
+  font-weight:800;
+}
+span.color2 {
+  color: $Color2;
+  font-weight:800;
+}
+span.color0 {
+  color: $Color3;
+  font-weight:800;
+}
+
 @media (max-width: 575px) {
   .inner_list_item_left, .inner_list_item_right {
     margin-left: auto;
@@ -53,9 +71,24 @@ $minReplayWidth: 360px;
   min-width: $minReplayWidth;
 }
 
-.replay_item_container {
-
+.replayListFilters {
+  @extend .replay_item_container;
+  font-size: 1em;
 }
+
+.toggleButton {
+  cursor: pointer;
+  background-color: $Dark;
+  color: $Highlight !important;
+  border-radius: 10px;
+  border: none;
+  margin: 4px 0px 0px 3px !important;
+  height: 27px !important;
+  pointer-events: inherit;
+}
+
+.toggleButton:focus {outline:0;}
+
 
 .longScroller::-webkit-scrollbar {
   width: 12px;
