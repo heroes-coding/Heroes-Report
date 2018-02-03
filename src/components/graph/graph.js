@@ -17,8 +17,8 @@ export default (props) => {
   xMin = bars ? xMin - 0.5 : xMin
   xMax = bars ? xMax + 0.5 : xMax
   const xRange = xMax-xMin
-  const yMin = d3.min(ys)
-  const yMax = d3.max(ys)
+  const yMin = bars ? 0 : d3.min(ys)
+  const yMax = d3.max(ys.filter(y => y < Infinity))
   const yRange = yMax-yMin
   const xPad = xRange*0.0
   const yPad = yRange*0.0
@@ -97,18 +97,20 @@ export default (props) => {
         {bars && bars.map((p,i) => {
           let [ x, y, stroke ] = p
           x = xScale(x)
-          y = yScale(y)
+          const yCoord = yScale(y)
           const style={stroke}
           return (
-            <line
-              key={x}
-              x1={x}
-              y1={yMaxCoord}
-              x2={x}
-              y2={yMaxCoord-y}
-              style={style}
-              className="barLine"
-            />
+            <g key={x}>
+              <line
+                x1={x}
+                y1={yMaxCoord}
+                x2={x}
+                y2={yCoord}
+                style={style}
+                className="barLine"
+              />
+              <text className="barText" x={x} y={yMaxCoord+25}>{yFormatter(y)}</text>
+            </g>
           )
         })}
         <line x1={xOff} y1={yRatio-yOff} x2={xRatio} y2={yRatio-yOff} className="axisLine" />
@@ -117,7 +119,7 @@ export default (props) => {
         {lines&&lines.map((line,i) => <path key={i} d={line} className='line' style={{stroke:colors[i]}} />)}
         {!simple&&<text x={-yRatio+yOff+20} y={xRatio-10} className="axisText" transform="rotate(-90)">{yLabel}</text>}
         <text x={xOff+10} y={yRatio-yOff-10} className="axisText" >{xLabel}</text>
-        <text onMouseEnter={() => { console.log(title) }} x={(xRatio+xOff)/2} y={30} className="graphTitle" >{title}</text>
+        <text onMouseEnter={() => { console.log(title) }} x={(xRatio+xOff)/2} y={bars ? 35 : 30} className="graphTitle" >{title}</text>
       </svg>
     </div>
   )
