@@ -51,7 +51,7 @@ class TalentCalculator extends Component {
   render() {
     const { filteredTalents, dataTime, talentCounts, hero } = this.props.talentData
     // I really wish there was a better way of doing this.  The problem is the old talents are passed back with the new hero id.  I don't know why props are being updated before the talent data is when I am only connecting to getHeroTalents
-    const curHero = parseInt(this.props.curHero)
+    let curHero = parseInt(this.props.curHero)
     return (
       <div className="container-fluid col-12 col-md-12 col-lg-9 order-lg-last" id="talentBox">
         <Popup
@@ -64,11 +64,11 @@ class TalentCalculator extends Component {
           y={this.state.popupY}
           pic={this.state.popupPic}
         />
-        {window.HOTS && curHero && <div className="talentCalcHeader row" >
-          Talent Calculator for &nbsp;<span style={{color:window.HOTS.ColorsDic[curHero]}}>{window.HOTS.nHeroes[curHero]}</span>
+        {window.HOTS && <div className="talentCalcHeader row" >
+          Talent Calculator for &nbsp;<span style={{color:window.HOTS.ColorsDic[curHero]}}>{window.HOTS.nHeroes[curHero]}</span>&nbsp;&nbsp;<i className="fa fa-undo iconOnButton resetButton" onClick={() => this.props.selectTalent('reset')} aria-hidden="true"></i>
         </div>
         }
-        {filteredTalents && window.HOTS && curHero === hero && filteredTalents.map((tals,l) => {
+        {filteredTalents && window.HOTS && filteredTalents.map((tals,l) => {
           return (
             <div key={l} className="talentRow row" >
               {tals.map((tal,i) => {

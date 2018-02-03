@@ -4,9 +4,12 @@ import TableHeader from './table_header'
 import TableBody from './table_body'
 import SelectedMainData from '../../selectors/selected_main_data'
 import DataFiltersBar from '../data_filters_bar'
-import { updateMainSorting } from '../../actions'
+import { updateMainSorting, updatePreferences, getMainData } from '../../actions'
 
 class DataTable extends Component {
+  componentDidMount() {
+    this.props.getMainData(this.props.prefs)
+  }
   constructor(props) {
     super(props)
     this.reorder = this.reorder.bind(this)
@@ -52,8 +55,9 @@ class DataTable extends Component {
 
 const mapStateToProps = state => {
   return {
-    data: SelectedMainData(state)
+    data: SelectedMainData(state),
+    prefs: state.prefs
   }
 }
 
-export default connect(mapStateToProps,{updateMainSorting})(DataTable)
+export default connect(mapStateToProps,{updateMainSorting, updatePreferences, getMainData})(DataTable)

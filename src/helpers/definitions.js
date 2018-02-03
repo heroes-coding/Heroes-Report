@@ -12,6 +12,9 @@ export const defaultPreferences = {
   sortStats: ['KDA','Experience', 'Globes']
 }
 
+export const brawlMapIDs = [11, 13, 15, 16, 18]
+export const allBrawlMapIDs = [11, 13, 15, 16, 18, 0, 8, 3]
+
 export const statCatStats = {
   'Meta': [2, 52, 3, 4, 5, 6, 13],
   'Overall': [16, 17, 14, 24, 21, 51, 36, 20],

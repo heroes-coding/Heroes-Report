@@ -5,7 +5,7 @@ import * as d3 from 'd3'
 import StatListTemplate from './stat_list_template'
 import KDensity from '../../components/graph/kdensity'
 import Graph from '../../components/graph/graph'
-import { formatNumber, roundedPercent, MSLToDateString, simplePercent } from '../../helpers/smallHelpers'
+import { formatNumber, roundedPercent, MSLToDateString, simplePercent, tinyPercent } from '../../helpers/smallHelpers'
 import { decoderNumbers } from '../../helpers/binary_defs'
 import { formatPercentile } from '../player_list/player_list'
 import { exponentialSmoothing } from '../../helpers/exponential_smoother'
@@ -49,7 +49,7 @@ class PlayerStatList extends Component {
     return {name, left: allyMean, right: enemyMean, statName}
   }
   mmr(mmrType,mmrData) {
-    return {name: mmrType, left: mmrData.mmr.toString(), right:`(${mmrData.percentile})`}
+    return {name: mmrType, left: mmrData.mmr.toString(), right:`(${formatPercentile(mmrData.percentile)})`}
   }
   changeGraph(stat, statName) {
     this.setState({stat, statName})
@@ -100,6 +100,11 @@ class PlayerStatList extends Component {
       stats = playerData.map(x => x.stats[index])
       yFormatter = formatNumber
     }
+
+    let winrateCorrelationData
+    if (showK) {
+      winrateCorrelationData = exponentialSmoothing(playerData.map((x,i) => { return [stats[i],x.Won] }).sort((x,y) => x[0] < y[0] ? -1 : 1))
+    }
     let data = playerData.map((x,i) => { return [x.MSL,stats[i]] }).reverse()
     let expTime = window.performance.now()
     const timedData = exponentialSmoothing(data)
@@ -120,6 +125,20 @@ class PlayerStatList extends Component {
           formatter={MSLToDateString}
           yFormatter={yFormatter}
         />
+        {showK&&winrateCorrelationData.length&&<Graph
+          graphClass="winrateGraph"
+          linePoints={winrateCorrelationData}
+          xLabel={statName}
+          yLabel="Win rate"
+          title={`Win rate by ${statName}`}
+          xRatio={500}
+          yRatio={290}
+          xOff={70}
+          yOff={90}
+          noArea={true}
+          formatter={yFormatter}
+          yFormatter={simplePercent}
+        />}
         {showK&&<KDensity
           graphClass="winrateGraph"
           X={stats}
@@ -130,6 +149,7 @@ class PlayerStatList extends Component {
           xOff={70}
           yOff={70}
           formatter={yFormatter}
+          yFormatter={tinyPercent}
         />}
       </div>
     )
@@ -144,70 +164,70 @@ class PlayerStatList extends Component {
     const outcomes = playerData.map(x => x.Won)
     const mmrData = [h&&mmr(mmrNames.h,h),q&&mmr(mmrNames.q,q),t&&mmr(mmrNames.t,t),u&&mmr(mmrNames.u,u)].filter(x => x)
     return (
-      <div className='container-fluid statsList col-12 col-md 6 col-lg-3 order-lg-first'>
-        <StatListTemplate
-          clickFunction={this.changeGraph}
-          title={handle}
-          subTitle={`Won ${roundedPercent(Math.round(d3.mean(outcomes)*1000))} (${d3.sum(outcomes)}/${outcomes.length}  matches)`}
-          graphs={this.getGraphs()}
-          data={[
-            {category: 'Event & Win %',
-              left:'Ally',
-              right: 'Enemy',
-              hasGraphs: true,
-              stats:['FirstTo10','FirstTo20'].map(s => { return percent(s,playerData) })
-            },
-            {category: 'Overall Stats',
-              left:'Mean',
-              right: 'Sigma',
-              hasGraphs: true,
-              stats:[
-                stat('KDA',playerData,playerData.map(x => x.KDA === Infinity ? 20 : x.KDA)),
-                ...[['Globes',null],['Experience',null],['Player Town Kills','Town Kills'],['Team Town Kills','Team T.Kills'],['Mercs Captured','Mercs'],['Team Merc Captures','Team Mercs'],['Length','Match Length'],['Time on Fire',null],['Escapes',null]].map(s => { return stat(s[0],playerData,null,s[1]) })
-              ]}
-          ]}
-        />
-        <StatListTemplate
-          clickFunction={this.changeGraph}
-          data={[
-            {category: 'Death Stats',
-              left:'Mean',
-              right: 'Sigma',
-              hasGraphs: true,
-              stats:[
-                ...[['Kills',null],['Deaths',null],['Outnumbered Deaths','Out#d Deaths'],['Assists',null],['Dead Time','Dead Time'],['Vengeances',null]].map(s => { return stat(s[0],playerData,null,s[1]) })
-              ]},
-            {category: 'Sustain Stats',
-              left:'Mean',
-              right: 'Sigma',
-              hasGraphs: true,
-              stats:[
-                ...[['Teamfight Damage Taken','TF Dam.Rec.'],['Healing',null],['Self Healing','Self Healing'],['Protection Given','Protection']].map(s => { return stat(s[0],playerData,null,s[1]) })
-              ]},
-            {category: 'Damage Stats',
-              left:'Mean',
-              right: 'Sigma',
-              hasGraphs: true,
-              stats:[
-                stat('KDA',playerData,playerData.map(x => x.KDA === Infinity ? 20 : x.KDA)),
-                ...[['Hero Damage',null],['Teamfight Hero Damage','TF Hero Dam.'],['Structure Damage','Build. Dam.'],['Minion Damage','Minion Dam.'],['Siege Damage','Siege Dam.']].map(s => { return stat(s[0],playerData,null,s[1]) })
-              ]},
-            {category: 'CC Stats',
-              left:'Mean',
-              right: 'Sigma',
-              hasGraphs: true,
-              stats:[
-                stat('KDA',playerData,playerData.map(x => x.KDA === Infinity ? 20 : x.KDA)),
-                ...[['Crowd Control Time','CC Seconds'],['Stun Time','Stun Seconds'],['Root Time','Root Time'],['Silence Time','Silence Time']].map(s => { return stat(s[0],playerData,null,s[1]) })
-              ]},
-            {category: 'MMR Type',
-              left:'MMR',
-              right: 'Perc.',
-              hasGraphs: false,
-              stats: mmrData
-            },
-          ]}
-        />
+      <div className='flex statsList col-12 col-sm 6 col-lg-3 order-lg-first'>
+        <div className='stat_item_container row'>
+          <StatListTemplate
+            clickFunction={this.changeGraph}
+            title={handle}
+            subTitle={`Won ${roundedPercent(Math.round(d3.mean(outcomes)*1000))} (${d3.sum(outcomes)}/${outcomes.length}  matches)`}
+            graphs={this.getGraphs()}
+            data={[
+              {category: 'Event & Win %',
+                left:'Ally',
+                right: 'Enemy',
+                hasGraphs: true,
+                stats:['FirstTo10','FirstTo20'].map(s => { return percent(s,playerData) })
+              },
+              {category: 'Overall Stats',
+                left:'Mean',
+                right: 'Sigma',
+                hasGraphs: true,
+                stats:[
+                  ...[['Length','Match Length'],['Votes Received',null],['Globes',null],['Experience',null],['Player Town Kills','Town Kills'],['Team Town Kills','Team T.Kills'],['Mercs Captured','Mercs'],['Team Merc Captures','Team Mercs'],['Time on Fire',null],['Escapes',null]].map(s => { return stat(s[0],playerData,null,s[1]) })
+                ]}
+            ]}
+          />
+          <StatListTemplate
+            clickFunction={this.changeGraph}
+            data={[
+              {category: 'Death Stats',
+                left:'Mean',
+                right: 'Sigma',
+                hasGraphs: true,
+                stats:[
+                  stat('KDA',playerData,playerData.map(x => x.KDA === Infinity ? 20 : x.KDA)),
+                  ...[['Kills',null],['Deaths',null],['Outnumbered Deaths','Out#d Deaths'],['Assists',null],['Dead Time','Dead Time'],['Vengeances',null]].map(s => { return stat(s[0],playerData,null,s[1]) })
+                ]},
+              {category: 'Sustain Stats',
+                left:'Mean',
+                right: 'Sigma',
+                hasGraphs: true,
+                stats:[
+                  ...[['Teamfight Damage Taken','TF Dam.Rec.'],['Healing',null],['Self Healing','Self Healing'],['Protection Given','Protection']].map(s => { return stat(s[0],playerData,null,s[1]) })
+                ]},
+              {category: 'Damage Stats',
+                left:'Mean',
+                right: 'Sigma',
+                hasGraphs: true,
+                stats:[
+                  ...[['Hero Damage',null],['Teamfight Hero Damage','TF Hero Dam.'],['Structure Damage','Build. Dam.'],['Minion Damage','Minion Dam.'],['Siege Damage','Siege Dam.']].map(s => { return stat(s[0],playerData,null,s[1]) })
+                ]},
+              {category: 'CC Stats',
+                left:'Mean',
+                right: 'Sigma',
+                hasGraphs: true,
+                stats:[
+                  ...[['Crowd Control Time','CC Seconds'],['Stun Time','Stun Seconds'],['Root Time','Root Time'],['Silence Time','Silence Time']].map(s => { return stat(s[0],playerData,null,s[1]) })
+                ]},
+              {category: 'MMR Type',
+                left:'MMR',
+                right: 'Perc.',
+                hasGraphs: false,
+                stats: mmrData
+              },
+            ]}
+          />
+        </div>
       </div>
     )
   }

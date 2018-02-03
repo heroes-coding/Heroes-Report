@@ -17,7 +17,7 @@ function kernelEpanechnikov(k) {
 }
 
 export default (props) => {
-  const { X, graphClass, xLabel, xRatio, yRatio, xOff, yOff, title, formatter } = props
+  const { X, graphClass, xLabel, xRatio, yRatio, xOff, yOff, title, formatter, yFormatter } = props
   const xMin = d3.min(X)
   const xMax = d3.max(X)
   const xRange = xMax-xMin
@@ -26,6 +26,9 @@ export default (props) => {
   let densityPoints = kernelDensityEstimator(kernelEpanechnikov(7), xScale.ticks(50))(X)
   let normalPoints = densityPoints.filter(x => x[0] > 0)
   let endPoint = normalPoints[normalPoints.length-1]
+  if (!endPoint) {
+    return <div></div>
+  }
   endPoint[1] = 0
   let startY = densityPoints.filter(x => x[0] <= 0)
   let startPoint = startY.length ? [0,startY.map(x => x[1]).reduce((x,y) => x+y)] : [0,0]
@@ -44,6 +47,7 @@ export default (props) => {
       xOff={xOff}
       yOff={yOff}
       formatter={formatter}
+      yFormatter={yFormatter}
     />
   )
 }

@@ -17,6 +17,7 @@ import AddHeroFilter from './filter_heroes_reducer'
 import AddHeroTalents from './player_talents_reducer'
 import SelectTalent from './select_talent_reducer'
 import GetFilteredTalents from './filtered_talents_reducer'
+import GetTimedData from './timed_data_reducer'
 
 const rootReducer = combineReducers({
   HOTS: HOTSDictionaryReducer,
@@ -34,6 +35,7 @@ const rootReducer = combineReducers({
   playerInfo: PlayerInfoReducer,
   talentData: AddHeroTalents,
   talentDic: TalentDicReducer,
+  timedData: GetTimedData,
   filterHeroes: AddHeroFilter,
   playerSearchResults: PlayerSearchList,
   replayPage: UpdateReplayPage

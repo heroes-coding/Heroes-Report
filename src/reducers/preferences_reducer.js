@@ -1,14 +1,26 @@
 import { UPDATE_PREFERENCES, UPDATE_MAIN_DATA } from '../actions'
-import { defaultPreferences } from '../helpers/definitions'
+import { defaultPreferences, brawlMapIDs, allBrawlMapIDs } from '../helpers/definitions'
 
 let oldPreferences
 if (window.localStorage.hasOwnProperty('prefs')) {
   oldPreferences = window.loadLocal('prefs')
 }
-const brawlMapIDs = [11, 13, 15, 16, 18]
+
 export default function(state = oldPreferences || {...defaultPreferences}, action) {
   if (action.type === UPDATE_PREFERENCES) {
     state = {...state}
+    if (action.prefType==='mode' && action.prefID===5 && !allBrawlMapIDs.includes(state.map)) {
+      state.map = 99
+    }
+    if (action.prefType==='map' && state.mode===5 && !allBrawlMapIDs.includes(action.prefID)) {
+      state.mode = 0
+    }
+    if (action.prefType==='mode' && action.prefID!==5 && brawlMapIDs.includes(state.map)) {
+      state.map = 99
+    }
+    if (action.prefType==='map' && brawlMapIDs.includes(action.prefID)) {
+      state.mode = 5
+    }
     if (action.prefType === 'sortStats') {
       const { slot, stat } = action.prefID
       state.sortStats = [...state.sortStats]
@@ -16,9 +28,7 @@ export default function(state = oldPreferences || {...defaultPreferences}, actio
     } else {
       state[action.prefType] = action.prefID
     }
-    if (action.prefType==='map' && brawlMapIDs.includes(parseInt(action.prefID,10))) {
-      state.mode = 5 // make brawl selections less frustrating
-    }
+
     window.saveLocal(state,'prefs')
     return state
   }

@@ -55,7 +55,7 @@ class IconList extends Component {
             event.preventDefault()
             this.updateFilterAndHeroes('A')
           }}
-        ><i className="fa fa-undo iconOnButton" aria-hidden="true"></i>{this.props.updateType}:</button>
+        ><i className="fa fa-undo iconOnButton" aria-hidden="true"></i>&nbsp;&nbsp;{this.props.updateType}:</button>
         <span className="iconLabel"></span>
         {this.props.iconList.map((d,i) => this.renderIcon(d,i))}
       </form>

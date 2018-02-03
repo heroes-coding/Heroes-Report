@@ -27,6 +27,7 @@ async function getHOTSDictionary() {
     window.saveLocal(HOTS,'HOTS')
   }
   window.HOTS = HOTS
+  window.HOTS.nAwards = _.invert(HOTS.awardN)
   window.buildsData = await buildsPromise
   window.buildsData = window.buildsData.data
   const uniqueKeys = Object.keys(HOTS.unique).map(x => parseInt(x))
@@ -68,6 +69,7 @@ async function getHOTSDictionary() {
     sortedMaps,
     sortedHeroes
   }
+  document.getElementById('loadingWrapper').style.visibility = 'hidden'
   return {
     type: GET_HOTS_DATA,
     payload: d

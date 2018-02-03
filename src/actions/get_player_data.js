@@ -8,10 +8,15 @@ export { GET_PLAYER_DATA, getPlayerData }
 async function getPlayerData(bnetID) {
   const repsPromise = getPlayerBinary(bnetID)
   // const saveName = `player${bnetID}`
-  let playerInfo = await axios.get(`https://heroes.report/search/mmr/${bnetID}`)
-  playerInfo = playerInfo.data
-  // window.saveLocal(playerInfo,saveName)
-  window.playerInfo = playerInfo
+  let playerInfo
+  try {
+    playerInfo = await axios.get(`https://heroes.report/search/mmr/${bnetID}`)
+    playerInfo = playerInfo.data
+  } catch (e) {
+    playerInfo = {handle:bnetID}
+    console.log(e)
+  }
+  playerInfo.bnetID = parseInt(bnetID)
   const reps = await repsPromise
   const goodReps = []
   while (!window.HOTS || !window.buildDic) {

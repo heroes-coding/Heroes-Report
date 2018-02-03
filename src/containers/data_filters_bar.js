@@ -5,7 +5,7 @@ import IconList from '../containers/icon_list'
 import { modeChoices, modeDic, mmrChoices, mmrDic } from '../helpers/definitions'
 import { renderTime, renderNothing, renderTinyMap, renderPeeps, renderTinyHero, renderTeam } from '../components/filterComponents'
 import { connect } from 'react-redux'
-import { updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter } from '../actions'
+import { updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData } from '../actions'
 import UpdateStatCat from './update_stat_cat'
 
 const roleDropdownData = ['Assassin','Warrior','Support','Specialist'].map(x => { return {name:x, id:x} })
@@ -25,6 +25,7 @@ class DataFilters extends Component {
   }
   getHeroes() {
     this.props.getHeroTalents(this.props.prefs.hero,this.props.prefs)
+    this.props.getTimedData(this.props.prefs,this.props.prefs.hero)
     this.props.selectTalent('reset')
   }
   updateTime(newTime) {
@@ -185,4 +186,4 @@ function mapStateToProps({HOTS, prefs, status, roles, franchises, filterHeroes})
   return {HOTS, prefs, status, roles, franchises, filterHeroes}
 }
 
-export default connect(mapStateToProps, {updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter})(DataFilters)
+export default connect(mapStateToProps, {updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData})(DataFilters)

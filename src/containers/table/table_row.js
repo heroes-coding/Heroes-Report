@@ -3,6 +3,9 @@ import Arc from '../../components/arc'
 import StatBox from './statBox'
 import WLStatBox from './WLstatBox'
 import { roundedPercent, formatStat, sToM } from '../../helpers/smallHelpers'
+import { updatePreferences, selectTalent } from '../../actions'
+import { withRouter } from 'react-router-dom'
+import { connect } from 'react-redux'
 
 const display = function(value,s) {
   let display
@@ -25,7 +28,20 @@ const display = function(value,s) {
   return display
 }
 
-export default class TableRow extends Component {
+class TableRow extends Component {
+  constructor(props) {
+    super(props)
+    this.updateHero = this.updateHero.bind(this)
+  }
+  updateHero(newHero) {
+    this.props.updatePreferences('hero', newHero)
+    this.props.selectTalent('reset')
+    if (this.props.history.location.pathname.includes('heroes')) {
+      this.props.getHeroTalents(newHero,this.props.prefs)
+    }
+    this.props.history.push(`/heroes/${newHero}`)
+  }
+
   shouldComponentUpdate(nextProps) {
     if (nextProps.showWL !== this.props.showWL || nextProps.id !== this.props.id || this.props.id.length < 4) {
       return true
@@ -56,7 +72,10 @@ export default class TableRow extends Component {
             <span
               className='heroName'
               style={nameStyle}
-            >{name}</span>
+              onClick={() => { this.updateHero(id) }}
+            >
+              {name}
+            </span>
           </div>
           {stats && stats.map(stat => {
             let { value, id, lValue, wValue } = stat
@@ -88,3 +107,9 @@ export default class TableRow extends Component {
     )
   }
 }
+
+function mapStateToProps(state, ownProps) {
+  return ownProps
+}
+
+export default withRouter(connect(mapStateToProps, {updatePreferences, selectTalent })(TableRow))

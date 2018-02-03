@@ -18,16 +18,16 @@ export default (props) => {
         className={`${props.classo} ${props.open ? 'popupAlive' : ''}`}
         style={{top:props.y,left:props.x}}
       >
-        <div className='popupPicHolder'>
+        {props.pic&&<div className='popupPicHolder'>
           <img
             src = {props.pic}
             className="popupPic"
             alt={props.pic}
           ></img>
-        </div>
+        </div>}
         <div className='popupText'>
-          <div className='popupName'>{props.name}</div>
-          <div className='popupDesc'>{descriptionator(props.desc)}</div>
+          {props.name&&<div className='popupName'>{props.name}</div>}
+          {props.desc&&<div className='popupDesc'>{descriptionator(props.desc)}</div>}
         </div>
       </div>
     </div>

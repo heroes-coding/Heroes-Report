@@ -18,7 +18,7 @@ export * from './filter_main_data'
 export * from './get_player_data'
 export * from './get_talent_dictionary'
 export * from './get_hero_data'
-
+export * from './get_hero_timed_data'
 
 export function updateMainSorting(id) {
   return {

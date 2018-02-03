@@ -12,59 +12,58 @@ let getSpace = function(spaces) {
 export default (props) => {
   const { title, subTitle, data, graphs, clickFunction } = props
   return (
-    <div className='statsList col-12 col-md 6 col-lg-3 order-lg-first'>
-      <div className='stat_item_container row'>
-        <div className='statItem col-12 col-sm-6 col-lg-12'>
-          <div className='handleHolder statBarHolder statBarTitle'>
-            {title}
-            {title&&<br />}
-            {subTitle&&<span id="winrate"><i
-              className="fa fa-line-chart"
-              aria-hidden="true"
-              onClick={() => clickFunction('winrate', 'Win rate')}
-            />&nbsp;{subTitle}</span>}
-          </div>
-          {graphs}
-          {data.map((c,ci) => {
-            const { category, left, right, hasGraphs, stats } = c
-            if (!stats.length) {
-              return <div></div>
-            }
-            return (
-              <div key={ci} >
-                <div className='statBarHolder statBarTitle'>
-                  {hasGraphs ? getSpace(1) : getSpace(2)}
-                  <span className="underline">{category}</span>
-                  {getSpace(spacesLeft-category.length-3)}
-                  <span className="underline">{left}</span>
-                  {getSpace(spacesMiddle-left.length)}
-                  <span className="underline">{right}</span>
-                </div>
-                {stats.map((x,i) => {
-                  const { name, left, right, statName } = x
-                  const spaceLeft = spacesLeft - name.length - left.length
-                  const spaceMiddle = spacesMiddle-right.length
-                  return (
-                    <div className='statBarHolder' key={name}>
-                      {hasGraphs ? <i
-                        className="fa fa-line-chart"
-                        aria-hidden="true"
-                        onClick={() => clickFunction(statName, name)}
-                      /> : null}
-                      {hasGraphs ? getSpace(1) : getSpace(2)}
-                      <span className="statName">{name}:</span>
-                      {getSpace(spaceLeft)}
-                      <span className="statValue">{left}</span>
-                      {getSpace(spaceMiddle)}
-                      <span className="stdValue">{right}</span>
-                    </div>
-                  )
-                })}
-              </div>
-            )
-          })}
-        </div>
+    <div className='statItem col-12 col-sm-6 col-lg-12'>
+      <div className='handleHolder statBarHolder statBarTitle'>
+        {title}
+        {title&&<br />}
+        {subTitle&&<span id="winrate"><i
+          className="fa fa-line-chart"
+          aria-hidden="true"
+          onClick={() => clickFunction('winrate', 'Win rate')}
+        />&nbsp;{subTitle}</span>}
       </div>
+      {graphs}
+      {data.map((c,ci) => {
+        const { category, left, right, hasGraphs, stats } = c
+        if (!stats.length) {
+          return <div></div>
+        }
+        return (
+          <div key={ci} >
+            <div className='statBarHolder statBarTitle'>
+              {hasGraphs ? getSpace(1) : getSpace(2)}
+              <span className="underline">{category}</span>
+              {getSpace(spacesLeft-category.length-3)}
+              <span className="underline">{left}</span>
+              {getSpace(spacesMiddle-left.length)}
+              <span className="underline">{right}</span>
+            </div>
+            {stats.map((x,i) => {
+              const { name, left, right, statName } = x
+              if ((!isNaN(left) && !parseInt(left) && !parseInt(right)) || right==="0:00") {
+                return <div key={i}></div>
+              }
+              const spaceLeft = spacesLeft - name.length - left.length
+              const spaceMiddle = spacesMiddle-right.length
+              return (
+                <div className='statBarHolder' key={name}>
+                  {hasGraphs ? <i
+                    className="fa fa-line-chart"
+                    aria-hidden="true"
+                    onClick={() => clickFunction(statName, name)}
+                  /> : null}
+                  {hasGraphs ? getSpace(1) : getSpace(2)}
+                  <span className="statName">{name}:</span>
+                  {getSpace(spaceLeft)}
+                  <span className="statValue">{left}</span>
+                  {getSpace(spaceMiddle)}
+                  <span className="stdValue">{right}</span>
+                </div>
+              )
+            })}
+          </div>
+        )
+      })}
     </div>
   )
 }

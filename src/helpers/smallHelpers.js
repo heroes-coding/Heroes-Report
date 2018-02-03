@@ -9,6 +9,15 @@ export const dateToDSL = function(date) {
   return Math.floor((date - 60000*240 - fakeLaunchDate)/(60000*1440))
 }
 
+export const DateToMSL = function(date) {
+  return (date - fakeLaunchDate)/(60000)
+}
+
+export function LightenDarkenColor(col,amt) {
+  col = parseInt(col,16)
+  return (((col & 0x0000FF) + amt) | ((((col>> 8) & 0x00FF) + amt) << 8) | (((col >> 16) + amt) << 16)).toString(16)
+}
+
 let daysAndMinutesSinceLaunch = function(minSinceLaunch) {
   let time = minSinceLaunch - 240
   let days = Math.floor(time/(1440))
@@ -43,8 +52,15 @@ export function formatLength(length, longForm) {
 export function MSLToDateString(d) {
   return formatDate(minSinceLaunchToDate(d))
 }
-export function simplePercent (p) {
+
+
+
+export function simplePercent(p) {
   return `${Math.round(p*100)}%`
+}
+
+export function tinyPercent (p) {
+  return `${Math.round(p*10000)/100}%`
 }
 
 
@@ -149,6 +165,7 @@ export const Around50 = function(percent) {
   return 'rgb(' + Math.round(R) + ',' + Math.round(G) + ',' + Math.round(B) + ')'
 }
 
+
 export const Dark50 = function(percent) {
   var factor = 255/10
   var R = percent < 50 ? Math.min((50-percent)*factor*2,255) : 0
@@ -157,7 +174,12 @@ export const Dark50 = function(percent) {
 }
 
 export const roundedPercent = function(data) {
+  data = Math.round(data)
   return `${data < 0 ? Math.ceil(data/10) : Math.floor(data/10)}.${data < 0 ? -1*data%10 : data%10}%`
+}
+
+export const roundedPercentPercent = function(num) {
+  return roundedPercent(num*1000)
 }
 
 export const formatStat = function(num) {
@@ -169,9 +191,18 @@ export const formatStat = function(num) {
   return commify(Math.round(num))
 }
 
+export const formatStatNumber = function(num) {
+  return formatNumber(num/100)
+}
+
 export const sToM = function(secs) {
+  secs = Math.round(secs)
   const mins = Math.floor(secs/60)
   secs = secs%60
   secs = secs < 10 ? "0" + secs : secs
   return mins + ":" + secs
+}
+
+export const statSToM = function(secs100) {
+  return sToM(Math.round(secs100/100))
 }

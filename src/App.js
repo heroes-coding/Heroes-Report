@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Storage from './helpers/storage'
-import { getHOTSDictionary, updatePreferences, getMainData, rollbackState, getTalentDic } from './actions'
+import { getHOTSDictionary, updatePreferences, rollbackState, getTalentDic } from './actions'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import DataTable from './containers/table/data_table'
 import HeroPage from './containers/heroPage/hero_page'
@@ -11,12 +11,10 @@ import PlayerList from './containers/player_list/player_list'
 import YourPage from './containers/your_page'
 import getReplayBinary from './helpers/binary_replay_unpacker'
 
-window.getReplayBinary = getReplayBinary
 
 class App extends Component {
   componentDidMount() {
     this.props.getHOTSDictionary()
-    this.props.getMainData(this.props.prefs)
     this.props.getTalentDic()
   }
   render() {
@@ -51,4 +49,4 @@ function mapStateToProps({prefs}) {
   return {prefs}
 }
 
-export default connect(mapStateToProps, {getTalentDic, getHOTSDictionary, updatePreferences, getMainData, rollbackState})(App)
+export default connect(mapStateToProps, {getTalentDic, getHOTSDictionary, rollbackState})(App)

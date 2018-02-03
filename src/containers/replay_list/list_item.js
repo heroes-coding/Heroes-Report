@@ -1,12 +1,14 @@
-import React from 'react'
+import React, { Component }  from 'react'
+import axios from 'axios'
 import ListPart from './list_part'
 import DoubleCell from '../../components/double_cell'
 import Arc from '../../components/arc'
 import { hashString } from '../../helpers/hasher'
 import { formatNumber, formatDate, formatTime, formatLength } from '../../helpers/smallHelpers'
 import PercentBar from '../../components/percent_bar'
+import Replay from '../replay/replay'
+import asleep from '../../helpers/asleep'
 const barColors = ['#8C5F8C','#51A1A7','#6383C4']
-
 
 const modes = {
   1: "QM",
@@ -14,13 +16,6 @@ const modes = {
   3: "HL",
   4: "TL",
   5: "BR"
-}
-
-function getReplay(props) {
-  const { MSL, heroes, winners, Length, mode, build, map } = props
-  const hashInput = `${mode}${Math.round(Length/60)}${heroes.join("")}${winners}${MSL}${map}${build}`
-  const hashPath = `https://heroes.report/stats/replays/${hashString(hashInput)}.json`
-  console.log(hashInput,hashPath)
 }
 
 let statBar = (statValue,index,statRange, statName) => {
@@ -39,7 +34,7 @@ let statBar = (statValue,index,statRange, statName) => {
     </div>
   )
 }
-let talentIcon = (talentIcon,key,row,openPopup,messagePopup,talent,hero) => {
+let talentIcon = (talentIcon,key,row,openPopup,messagePopup,talent,hero,div) => {
   talentIcon = `${talentIcon || talentIcon === 0 ? `${talentIcon}.jpg` : 'empty.png'}`
   return (
     <div
@@ -52,7 +47,7 @@ let talentIcon = (talentIcon,key,row,openPopup,messagePopup,talent,hero) => {
         const name = window.HOTS.cTalents[hero][talent][0]
         const desc = window.HOTS.cTalents[hero][talent][1]
         event.preventDefault()
-        openPopup(row,key,name,desc,`https://heroes.report/singleTalents/${talentIcon}`)
+        openPopup(row,div,name,desc,`https://heroes.report/singleTalents/${talentIcon}`,true)
       }}
       onMouseLeave={(event) => {
         if (!talent) {
@@ -72,14 +67,14 @@ let talentIcon = (talentIcon,key,row,openPopup,messagePopup,talent,hero) => {
   )
 }
 
-let tinyHero = (hero,key,openPopup,row,messagePopup) => {
+let tinyHero = (hero,key,openPopup,row,messagePopup,div) => {
   return (
     <img
       onMouseEnter={(event) => {
         const name = window.HOTS.nHeroes[hero]
         const desc = ''
         event.preventDefault()
-        openPopup(row,key,name,desc,`https://heroes.report/squareHeroes/${hero}.jpg`)
+        openPopup(row,div,name,desc,`https://heroes.report/squareHeroes/${hero}.jpg`)
       }}
       onMouseLeave={(event) => {
         event.preventDefault()
@@ -104,88 +99,133 @@ let firsts = (first,text) => {
   )
 }
 
-let left = props => {
+let left = (props,div, getReplay) => {
   return (
-    <ListPart
-      extraClass='listPart'
-      childComponent={
-        <div onClick={() => getReplay(props)} className="inner_list_item_left">
-          <img
-            onMouseEnter={(event) => {
-              const name = window.HOTS.nHeroes[props.hero]
-              const desc = ''
-              event.preventDefault()
-              props.openPopup(props.row,props.key,name,desc,`https://heroes.report/squareHeroes/${props.hero}.jpg`)
-            }}
-            onMouseLeave={(event) => {
-              event.preventDefault()
-              props.messagePopup()
-            }}
-            className="tinyReplayHero"
-            src={`https://heroes.report/squareHeroes/${props.hero}.jpg`}
-            alt={props.slot}
-          ></img>
-          <Arc
-            color={"#0000ff"}
-            id={props.id}
-            dim={28}
-            translate="(7,13)"
-            extraClass="reportArc"
-          />
-          <img
-            onMouseEnter={(event) => {
-              const mapName = window.HOTS.nMaps[props.map]
-              const pName = props.handle.split('#')[0]
-              const name = `${mapName} | ${props.won ? 'Victory' : 'Defeat'}`
-              const desc = `${pName} ${props.won ? 'won' : 'lost'} a${props.mode === 2 ? 'n' :''} ${window.HOTS.nModes[props.mode]}${props.mode === 1 || props.mode === 5 ? '' : ' match'} on ${mapName} as ${window.HOTS.nHeroes[props.hero]} in ${formatLength(props.Length,true)} on ${props.date.toString().slice(0,10)} at ${formatTime(props.date)}.`
-              event.preventDefault()
-              props.openPopup(props.row,props.key,name,desc,`https://heroes.report/mapPosts/${props.map}.jpg`)
-            }}
-            onMouseLeave={(event) => {
-              event.preventDefault()
-              props.messagePopup()
-            }}
-            className="tinyReplayMap"
-            src={`https://heroes.report/mapPostsTiny/${props.map}.png`}
-            alt={props.map}
-          ></img>
-          <span className="gameModeBox">
-            {modes[props.mode]}
-          </span>
-          <DoubleCell
-            topValue={formatDate(props.date)}
-            bottomValue={formatTime(props.date)}
-          />
-          <span
-            className="victoryBox"
-            style={{color: props.won ? '#00ff00' : '#ff0000'}}
-          >
-            {props.won ? 'V' : 'D'}
-          </span>
-          <span className="gameLength">
-            {formatLength(props.Length)}
-          </span>
-          <div className="teamsHolder">
-            <div className="tinyHeroHolder" style={{background: "#022c02"}}>
-              {[0,1,2,3,4].map((x) => tinyHero(props.allies[x],`${props.MSL}-${x}`,props.openPopup,props.row,props.messagePopup))}
-            </div>
-            <div className="tinyHeroHolder" style={{background: "#350101"}}>
-              {[0,1,2,3,4].map((x) => tinyHero(props.enemies[x],`${props.MSL}-${x}`,props.openPopup,props.row,props.messagePopup))}
-            </div>
+    <div className={`col-12 col-sm-6 col-xl-6 noPadding listPart`} align="center" onClick={() => getReplay(props)}>
+      <div className="inner_list_item_left">
+        <img
+          onMouseEnter={(event) => {
+            const name = window.HOTS.nHeroes[props.hero]
+            const desc = ''
+            event.preventDefault()
+            props.openPopup(props.row,div,name,desc,`https://heroes.report/squareHeroes/${props.hero}.jpg`)
+          }}
+          onMouseLeave={(event) => {
+            event.preventDefault()
+            props.messagePopup()
+          }}
+          className="tinyReplayHero"
+          src={`https://heroes.report/squareHeroes/${props.hero}.jpg`}
+          alt={props.slot}
+        ></img>
+        <Arc
+          color={"#0000ff"}
+          id={props.id}
+          dim={28}
+          translate="(7,13)"
+          extraClass="reportArc"
+        />
+        <img
+          onMouseEnter={(event) => {
+            const mapName = window.HOTS.nMaps[props.map]
+            const pName = props.handle.split('#')[0]
+            const name = `${mapName} | ${props.won ? 'Victory' : 'Defeat'}`
+            const desc = `${pName} ${props.won ? 'won' : 'lost'} a${props.mode === 2 ? 'n' :''} ${window.HOTS.nModes[props.mode]}${props.mode === 1 || props.mode === 5 ? '' : ' match'} on ${mapName} as ${window.HOTS.nHeroes[props.hero]} in ${formatLength(props.Length,true)} on ${props.date.toString().slice(0,10)} at ${formatTime(props.date)}.`
+            event.preventDefault()
+            props.openPopup(props.row,div,name,desc,`https://heroes.report/mapPosts/${props.map}.jpg`)
+          }}
+          onMouseLeave={(event) => {
+            event.preventDefault()
+            props.messagePopup()
+          }}
+          className="tinyReplayMap"
+          src={`https://heroes.report/mapPostsTiny/${props.map}.png`}
+          alt={props.map}
+        ></img>
+        <span className="gameModeBox">
+          {modes[props.mode]}
+        </span>
+        <DoubleCell
+          topValue={formatDate(props.date)}
+          bottomValue={formatTime(props.date)}
+        />
+        <span
+          className="victoryBox"
+          style={{color: props.won ? '#00ff00' : '#ff0000'}}
+        >
+          {props.won ? 'V' : 'D'}
+        </span>
+        <span className="gameLength">
+          {formatLength(props.Length)}
+        </span>
+        <div className="teamsHolder">
+          <div className="tinyHeroHolder" style={{background: "#022c02"}}>
+            {[0,1,2,3,4].map((x) => tinyHero(props.allies[x],`${props.MSL}-${x}`,props.openPopup,props.row,props.messagePopup,div))}
+          </div>
+          <div className="tinyHeroHolder" style={{background: "#350101"}}>
+            {[0,1,2,3,4].map((x) => tinyHero(props.enemies[x],`${props.MSL}-${x}`,props.openPopup,props.row,props.messagePopup,div))}
           </div>
         </div>
-      }
-    />
+      </div>
+    </div>
   )
 }
 
-export default (props) => {
-  return (
-    <div className="replayItem row">
-      {left(props)}
-      <ListPart
-        extraClass='listPart'
-        childComponent={
+class replay extends Component {
+  shouldComponentUpdate(nextProps) {
+    if (this.props.handle !== nextProps.handle) {
+      this.reloaded = true
+      this.setState({
+        ...this.state,
+        open:false,
+        replay: ''
+      })
+    }
+    return true
+  }
+  constructor(props) {
+    super(props)
+    this.state = { open: false, replay: '', div:null }
+    this.openReplay = this.openReplay.bind(this)
+    this.getReplay = this.getReplay.bind(this)
+  }
+  openReplay(results) {
+    this.setState({
+      ...this.state,
+      open: !this.state.open,
+      replay: results
+    })
+  }
+  async getReplay(props) {
+    if (!this.state.replay) {
+      const { MSL, heroes, winners, Length, mode, build, map } = props
+      const hashInput = `${mode}${Math.round(Length/60)}${heroes.join("")}${winners}${MSL}${map}${build}`
+      const hashPath = `https://heroes.report/stats/replays/${hashString(hashInput)}.json`
+      console.log(hashInput,hashPath)
+      const results = await axios.get(hashPath)
+      let replay = results.data
+      if (replay.hasOwnProperty('replay')) {
+        replay = replay.replay
+      }
+      this.setState({...this.state, replay})
+    }
+    this.setState({...this.state, open: !this.state.open})
+  }
+  render() {
+    const props = this.props
+    const { open, replay } = this.state
+    return (
+      <div
+        ref ={(div) => {
+          if (this.state.div) {
+            return
+          }
+          this.setState({...this.state, div:div})
+        }}
+        className="replayItem row"
+      >
+        {left(props,this.state.div,this.getReplay)}
+        <div onClick={() => this.getReplay(props)} className={`col-12 col-sm-6 col-xl-6 noPadding listPart`} align="center">
           <div className="inner_list_item_right">
             <div className="miniStatsHolder">
               {props.stats.map((x,i) => statBar(props.statValues[i],i,props.ranges[i],x))}
@@ -194,12 +234,16 @@ export default (props) => {
               {firsts(props.FirstTo10,"10")}
               {firsts(props.FirstTo20,"20")}
             </div>
-            <div className="talentsHolder">
-              {[0,1,2,3,4,5,6].map((x) => talentIcon(props.talPics[x],`${props.MSL}-${x}`,props.row,props.openPopup,props.messagePopup,props.talents[x],props.hero))}
+            <div ref={(div) => { this.talentsDiv = div }} className="talentsHolder">
+              {[0,1,2,3,4,5,6].map((x) => talentIcon(props.talPics[x],`${props.MSL}-${x}`,props.row,props.openPopup,props.messagePopup,props.talents[x],props.hero,this.state.div))}
             </div>
+            <i className="fa fa-lg fa-chevron-circle-down downloadReplay" aria-hidden="true"></i>
           </div>
-        }
-      />
-    </div>
-  )
+        </div>
+        {this.state.open&&<Replay thisDiv={this.talentsDiv} replay={replay} handle={this.props.handle} bnetID={this.props.bnetID} />}
+      </div>
+    )
+  }
 }
+
+export default replay

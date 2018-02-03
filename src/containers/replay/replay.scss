@@ -1,0 +1,217 @@
+@import "../../style/utilities/utilities.scss";
+@import "../heroPage/talentBox.scss";
+$minReplayWidth: 360px;
+
+.replayFlex {
+  margin: 10px 0px;
+  max-width: $minReplayWidth+30;
+  font-size: 1.2em;
+  padding: 0px !important;
+}
+.replayFlexHolder {
+  margin: auto;
+}
+.barHolder {
+    width: $minReplayWidth + 22;
+    margin-top: 16px;
+    padding-top: 2px;
+    //background: darken($Dark,5%);
+    padding: 1px;
+}
+
+svg.barGraph {
+    overflow: visible;
+}
+
+svg.globesGraph {
+  overflow: visible;
+}
+.matchupGraphs {
+  overflow: visible;
+}
+
+
+.statCat {
+  background: darken($Dark,8%);
+  // border:1px solid black;
+}
+
+.statCatTitle {
+    font-size: 1em;
+    padding: 2px;
+    margin: 15px 1px 5px 1px;
+    background: lighten($Dark,10%);
+    color: $Light;
+    font-family:$NumbersFont;
+    font-weight:500;
+}
+
+.reportStatHolder {
+    padding: 2px !important;
+    //background: $Dark;
+    width: $minReplayWidth +26;
+    margin: 2px;
+}
+
+
+/*
+img.tinyFlexHero {
+    -webkit-clip-path: circle(16px at 50% 50%);
+    clip-path: circle(16px at 50% 50%);
+
+} */
+
+img.tinyFlexHero {
+    margin:1px;
+    height: 30px;
+    width: 30px;
+    -webkit-clip-path: circle(8px at 50% 50%);
+    clip-path: circle(10px at 50% 50%);
+}
+
+.replayFlexBody, .replayFlexHeaderHolder {
+  display: flex;
+  flex: 1 0;
+  flex-direction: row;
+  align-content: space-between;
+  text-align:left;
+}
+.replayFlexBody {
+  height: 31px;
+  border-bottom:1px solid black;
+  border-left:1px solid black;
+  border-right: 1px solid black;
+  margin-bottom: 1px;
+}
+
+text.barText {
+    font-size: 1.6em;
+    fill: white;
+    text-anchor: middle;
+}
+
+.barGraph .graphTitle {
+    font-size: 2em;
+    opacity: 1;
+    font-weight: 100;
+    font-family: "Roboto Condensed", sans-serif;
+}
+
+line.barLine {
+    stroke-width: 70px;
+}
+
+.barGraph {
+    font-size: 1.4em;
+}
+
+.evenBody {
+  background: darken($Dark,9%);
+}
+.oddBody {
+  background: darken($Dark,6%);
+}
+.replaySelf {
+  background: darken($Highlight,15%);
+}
+
+.replayTalentPopup {
+  @extend .talentPopup;
+  //opacity: 1 !important;
+  font-size: 1.4em;
+  text-align: left;
+}
+/*
+.replayAlly {
+  border-bottom: 1px solid mix(green,$Dark);
+}
+.replayEnemy {
+  border-bottom: 1px solid mix(red,$Dark);
+}
+*/
+
+
+.replayFlexTalents {
+  display: flex;
+  width:168px;
+  margin: 2px;
+  padding: 0 2px;
+  flex-direction: row;
+  align-content: space-around;
+  background: black;
+  text-align: center;
+  font-size: 0.8em;
+}
+.replayFlexIcon {
+  width: 34px;
+}
+
+.replayFlexPlayer, .replayFlexMMR, .replayFlexTalent {
+  flex: 1 0;
+  padding-right: 10px;
+  margin: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.replayFlexAwards {
+  width: 72px;
+  display: flex;
+  margin: auto;
+  flex-direction: row;
+  align-content: space-around;
+  background: black;
+  text-align: center;
+}
+
+.replayFlexHeaderHolder {
+  font-weight: 700;
+  font-size: 1.1em;
+  text-decoration: underline;
+  height: 30px;
+  background: darken($Dark,10%);
+}
+
+.allyBox {
+  background: #002a00;
+}
+.enemyBox {
+  background: #390000;
+}
+
+.teamHeader {
+    flex: 1 auto;
+    margin: auto;
+    padding: 0px !important;
+    text-align: center;
+}
+
+.replayFlexHeader {
+  background: none !important;
+}
+
+.replayFlexAward {
+  padding-right:0px;
+}
+
+.replayFlexMMR {
+  padding-right: 0px;
+  line-height: 1em;
+}
+
+.replayFlexPlayer {
+  cursor: pointer;
+}
+
+.replayFlexPlayer:hover {
+  color: $Highlight;
+}
+
+.MMRNumber {
+  color:$Color2;
+}
+
+.replayFlexPlayer {
+  flex: 1.5 0;
+  font-size: 0.8em;
+}

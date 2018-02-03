@@ -4,11 +4,13 @@ import { connect } from 'react-redux'
 // import { getHeroTalents } from '../../actions'
 import DataFiltersBar from '../../containers/data_filters_bar'
 import TalentCalculator from './talentCalculator'
+import { HeroStatList, MatchupTable } from '../stat_list/hero_stats'
 
 class HeroHolder extends Component {
   componentDidMount() {
   }
   render() {
+    let heroID = this.props.match.params.id
     return (
       <div className="overall">
         <div className="filtersHolder">
@@ -16,8 +18,10 @@ class HeroHolder extends Component {
         </div>
         <div className="row d-flex justify-content-end" id="playerPageHolder">
           <div className="container-fluid col-12 col-md-12 col-lg-9 order-lg-last" id="talentBox">
-            <TalentCalculator curHero = {parseInt(this.props.match.params.id)} />
+            <TalentCalculator curHero={heroID} />
+            <MatchupTable curHero={heroID} />
           </div>
+          <HeroStatList curHero={heroID} />
         </div>
       </div>
     )

@@ -6,6 +6,53 @@
   @include  unselectable;
 }
 
+div#talentBox {
+    max-width: 100%;
+    padding: 6px 10px;
+}
+
+.pagesDiv {
+    display: flex;
+    flex-direction: row !important;
+}
+.pageMarker {
+  cursor: pointer;
+  flex: 1 0;
+  text-align: center;
+  border: 1px solid lighten($Dark,5%);
+  background-color: $Dark;
+  color: $Light;
+  margin: 2px 2px;
+}
+
+.activePage {
+  color: $Light;
+  background-color: $Highlight;
+
+}
+
+.matchupGraphs {
+    display: flex;
+}
+
+.matchupHolder {
+    padding: 0 7px 0 6px;
+    margin: 0 0 0 -3px;
+}
+
+.matchupTitle {
+    text-align: center;
+    font-size: 1.2em;
+    margin: -5px 0px 5px 0px;
+    font-family: $PrimaryFont;
+}
+
+
+.resetButton {
+    margin-top: 5px;
+    cursor: pointer;
+}
+
 text.tText {
   fill:$Light;
   font-size:0.8;
@@ -56,6 +103,7 @@ svg.CalcTalentHolder {
   @include unselectable;
   z-index: 5;
   border: 1px solid $Dark;
+  min-width: 300px;
 }
 
 .quest {
@@ -67,4 +115,5 @@ svg.CalcTalentHolder {
 
 .popupHolder {
   height: 0px !important;
+  font-family: $PrimaryFont !important;
 }

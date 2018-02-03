@@ -1,6 +1,9 @@
 @import "../../style/utilities/utilities.scss";
 $minReplayWidth: 360px;
 
+.heroName {
+  cursor: pointer;
+}
 
 .inner_list_item_left {
   padding: 5px 0px;
@@ -11,8 +14,19 @@ $minReplayWidth: 360px;
   margin-right: auto;
 }
 
+.matchupHolder {
+  min-width: 444px;
+}
+
+.downloadReplay {
+  color: $Color3;
+  position: relative;
+  left: 3px;
+  top: 3px;
+  cursor: pointer;
+}
+
 .filterText {
-  @extend .iconFilter;
   margin: 6px 5px -5px 20px!important;
 }
 
