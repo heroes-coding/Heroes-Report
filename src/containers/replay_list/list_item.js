@@ -173,7 +173,7 @@ let left = (props,div, getReplay) => {
 
 class replay extends Component {
   shouldComponentUpdate(nextProps) {
-    if (this.props.handle !== nextProps.handle) {
+    if (this.props.handle !== nextProps.handle || this.props.MSL !== nextProps.MSL) {
       this.reloaded = true
       this.setState({
         ...this.state,
@@ -240,7 +240,7 @@ class replay extends Component {
             <i className="fa fa-lg fa-chevron-circle-down downloadReplay" aria-hidden="true"></i>
           </div>
         </div>
-        {this.state.open&&<Replay thisDiv={this.talentsDiv} replay={replay} handle={this.props.handle} bnetID={this.props.bnetID} />}
+        {this.state.open&&<Replay thisDiv={this.talentsDiv} replay={replay} handle={this.props.handle} bnetID={this.props.bnetID} MSL={props.MSL} />}
       </div>
     )
   }

@@ -4,18 +4,25 @@ $minReplayWidth: 360px;
 
 .replayFlex {
   margin: 10px 0px;
-  max-width: $minReplayWidth+30;
+  // max-width: $minReplayWidth+30;
   font-size: 1.2em;
   padding: 0px !important;
 }
 .replayFlexHolder {
-  margin: auto;
+  display: flex;
+  flex-direction: row;
+  align-content: space-between;
+  width: 100%;
+  margin: 10px 5px 10px 25px;
 }
+.replayCol {
+    padding: 0px 20px;
+}
+
 .barHolder {
-    width: $minReplayWidth + 22;
-    margin-top: 16px;
+    width: 100%;
+    margin-top: 5px;
     padding-top: 2px;
-    //background: darken($Dark,5%);
     padding: 1px;
 }
 
@@ -37,19 +44,20 @@ svg.globesGraph {
 }
 
 .statCatTitle {
-    font-size: 1em;
+    font-size: 1.2em;
     padding: 2px;
-    margin: 15px 1px 5px 1px;
+    margin: 15px 1px 10px 1px;
+    font-weight: 500;
+    border-top: 1px solid black;
     background: lighten($Dark,10%);
     color: $Light;
     font-family:$NumbersFont;
-    font-weight:500;
 }
 
 .reportStatHolder {
     padding: 2px !important;
     //background: $Dark;
-    width: $minReplayWidth +26;
+    // width: $minReplayWidth +26;
     margin: 2px;
 }
 
@@ -76,6 +84,38 @@ img.tinyFlexHero {
   align-content: space-between;
   text-align:left;
 }
+
+.legendFlexBody {
+  display: flex;
+  flex: 1 0;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: space-between;
+}
+
+.barLegend {
+    padding: 5px;
+    background: lighten($Dark,5%);
+}
+
+.heroLegend {
+  padding : 0px 5px;
+  flex: 1 0 auto;
+}
+.legendTitle {
+    font-size: 1.2em;
+}
+
+
+.heroLegend:before {
+    position: relative;
+    font-family: FontAwesome;
+    top: 1px;
+    left: -2px;
+    content: "\f111";
+}
+
+
 .replayFlexBody {
   height: 31px;
   border-bottom:1px solid black;
@@ -121,6 +161,12 @@ line.barLine {
   font-size: 1.4em;
   text-align: left;
 }
+
+.graphPopup {
+  @extend .talentPopup;
+  text-align: left;
+}
+
 /*
 .replayAlly {
   border-bottom: 1px solid mix(green,$Dark);
@@ -162,6 +208,15 @@ line.barLine {
   align-content: space-around;
   background: black;
   text-align: center;
+}
+
+.replayFlex {
+  min-width: 360px;
+}
+
+.replayReport {
+  margin: 20px 0px 30px 0px;
+  padding: 1px;
 }
 
 .replayFlexHeaderHolder {

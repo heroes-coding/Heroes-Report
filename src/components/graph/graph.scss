@@ -5,9 +5,19 @@
     fill: $Color3;
 }
 
-.graphHolder {
-  padding: 10px 10px;
-  width:100%;
+.graphHolder, .legendHolder {
+    padding: 0px 10px 0px 5px;
+    width: 100%;
+}
+
+.legendLine {
+  stroke-width: 10px;
+}
+
+.legendText {
+  font-size: 1.4em;
+  fill: $Light;
+  opacity: 0.8;
 }
 
 .fa-area-chart, .fa-line-chart {
