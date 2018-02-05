@@ -33,6 +33,7 @@ class ReplayList extends Component {
       popupPic: '',
       sortBy: 'Date',
       sortDesc: true,
+      curMSL: null
     }
     this.openPopup = this.openPopup.bind(this)
     this.closePopup = this.closePopup.bind(this)
@@ -40,6 +41,13 @@ class ReplayList extends Component {
     this.changeSort = this.changeSort.bind(this)
     this.reverseSort = this.reverseSort.bind(this)
     this.changeStatBar = this.changeStatBar.bind(this)
+    this.changeOpenReplay = this.changeOpenReplay.bind(this)
+  }
+  changeOpenReplay(newMSL) {
+    this.setState({
+      ...this.state,
+      curMSL: newMSL
+    })
   }
   changeStatBar(newStat) {
     this.props.updatePreferences('sortStats',newStat)
@@ -123,7 +131,7 @@ class ReplayList extends Component {
 
     const region = 1 // NEED TO INTEGRATE THIS INTO THE SEARCH SCRIPT DOWN THE LINE
     let talPics
-    if (window.HOTS) {
+    if (window.HOTS && window.HOTS.talentPics) {
       talPics = fullTals.map(x => window.HOTS.talentPics[x])
     } else {
       talPics = Array(7).fill(null)
@@ -131,6 +139,8 @@ class ReplayList extends Component {
     return (
       <div key={index} className="replay_item_container">
         <ListItem
+          changeOpenReplay={this.changeOpenReplay}
+          curMSL={this.state.curMSL}
           handle={handle}
           bnetID={bnetID}
           ends={ends}

@@ -92,6 +92,13 @@ svg.CalcTalentHolder {
   padding: 8px 0px;
 }
 
+.talentTime {
+  font-size: 0.7em;
+  opacity: 0.8;
+  font: $Light;
+  display: inline-block;
+  margin-top: 4px;
+}
 
 .talentPopup {
   @extend .replayItem;

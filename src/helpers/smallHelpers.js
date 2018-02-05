@@ -13,6 +13,17 @@ export const DateToMSL = function(date) {
   return (date - fakeLaunchDate)/(60000)
 }
 
+export const updatedTime = function(updatedTime) {
+  let updatedMins = (new Date() - new Date(updatedTime))/60000
+  if (updatedMins < 180) {
+    return Math.round(updatedMins) + ' mins.'
+  } else if (updatedMins < 72*60) {
+    return Math.round(updatedMins/60) + ' hours'
+  } else {
+    return Math.round(updatedMins/60/24) + ' days'
+  }
+}
+
 export function LightenDarkenColor(col,amt) {
   col = parseInt(col,16)
   return (((col & 0x0000FF) + amt) | ((((col>> 8) & 0x00FF) + amt) << 8) | (((col >> 16) + amt) << 16)).toString(16)

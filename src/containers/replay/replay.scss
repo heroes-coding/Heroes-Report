@@ -87,6 +87,14 @@ img.tinyFlexHero {
   float: left;
 }
 
+.wheelHolder {
+  font-family: $NumbersFont;
+  padding-top:20px;
+}
+.wheelSVG {
+  fill: darken($Light,10%);
+}
+
 .strikethrough:before {
     position: relative;
     font-family: FontAwesome;

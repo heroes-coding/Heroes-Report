@@ -127,6 +127,7 @@ class HeroStatList extends Component {
       return <div></div>
     }
     let hero = this.props.curHero
+    console.log(this.props)
     hero = window.HOTS ? window.HOTS.nHeroes[hero] : hero
     this.hero = hero
     const buildData = this.props[0].builds
@@ -208,7 +209,6 @@ class HeroStatList extends Component {
     )
   }
 }
-
 
 class MatchupTable extends Component {
   constructor(props) {

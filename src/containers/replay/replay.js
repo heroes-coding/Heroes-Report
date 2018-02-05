@@ -8,6 +8,7 @@ import { withRouter } from 'react-router-dom'
 import { formatPercentile } from '../player_list/player_list'
 import Popup from '../../components/popup'
 import awardProcessor from '../../helpers/awardProcessor'
+import Wheel from './wheels'
 import * as d3 from 'd3'
 const modeLetters = {3: 'h', 1:'q', 4:'t', 2:'u'}
 
@@ -203,31 +204,35 @@ class Replay extends Component {
     this.closePopup = this.closePopup.bind(this)
     this.messagePopup = this.messagePopup.bind(this)
   }
-  openPopup(row,div, popupName, popupDesc, popupPic,isTalent) {
-    popupName = popupName.replace('Blue ','').replace('Red ','')
-    const rowDiv = div.getBoundingClientRect()
+  openPopup(row,div, popupName, popupDesc, popupPic,isTalent, x, y) {
     const conDiv = this.div.getBoundingClientRect()
-    const extraWide = conDiv.width > 780 || false
-    window.pDiv = div
-    window.oDiv = this.div
     if (this.popupTimeout) {
       clearTimeout(this.popupTimeout)
       this.popupTimeout = null
     }
-    let x
-    if (isTalent && extraWide) {
-      x = rowDiv.width/2
-    } else if (!extraWide) {
-      x = (rowDiv.width - 380)/2
+    if (!x) {
+      y = row*31+72
+      popupName = popupName.replace('Blue ','').replace('Red ','')
+      const rowDiv = div.getBoundingClientRect()
+      const extraWide = conDiv.width > 780 || false
+      window.pDiv = div
+      window.oDiv = this.div
+      if (isTalent && extraWide) {
+        x = rowDiv.width/2
+      } else if (!extraWide) {
+        x = (rowDiv.width - 380)/2
+      } else {
+        x = (rowDiv.width - 760)/2
+      }
     } else {
-      x = (rowDiv.width - 760)/2
+      y = y - conDiv.y
     }
     this.visualChange = true
     this.setState({
       ...this.state,
       popupOpen:true,
       popupX: x,
-      popupY:row*31+72,
+      popupY:y,
       popupName,
       popupDesc,
       popupPic,
@@ -244,83 +249,13 @@ class Replay extends Component {
     })
   }
   render() {
-    const { replay, handle, bnetID, thisDiv } = this.props
+    const { replayData, handle, bnetID, thisDiv } = this.props
     this.div = thisDiv
-    window.replay = replay
     const { mmrs } = this.state
-    let { h, e, b, bnetIDs, r } = replay
-    const [minSinceLaunch, build, region, gameLength, mapName, gameMode, firstTo10, firstTo20, firstFort,winners] = r
+    const { heroes, handles, slot, team, gameMode, allies, enemies, players, colors, heroNames, globes, maxGlobes, towns, mercs, bans, levels, levelMax, stackedXP, maxTime, bnetIDs, stats, awards, wheelData, MSL } = replayData
     if (!mmrs && !this.mmrsCalled) {
       this.populateMMRS(bnetIDs, gameMode)
       this.mmrsCalled = true
-    }
-    const heroes = [0,1,2,3,4,5,6,7,8,9].map(x => h[x])
-    const handles = heroes.map(x => `${x[3]}#${x[4]}`)
-    const slot = bnetIDs.indexOf(bnetID)
-    const team = Math.floor(slot/5)
-
-    const allies = [0,1,2,3,4].map(x => x + team*5).filter(x => x !== slot)
-    const enemies = [0,1,2,3,4].map(x => x + (1-team)*5)
-    const players = [slot, ...allies, ...enemies]
-    const colors = [0,1,2,3,4,5,6,7,8,9].map(p => window.HOTS.ColorsDic[heroes[p][0]])
-    const heroNames = [0,1,2,3,4,5,6,7,8,9].map(p => window.HOTS.nHeroes[heroes[p][0]])
-    const globes = [0,1,2,3,4,5,6,7,8,9].map(p => replay.e.g[p].map((t,i) => [t/60,i+1]))
-    let ___ = [0,1,2,3,4,5,6,7,8,9].map(p => { globes[p].unshift([0,0]) })
-    const maxGlobes = d3.max([].concat(...globes).map(g => g[1]))
-    const towns = [[],[]]
-    const mercs = [[],[]]
-    const bans = [[],[]]
-    const levels = [[],[]]
-    for (let t=0;t<2;t++) {
-      const tempTeam = t === team ? 0 : 1
-      towns[tempTeam] = replay.e.t.filter(x => (x[3] === 10+t || (t*5 <= x[3] && x[3] < t*5 + 5)) || false)
-      mercs[tempTeam] = replay.e.j[t].slice(0,)
-      bans[tempTeam] = replay.b[t].map(b => isNaN(b) ? null : b)
-      levels[tempTeam] = replay.e.l[t].map((c,i) => [c < 0 ? 0 : c/60, i+1])
-      towns[tempTeam].unshift([0,0,0,0])
-      mercs[tempTeam].unshift([0,0])
-    }
-    const levelMax = d3.max(levels.map(x => x.length))+1 // used for both levels graph and rescaling of experience numbers
-    window.towns = towns
-    const stackedXP = [ [ [],[],[],[],[] ] , [ [],[],[],[],[] ] ]
-    const XPOrder = [2,5,3,6,4]
-    const nXP = replay.e.x.length
-    const maxTime = gameLength/60
-    const maxXP = Math.max(d3.sum(replay.e.x[nXP-1].slice(2,)),d3.sum(replay.e.x[nXP-2].slice(2,)))
-    const XPMult = levelMax/maxXP*0.8
-    for (let x=2;x<replay.e.x.length;x++) {
-      const xp = replay.e.x[x]
-      const t= xp[1] === team ? 0 : 1
-      let yOff = 0
-      for (var xi=0;xi<5;xi++) {
-        const yDelta = xp[XPOrder[xi]]*XPMult
-        stackedXP[t][xi].push({'x':Math.ceil((x-1)/2)+(t === 0 ? -1 : 1)*0.125,'y0':yOff,'y1':yOff+yDelta})
-        yOff += yDelta
-      }
-    }
-    console.log(stackedXP)
-
-    const stats = players.map(p => {
-      const [ hero, slot, stat2, stat3, stat4, Award, Deaths, TownKills, Takedowns, Kills, Assists, KillStreak, Level, Experience, HeroDam, DamTaken, BuildingDam, SiegeDam, Healing, SelfHealing, DeadTime, CCTime, CreepDam, SummonDam, Mercs, WatchTowers, MinionDam, Globes, Silenced, statID1, statValue1, statID2, statValue2, statID3, statValue3, statID4, statValue4, statID5, statValue5, statID6, statValue6, statID7, statValue7, TFDamTaken, TFEscapes, SilenceTime, ClutchHeals, OutnmbdDeaths, Escapes, StunTime, Vengeances, TFHeroDam, RootTime, Protection, stat54, Pings, TypedChars, Votes, Votedfor, FireTime, mapStats ] = replay.h[p]
-      return { hero, slot, stat2, stat3, stat4, Award, Deaths, TownKills, Takedowns, Kills, Assists, KillStreak, Level, Experience, HeroDam, DamTaken, BuildingDam, SiegeDam, Healing, SelfHealing, DeadTime, CCTime, CreepDam, SummonDam, Mercs, WatchTowers, MinionDam, Globes, Silenced, statID1, statValue1, statID2, statValue2, statID3, statValue3, statID4, statValue4, statID5, statValue5, statID6, statValue6, statID7, statValue7, TFDamTaken, TFEscapes, SilenceTime, ClutchHeals, OutnmbdDeaths, Escapes, StunTime, Vengeances, TFHeroDam, RootTime, Protection, stat54, Pings, TypedChars, Votes, Votedfor, FireTime, mapStats }
-    })
-    // derived stats
-    players.map(p => {
-      const { Deaths, Kills, Assists } = stats[p]
-      stats[p].KDA = Deaths ? (Kills+Assists)/Deaths : Kills || Assists ? Infinity : 0
-    })
-    bnetIDs = players.map(p => bnetIDs[p])
-    if (!this.awards && window.HOTS.nAwards) {
-      this.awards = [0,1,2,3,4,5,6,7,8,9].map(x => {
-        let award = heroes[x][5] ? heroes[x][5] : null
-        award = award && window.HOTS.nAwards.hasOwnProperty(award) ? window.HOTS.awardDic[window.HOTS.nAwards[award]] : null
-        award = award ? [(Math.floor(x/5) === team ? 'Blue ' : 'Red ') + award[0],award[1]] : null
-        const pAwards = awardProcessor(heroes,heroes[x])
-        if (award) {
-          pAwards.unshift(award)
-        }
-        return pAwards
-      })
     }
     return (
       <div className="replayFlexHolder row">
@@ -354,7 +289,7 @@ class Replay extends Component {
                   index={i}
                   openPopup={this.openPopup}
                   messagePopup={this.messagePopup}
-                  awards={this.awards[s]}
+                  awards={awards[s]}
                 />
               })}
               {[0,1].map(team => {
@@ -371,10 +306,10 @@ class Replay extends Component {
                         return mmr ? mmr.mmr : null
                       }).filter(x => x))) : '-----'
                     }
-                    D={d3.sum(teamPlayers.map(p => replay.e.d[p].length))}
+                    D={d3.sum(teamPlayers.map(p => stats[p]))}
                     Towns={towns[team].length-1}
                     Mercs={mercs[team].length-1}
-                    Globes={d3.sum(teamPlayers.map(p => replay.e.g[p].length))}
+                    Globes={d3.sum(teamPlayers.map(p => globes[p].length))}
                   />
                 )
               })}
@@ -480,6 +415,22 @@ class Replay extends Component {
                 yFormatter={formatNumber}
               />
             </div>
+            <Wheel
+              key={MSL}
+              dataRoot={wheelData.deathRoot}
+              wheelName="Death"
+              isDeath={true}
+              openPopup={this.openPopup}
+              messagePopup={this.messagePopup}
+            />
+            <Wheel
+              key={`M${MSL}`}
+              dataRoot={wheelData.murderRoot}
+              wheelName="Murder"
+              isDeath={false}
+              openPopup={this.openPopup}
+              messagePopup={this.messagePopup}
+            />
           </div>
         </div>
         <div className={`col-12 col-md-6 col-xl-6 replayCol`} align="center">

@@ -7,6 +7,7 @@ import { hashString } from '../../helpers/hasher'
 import { formatNumber, formatDate, formatTime, formatLength } from '../../helpers/smallHelpers'
 import PercentBar from '../../components/percent_bar'
 import Replay from '../replay/replay'
+import ProcessReplay from '../replay/process_replay'
 import asleep from '../../helpers/asleep'
 const barColors = ['#8C5F8C','#51A1A7','#6383C4']
 
@@ -173,7 +174,7 @@ let left = (props,div, getReplay) => {
 
 class replay extends Component {
   shouldComponentUpdate(nextProps) {
-    if (this.props.handle !== nextProps.handle || this.props.MSL !== nextProps.MSL) {
+    if (this.props.handle !== nextProps.handle || this.props.MSL !== nextProps.MSL || (this.props.curMSL !== nextProps.curMSL && nextProps.MSL !== nextProps.curMSL)) {
       this.reloaded = true
       this.setState({
         ...this.state,
@@ -209,8 +210,10 @@ class replay extends Component {
       if (replay.hasOwnProperty('replay')) {
         replay = replay.replay
       }
-      this.setState({...this.state, replay})
+      const replayData = ProcessReplay(replay,props.bnetID)
+      this.setState({...this.state, replay, replayData})
     }
+    this.props.changeOpenReplay(this.props.MSL)
     this.setState({...this.state, open: !this.state.open})
   }
   render() {
@@ -242,7 +245,7 @@ class replay extends Component {
             <i className="fa fa-lg fa-chevron-circle-down downloadReplay" aria-hidden="true"></i>
           </div>
         </div>
-        {this.state.open&&<Replay thisDiv={this.talentsDiv} replay={replay} handle={this.props.handle} bnetID={this.props.bnetID} MSL={props.MSL} />}
+        {this.state.open&&<Replay thisDiv={this.talentsDiv} replay={replay} handle={this.props.handle} bnetID={this.props.bnetID} MSL={props.MSL} replayData={this.state.replayData}/>}
       </div>
     )
   }

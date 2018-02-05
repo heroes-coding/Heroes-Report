@@ -26,7 +26,7 @@ class Graph extends React.Component {
     const { xRatio, yRatio } = this.props
     const bRect = this.div.getBoundingClientRect()
     const { width, height } = bRect
-    x = x*width/xRatio-width/2
+    x = x*width/xRatio
     y = y*height/yRatio+85
     /*
     x = x*width/xRatio-width/2
@@ -80,8 +80,8 @@ class Graph extends React.Component {
       yMax = d3.max(ys.filter(y => y < Infinity))
     }
     const yRange = yMax-yMin
-    const xPad = xRange*0.0025
-    const yPad = yRange*0.0025
+    const xPad = xRange*0.025
+    const yPad = yRange*0.025
     const xScale = d3.scaleLinear().range([xOff+1, xRatio]).domain([xMin-xPad,xMax+xPad])
     const xTicks = xScale.ticks(8)
     const xTickOffset = xTicks[xTicks.length-1].toString().length > 2 ? 5 : 0
@@ -89,7 +89,8 @@ class Graph extends React.Component {
     const yScale =
     d3.scaleLinear().range([yRatio-yOff-1, 0]).domain([yMin-yPad,yMax+yPad])
     const yMaxCoord = yScale(yMin)
-    const yTicks = yScale.ticks(5)
+    let yTicks = yScale.ticks(5)
+    let usedTicks = []
     window.myYS = yScale
     let lines, line
     if (linePoints) {
@@ -147,8 +148,12 @@ class Graph extends React.Component {
               )
             })}
           </g>}
-          {!simple&&yTicks.map((y,i) => {
+          {!simple&&yTicks.reverse().map((y,i) => {
             const tick = yFormatter ? yFormatter(y) : y
+            if (usedTicks.includes(tick)) {
+              return <g></g>
+            }
+            usedTicks.push(tick)
             y = yScale(y)
             return (
               <g key={y}>
