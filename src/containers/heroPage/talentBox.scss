@@ -101,7 +101,7 @@ svg.CalcTalentHolder {
   background-color: black;
   padding: 10px;
   @include unselectable;
-  z-index: 5;
+  z-index: 10;
   border: 1px solid $Dark;
   min-width: 300px;
 }

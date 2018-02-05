@@ -28,9 +28,22 @@ const header = () => {
 }
 
 const Team = (props) => {
-  const { Allies, MMR, D, Towns, Mercs, Globes } = props
+  const { Allies, MMR, D, Towns, Mercs, Globes, gameMode, bans } = props
   return (
     <div className={`replayFlexBody ${Allies ? 'ally' : 'enemy'}Box`}>
+      {gameMode < 5 && gameMode > 1 && <div className="banHolder">
+        {[0,1].map(b => {
+          return (
+            <div key={b} className="strikethrough">
+              <img
+                className="tinyBanHero"
+                src={`https://heroes.report/squareHeroes/${bans[b] ? bans[b] : "black"}.jpg`}
+                alt={bans[b] || b}
+              ></img>
+            </div>
+          )
+        })}
+      </div>}
       <div className='teamHeader'>MMR: {MMR}</div>
       <div className='teamHeader'>Deaths: {D}</div>
       <div className='teamHeader'>Towns: {Towns}</div>
@@ -154,7 +167,7 @@ class Replay extends Component {
     }
     return this.state.unloaded
   }
-  async populateMMRS(bnetIDs) {
+  async populateMMRS(bnetIDs, gameMode) {
     let res = await axios.get(`https://heroes.report/search/mmrs/${bnetIDs.join(",")}`)
     res = res.data
     const resKeys = Object.keys(res)
@@ -162,8 +175,8 @@ class Replay extends Component {
     for (let m=0;m<resKeys.length;m++) {
       const id =resKeys[m]
       const mmr = res[id]
-      const l = modeLetters[this.mode]
-      if (this.mode === 5 || !mmr.hasOwnProperty(l)) {
+      const l = modeLetters[gameMode]
+      if (gameMode === 5 || !mmr.hasOwnProperty(l)) {
         mmrs[id] = mmr['q'] ? mmr['q'] : null
       } else {
         mmrs[id] = mmr[l]
@@ -236,16 +249,16 @@ class Replay extends Component {
     window.replay = replay
     const { mmrs } = this.state
     let { h, e, b, bnetIDs, r } = replay
+    const [minSinceLaunch, build, region, gameLength, mapName, gameMode, firstTo10, firstTo20, firstFort,winners] = r
     if (!mmrs && !this.mmrsCalled) {
-      this.populateMMRS(bnetIDs)
+      this.populateMMRS(bnetIDs, gameMode)
       this.mmrsCalled = true
     }
     const heroes = [0,1,2,3,4,5,6,7,8,9].map(x => h[x])
     const handles = heroes.map(x => `${x[3]}#${x[4]}`)
     const slot = bnetIDs.indexOf(bnetID)
     const team = Math.floor(slot/5)
-    const [minSinceLaunch, build, region, gameLength, mapName, gameMode, firstTo10, firstTo20, firstFort,winners] = r
-    this.mode = gameMode
+
     const allies = [0,1,2,3,4].map(x => x + team*5).filter(x => x !== slot)
     const enemies = [0,1,2,3,4].map(x => x + (1-team)*5)
     const players = [slot, ...allies, ...enemies]
@@ -256,14 +269,37 @@ class Replay extends Component {
     const maxGlobes = d3.max([].concat(...globes).map(g => g[1]))
     const towns = [[],[]]
     const mercs = [[],[]]
+    const bans = [[],[]]
+    const levels = [[],[]]
     for (let t=0;t<2;t++) {
-      const tempTeam = t === team ? team : 1-team
+      const tempTeam = t === team ? 0 : 1
       towns[tempTeam] = replay.e.t.filter(x => (x[3] === 10+t || (t*5 <= x[3] && x[3] < t*5 + 5)) || false)
       mercs[tempTeam] = replay.e.j[t].slice(0,)
+      bans[tempTeam] = replay.b[t].map(b => isNaN(b) ? null : b)
+      levels[tempTeam] = replay.e.l[t].map((c,i) => [c < 0 ? 0 : c/60, i+1])
       towns[tempTeam].unshift([0,0,0,0])
       mercs[tempTeam].unshift([0,0])
     }
+    const levelMax = d3.max(levels.map(x => x.length))+1 // used for both levels graph and rescaling of experience numbers
     window.towns = towns
+    const stackedXP = [ [ [],[],[],[],[] ] , [ [],[],[],[],[] ] ]
+    const XPOrder = [2,5,3,6,4]
+    const nXP = replay.e.x.length
+    const maxTime = gameLength/60
+    const maxXP = Math.max(d3.sum(replay.e.x[nXP-1].slice(2,)),d3.sum(replay.e.x[nXP-2].slice(2,)))
+    const XPMult = levelMax/maxXP*0.8
+    for (let x=2;x<replay.e.x.length;x++) {
+      const xp = replay.e.x[x]
+      const t= xp[1] === team ? 0 : 1
+      let yOff = 0
+      for (var xi=0;xi<5;xi++) {
+        const yDelta = xp[XPOrder[xi]]*XPMult
+        stackedXP[t][xi].push({'x':Math.ceil((x-1)/2)+(t === 0 ? -1 : 1)*0.125,'y0':yOff,'y1':yOff+yDelta})
+        yOff += yDelta
+      }
+    }
+    console.log(stackedXP)
+
     const stats = players.map(p => {
       const [ hero, slot, stat2, stat3, stat4, Award, Deaths, TownKills, Takedowns, Kills, Assists, KillStreak, Level, Experience, HeroDam, DamTaken, BuildingDam, SiegeDam, Healing, SelfHealing, DeadTime, CCTime, CreepDam, SummonDam, Mercs, WatchTowers, MinionDam, Globes, Silenced, statID1, statValue1, statID2, statValue2, statID3, statValue3, statID4, statValue4, statID5, statValue5, statID6, statValue6, statID7, statValue7, TFDamTaken, TFEscapes, SilenceTime, ClutchHeals, OutnmbdDeaths, Escapes, StunTime, Vengeances, TFHeroDam, RootTime, Protection, stat54, Pings, TypedChars, Votes, Votedfor, FireTime, mapStats ] = replay.h[p]
       return { hero, slot, stat2, stat3, stat4, Award, Deaths, TownKills, Takedowns, Kills, Assists, KillStreak, Level, Experience, HeroDam, DamTaken, BuildingDam, SiegeDam, Healing, SelfHealing, DeadTime, CCTime, CreepDam, SummonDam, Mercs, WatchTowers, MinionDam, Globes, Silenced, statID1, statValue1, statID2, statValue2, statID3, statValue3, statID4, statValue4, statID5, statValue5, statID6, statValue6, statID7, statValue7, TFDamTaken, TFEscapes, SilenceTime, ClutchHeals, OutnmbdDeaths, Escapes, StunTime, Vengeances, TFHeroDam, RootTime, Protection, stat54, Pings, TypedChars, Votes, Votedfor, FireTime, mapStats }
@@ -271,7 +307,7 @@ class Replay extends Component {
     // derived stats
     players.map(p => {
       const { Deaths, Kills, Assists } = stats[p]
-      stats[p].KDA = Deaths ? (Kills+Assists)/Deaths : Kills ? Infinity : 0
+      stats[p].KDA = Deaths ? (Kills+Assists)/Deaths : Kills || Assists ? Infinity : 0
     })
     bnetIDs = players.map(p => bnetIDs[p])
     if (!this.awards && window.HOTS.nAwards) {
@@ -327,6 +363,8 @@ class Replay extends Component {
                   <Team
                     key={team}
                     Allies={!team}
+                    bans={bans[team]}
+                    gameMode={gameMode}
                     MMR={
                       mmrs ? Math.round(d3.mean(teamPlayers.map(p => {
                         const mmr = mmrs[bnetIDs[p]]
@@ -341,6 +379,27 @@ class Replay extends Component {
                 )
               })}
             </div>
+            <Graph
+              graphClass="globesGraph"
+              multiLines={levels}
+              stackedBars={stackedXP}
+              colors={["#00ff00","#ff0000","#fff000","#ff0000","#4800ff","#009cff","#a8ff00"]}
+              lineLabels={["Ally Level","Enemy Level","Minion XP", "Hero XP", "Creep XP", "Trickle XP", "Structure XP"]}
+              xLabel="Minutes"
+              yLabel="Level"
+              title='Team Experience and Levels'
+              xRatio={500}
+              yRatio={450}
+              xOff={20}
+              xMin={0}
+              yMin={0}
+              xMax={maxTime}
+              yMax={levelMax}
+              yOff={50}
+              noArea={true}
+              formatter={formatNumber}
+              yFormatter={formatNumber}
+            />
             <div className="matchupGraphs">
               {[0,1].map(team => {
                 const teamPlayers = players.slice(team*5,team*5+5).filter(p => globes[p].length)
@@ -358,6 +417,7 @@ class Replay extends Component {
                     xRatio={250}
                     yRatio={400}
                     xOff={20}
+                    xMax={maxTime}
                     yOff={50}
                     noArea={true}
                     formatter={formatNumber}
@@ -387,7 +447,7 @@ class Replay extends Component {
                 xOff={20}
                 xMin={0}
                 yMin={0}
-                xMax={Math.ceil(gameLength/60)}
+                xMax={maxTime}
                 yOff={50}
                 noArea={true}
                 formatter={formatNumber}
@@ -413,7 +473,7 @@ class Replay extends Component {
                 xOff={20}
                 xMin={0}
                 yMin={0}
-                xMax={Math.ceil(gameLength/60)}
+                xMax={maxTime}
                 yOff={50}
                 noArea={true}
                 formatter={formatNumber}
@@ -453,9 +513,6 @@ class Replay extends Component {
                   {c.stats.map(stat => {
                     let [ s, name ] = stat
                     name = name || s
-                    /*
-                    [ hero, slot, stat2, stat3, stat4, Award, TownKills,  SiegeDam, CreepDam, SummonDam, WatchTowers, Silenced, statID1, statValue1, statID2, statValue2, statID3, statValue3, statID4, statValue4, statID5, statValue5, statID6, statValue6, statID7, statValue7, TFDamTaken, TFEscapes, ClutchHeals, OutnmbdDeaths, Escapes, StunTime, Vengeances, TFHeroDam, RootTime, Protection, stat54, Pings, TypedChars, Votes, Votedfor, FireTime, mapStats ]
-                    */
                     const bars = players.map((p,i) => [i,stats[i][s],colors[p]])
                     if (!bars.filter(x => x[1]).length) {
                       return <div key={s}></div>

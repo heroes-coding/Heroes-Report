@@ -56,7 +56,7 @@ class Graph extends React.Component {
   }
   render() {
     const props = this.props
-    let { points, linePoints, graphClass, yLabel, xLabel, xRatio, yRatio, xOff, yOff, title, formatter, noArea, yFormatter, multiLines, colors, lineLabels, bars, yMax, step, xMin, xMax, yMin, containerClass, labelPoints } = props
+    let { points, linePoints, graphClass, yLabel, xLabel, xRatio, yRatio, xOff, yOff, title, formatter, noArea, yFormatter, multiLines, colors, lineLabels, bars, yMax, step, xMin, xMax, yMin, containerClass, labelPoints, stackedBars } = props
     const toMap = points || bars || linePoints || [].concat(...multiLines)
     if (!toMap.length) {
       return <div></div>
@@ -142,7 +142,7 @@ class Graph extends React.Component {
                   >
                     {tick}
                   </text>
-                  <line x1={x} y1={0} x2={x} y2={-(yRatio-yOff)} className="tickLine" />
+                  <line x1={0} y1={0} x2={0} y2={-(yRatio-yOff)} className="tickLine" />
                 </g>
               )
             })}
@@ -210,16 +210,40 @@ class Graph extends React.Component {
               </g>
             )
           })}
+          {stackedBars && stackedBars.map(t => {
+            return t.map((bars,c) => {
+              return bars.map((b,i) => {
+                let { x, y0, y1 } = b
+                x = xScale(x)
+                y0 = yScale(y0)
+                y1 = yScale(y1)
+                const style ={stroke: colors[c+2]}
+                return (
+                  <line
+                    key={i}
+                    x1={x}
+                    y1={y0}
+                    x2={x}
+                    y2={y1}
+                    style={style}
+                    className="XPBarLine"
+                  />
+                )
+              })
+            })
+          })}
           <line x1={xOff} y1={yRatio-yOff} x2={xRatio} y2={yRatio-yOff} className="axisLine" />
           {!simple&&<line x1={xOff} y1={yRatio-yOff} x2={xOff} y2="0" className="axisLine" />}
           {line&&<path d={line} className={noArea ? 'line' : 'areaLine'} />}
-          {lines&&lines.map((line,i) => {
+          {lines&&lines.map((line,i) => <path key={i}d={line} className='line multiline' style={{stroke:colors[i]}} />)}
+          {lineLabels&&lineLabels.map((lineLabel,i) => {
             const fill = {fill:colors[i]}
             const xO = 15
             const yO = 45
             return (
               <g key={i}>
                 <circle
+                  className="legendPoint"
                   cx={xOff+xO}
                   cy={yO+25*i}
                   r={8}
@@ -229,8 +253,7 @@ class Graph extends React.Component {
                   x={xOff+xO+18}
                   y={yO+5+25*i}
                   className="legendText"
-                >{lineLabels[i]}</text>
-                <path d={line} className='line' style={{stroke:colors[i]}} />
+                >{lineLabel}</text>
               </g>
             )
           })}

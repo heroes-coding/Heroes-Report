@@ -60,6 +60,7 @@ function heapFromBytes(buffer) {
       rep.talents = heap.slice(off+33,off+40)
       rep.MSL = rep.stats[decoderNumbers.MSL]
       rep.KDA = (rep.stats[decoderNumbers.Kills] + rep.stats[decoderNumbers.Assists])/rep.stats[decoderNumbers.Deaths]
+      rep.ends = [rep.stats[decoderNumbers.Team0End],rep.stats[decoderNumbers.Team1End]]
       rep.buildIndex = rep.stats[decoderNumbers.buildIndex]
       replays.push(rep)
     }

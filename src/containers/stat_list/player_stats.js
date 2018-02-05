@@ -176,7 +176,7 @@ class PlayerStatList extends Component {
                 left:'Ally',
                 right: 'Enemy',
                 hasGraphs: true,
-                stats:['FirstTo10','FirstTo20'].map(s => { return percent(s,playerData) })
+                stats:['FirstTo10','FirstTo20','FirstFort'].map(s => { return percent(s,playerData) })
               },
               {category: 'Overall Stats',
                 left:'Mean',

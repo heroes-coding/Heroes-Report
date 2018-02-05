@@ -178,14 +178,15 @@ class replay extends Component {
       this.setState({
         ...this.state,
         open:false,
-        replay: ''
+        replay: null,
+        replayData: null
       })
     }
     return true
   }
   constructor(props) {
     super(props)
-    this.state = { open: false, replay: '', div:null }
+    this.state = { open: false, replay: null, replayData: null, div:null }
     this.openReplay = this.openReplay.bind(this)
     this.getReplay = this.getReplay.bind(this)
   }
@@ -199,6 +200,7 @@ class replay extends Component {
   async getReplay(props) {
     if (!this.state.replay) {
       const { MSL, heroes, winners, Length, mode, build, map } = props
+      window.rep = props
       const hashInput = `${mode}${Math.round(Length/60)}${heroes.join("")}${winners}${MSL}${map}${build}`
       const hashPath = `https://heroes.report/stats/replays/${hashString(hashInput)}.json`
       console.log(hashInput,hashPath)

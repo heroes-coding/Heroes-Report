@@ -20,6 +20,20 @@
   opacity: 0.8;
 }
 
+line.XPBarLine {
+    stroke-width: 4px;
+    stroke-opacity: 0.8;
+
+}
+
+circle.legendPoint {
+    opacity: 0.8;
+}
+
+.multiline {
+  opacity: 0.8;
+}
+
 .fa-area-chart, .fa-line-chart {
     cursor: pointer;
     color: darken($Highlight,10%);

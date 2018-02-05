@@ -211,8 +211,8 @@ extern "C" {
 
       //
       replays[r*nItemsToDecode+oFirstTo10] = first10 == 2 ? 2 : first10 == team ? 1 : 0;
-      replays[r*nItemsToDecode+oFirstTo20] = first20 == 2 ? 2 : first10 == team ? 1 : 0;
-      replays[r*nItemsToDecode+oFirstFort] = firstFORT == 2 ? 2 : first10 == team ? 1 : 0;
+      replays[r*nItemsToDecode+oFirstTo20] = first20 == 2 ? 2 : first20 == team ? 1 : 0;
+      replays[r*nItemsToDecode+oFirstFort] = firstFORT == 2 ? 2 : firstFORT == team ? 1 : 0;
       for (int p=0;p<5;p++) {
         replays[r*nItemsToDecode+oAllies[p]] = allies[p];
         replays[r*nItemsToDecode+oEnemies[p]] = enemies[p];
