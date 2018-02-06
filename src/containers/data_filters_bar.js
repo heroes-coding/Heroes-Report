@@ -178,7 +178,7 @@ class DataFilters extends Component {
           containerClass='halfy input-group filterGroup'
           hideArrow={true}
         />}
-        {updatedTime&&<ButtonLabeledSpacer filterName={`Updated ${updatedTime} ago`} faIcon='fa-bolt' overclass='blackButton' />}
+        {updatedTime&&<ButtonLabeledSpacer filterName={`Stats updated ${updatedTime} ago`} faIcon='fa-bolt' overclass='blackButton' />}
       </div>
     )
   }

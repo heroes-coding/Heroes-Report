@@ -9,6 +9,9 @@ import { connect } from 'react-redux'
 
 const display = function(value,s) {
   let display
+  if (value===0) {
+    return "-"
+  }
   if (s === 5) {
     // ban rec rankings
     display = value

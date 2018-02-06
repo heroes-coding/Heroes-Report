@@ -124,8 +124,7 @@ class HeroStatList extends Component {
     )
   }
   render() {
-    window.pops = this.props
-    if (!this.props[0] || !this.props.HOTS || !this.props.builds) {
+    if (!this.props[0] || !this.props.HOTS) {
       return <div></div>
     }
     let hero = this.props.curHero
@@ -133,6 +132,9 @@ class HeroStatList extends Component {
     this.hero = hero
     const buildData = this.props[0].builds
     const buildTimeFrame = this.props.prefs.time
+    if (!this.props[0].dict.hasOwnProperty(buildTimeFrame)) {
+      return <div></div>
+    }
     const [ buildType, buildIndex ] = this.props[0].dict[buildTimeFrame]
     const lastBuild = this.props[0][buildType][buildIndex]
     const [ Kills, Assists, Deaths ] = lastBuild.slice(14,17)
@@ -228,7 +230,7 @@ class MatchupTable extends Component {
     }
   }
   getGraphs() {
-    if (!window.HOTS || !this.state.graphHero) {
+    if (!window.HOTS) {
       return <div />
     }
     const {id,name,color} = this.state.graphHero

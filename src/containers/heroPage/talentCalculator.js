@@ -66,7 +66,7 @@ class TalentCalculator extends Component {
         />
         {window.HOTS && <div className="talentCalcHeader row" >
           Talent Calculator for &nbsp;<span style={{color:window.HOTS.ColorsDic[curHero]}}>{window.HOTS.nHeroes[curHero]}</span>&nbsp;&nbsp;<i className="fa fa-undo iconOnButton resetButton" onClick={() => this.props.selectTalent('reset')} aria-hidden="true"></i>
-          <span className="talentTime">&nbsp;&nbsp;(Last updated {updatedTime(dataTime)} ago)</span>
+          <span className="talentTime">&nbsp;&nbsp;(This talent data last updated {updatedTime(dataTime)} ago)</span>
         </div>
         }
         {filteredTalents && window.HOTS && filteredTalents.map((tals,l) => {
