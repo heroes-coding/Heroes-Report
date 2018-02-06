@@ -10,11 +10,8 @@ import PlayerPage from './containers/player_page'
 import PlayerList from './containers/player_list/player_list'
 import YourPage from './containers/your_page'
 import getReplayBinary from './helpers/binary_replay_unpacker'
-import Remarkable from 'remarkable'
-import Readme from '../README.md'
-console.log(Readme)
-const renderer = new Remarkable()
-
+import Markdown from './containers/markdown_display'
+import mPath from './features.md'
 
 class App extends Component {
   componentDidMount() {
@@ -31,7 +28,7 @@ class App extends Component {
             <div className="row">
               <div className="col-xl-1"></div>
               <div className="col-sm-12 col-lg-12 col-xl-10" id="contentHolder">
-                {renderer.render('# Remarkable rulezz!')}
+                <Markdown path={mPath} />
                 <Switch>
                   <Route path="/playerlist/:id" component={PlayerList} />
                   <Route path="/players/:id" component={PlayerPage} />

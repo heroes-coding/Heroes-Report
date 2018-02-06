@@ -9,8 +9,8 @@
 
 The hero page currently pulls the following data about a hero:
 
-* `Stats and matchup data by build across all builds`
-* `All talent builds from a given time frame`
+* **Stats and matchup data** by build across all builds
+* **All talent builds** from a given time frame
 
 ## `The Talent Calculator`
 
@@ -20,6 +20,6 @@ Incomplete builds are factored into talent win rates by the proportion of observ
 
 So the displayed win rates effectively factor in the information from incomplete builds.  The displayed pick rates of talents are not adjusted according to incomplete builds - they reflect actual picks only.
 
-## More to Come
+<a name="more-to-come">More to Come</a>
 
 This will be expanded upon later.
