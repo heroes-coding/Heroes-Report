@@ -9,3 +9,17 @@
 @import "../containers/player_page.scss";
 @import "../containers/heroPage/talentBox.scss";
 @import "../components/graph/graph.scss";
+@import "./utilities/variables.scss";
+
+:export {
+  Highlight: $Highlight;
+  Color1: $Color1;
+  Color2: $Color2;
+  Color3: $Color3;
+  Light: $Light;
+  Dark: $Dark;
+  BackgroundColor: $BackgroundColor;
+  Foreground: darken($Dark,10%);
+  Container: $Container;
+  DimText: $DimText;
+}

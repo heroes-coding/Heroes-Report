@@ -37,6 +37,7 @@
     "reactstrap": "^4.8.0",
     "redux": "^3.7.2",
     "redux-promise": "^0.5.3",
+    "remarkable": "^1.7.1",
     "reselect": "^3.0.1",
     "wasm-arrays": "^1.0.2",
     "web-assembly": "^0.0.1"

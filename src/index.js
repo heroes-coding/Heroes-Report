@@ -8,34 +8,32 @@ import ReduxPromise from 'redux-promise'
 import reducers from './reducers'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import '../node_modules/font-awesome/css/font-awesome.min.css'
-import './style/style.css'
+import * as styles from './style/style.css'
 
-(function(console){
+window.styles = styles
 
-console.save = function(data, filename){
+window.save = function(data, filename) {
+  if(!data) {
+      console.error('Console.save: No data')
+      return;
+  }
 
-    if(!data) {
-        console.error('Console.save: No data')
-        return;
-    }
+  if(!filename) filename = 'console.json'
 
-    if(!filename) filename = 'console.json'
+  if(typeof data === "object"){
+      data = JSON.stringify(data, undefined, 4)
+  }
 
-    if(typeof data === "object"){
-        data = JSON.stringify(data, undefined, 4)
-    }
+  var blob = new Blob([data], {type: 'text/json'}),
+      e    = document.createEvent('MouseEvents'),
+      a    = document.createElement('a')
 
-    var blob = new Blob([data], {type: 'text/json'}),
-        e    = document.createEvent('MouseEvents'),
-        a    = document.createElement('a')
-
-    a.download = filename
-    a.href = window.URL.createObjectURL(blob)
-    a.dataset.downloadurl =  ['text/json', a.download, a.href].join(':')
-    e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
-    a.dispatchEvent(e)
- }
-})(console)
+  a.download = filename
+  a.href = window.URL.createObjectURL(blob)
+  a.dataset.downloadurl =  ['text/json', a.download, a.href].join(':')
+  e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+  a.dispatchEvent(e)
+}
 
 window.d3 = d3
 window.debug = function(msg) {
