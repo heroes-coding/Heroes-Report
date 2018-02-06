@@ -1,4 +1,24 @@
 import _ from 'lodash'
+
+const statMults = {0: 1,
+  1: 1,
+  2: 1,
+  3: 470,
+  4: 1,
+  5: 379,
+  6: 1,
+  7: 438,
+  8: 1,
+  9: 772,
+  10: 1,
+  11: 1,
+  12: 1,
+  13: 1,
+  14: 1,
+  15: 1,
+  16: 391
+}
+
 const replayVals = [
   [['buildIndex',321,1], ['map',35,1], ['Length', 2520, 1], ['hero0',147,1]],
   [['MSL',4860000,1], ['mode',6,1], ['hero1',147,1]],
@@ -118,5 +138,4 @@ Object.keys(decoderDictionary).filter(x => x >= nPredefined).map(x => { decoderN
 
 // This has to match the order of unpacking in the binary unpacker (emscriptten decodeReplays)
 const specialLocations = [].concat(replayDecoderLengths,replayDecoder,[slotIndex, winners],firsts,heroIndexes,talentIndexes)
-
-export { replayVals, replayDecoder, indexes, replayDecoderLengths, slotIndex, heroIndexes, decoderDictionary, talentIndexes, firsts, decoderIndex, nPredefined, winners, specialLocations, decoderNumbers, talentSlots, menuStats }
+export { replayVals, replayDecoder, indexes, replayDecoderLengths, slotIndex, heroIndexes, decoderDictionary, talentIndexes, firsts, decoderIndex, nPredefined, winners, specialLocations, decoderNumbers, talentSlots, menuStats, statMults }

@@ -26,7 +26,7 @@ export default (props) => {
       {data.map((c,ci) => {
         const { category, left, right, hasGraphs, stats } = c
         if (!stats.length) {
-          return <div></div>
+          return <div key={ci}></div>
         }
         return (
           <div key={ci} >

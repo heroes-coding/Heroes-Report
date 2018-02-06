@@ -17,6 +17,10 @@
     font-size: 12px;
 }
 
+form.input-group.filterGroup.blackButton {
+  background: darken($Dark,10%) !important;
+
+}
 
 .halfy {
   max-width: 49.5% !important;

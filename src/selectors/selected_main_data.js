@@ -81,7 +81,7 @@ const getMainData = (main, statCat, selectedHeroes, order) => {
     }
     heroes.push(mrBig)
   }
-  const selectedStuff = {rows: heroes, headers: statCat.headers, cat:statCat.cat, order}
+  const selectedStuff = {rows: heroes, headers: statCat.headers, cat:statCat.cat, order, updatedMins: main.updatedMins}
   window.debug(`Reslecting of main data took ${Math.round(window.performance.now()*100 - startTime*100)/100} ms`)
   return selectedStuff
 }

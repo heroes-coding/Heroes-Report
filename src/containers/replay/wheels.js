@@ -1,6 +1,7 @@
 import React from 'react'
 import * as d3 from 'd3'
 
+const isChrome = (!!window.chrome && !!window.chrome.webstore) || (!!window.opr && !!window.opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0
 const wheelDefs = {'width':600,'height':600}
 wheelDefs.radius = (Math.min(wheelDefs.width, wheelDefs.height) / 2) - 50
 
@@ -50,6 +51,9 @@ class Wheel extends React.Component {
     return "M " + start[0] + "," + start[1] + " A " + radius + ", " + radius + curveType + finish[0] + "," + finish[1]
   }
   clickWheel(d,SVG,wheelGroups, isDeath) {
+    if (!isChrome || this.isAnimating) {
+      return
+    }
     this.isAnimating = true
     const that = this
     const newDepth = d.depth
@@ -139,7 +143,7 @@ class Wheel extends React.Component {
         y = (yCoord + 250)*box.height/500 + box.top
         if (d.depth===0) {
           popupName = 'Wheel of ' + wheelName
-          popupDesc = 'Click on or hover over the arcs for more detail'
+          popupDesc = isChrome ? 'Click on or hover over the arcs for more detail' : 'Hover over the arcs for more detail (animations disabled for non-Chrome engine browsers because of buggy text and animations)'
         } else if (d.depth===1) {
           const val = Math.round(d.value)
           if (isDeath) {
@@ -168,7 +172,7 @@ class Wheel extends React.Component {
             popupDesc = `${d.parent.data.name} (${d.parent.data.pname}) had ${val} takedowns against ${d.data.name}`
           }
         }
-        openPopup(null,null, popupName, popupDesc, popupPic,false, x, y)
+        openPopup(null,null, popupName, popupDesc, popupPic,false, 50, y)
       })
       .on('mouseout', function(d,i) {
         messagePopup()

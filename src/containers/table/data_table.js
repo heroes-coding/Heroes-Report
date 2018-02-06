@@ -5,6 +5,7 @@ import TableBody from './table_body'
 import SelectedMainData from '../../selectors/selected_main_data'
 import DataFiltersBar from '../data_filters_bar'
 import { updateMainSorting, updatePreferences, getMainData } from '../../actions'
+import { updatedTimeMins } from '../../helpers/smallHelpers'
 
 class DataTable extends Component {
   componentDidMount() {
@@ -23,10 +24,11 @@ class DataTable extends Component {
     this.props.updateMainSorting(id)
   }
   render() {
+    const updatedTime =  updatedTimeMins(this.props.data.updatedMins)
     return (
       <div className="overall">
         <div className="filtersHolder">
-          <DataFiltersBar menu={0} />
+          <DataFiltersBar menu={0} updatedTime={updatedTime} />
         </div>
         <div className="ReactTable -striped -highlight">
           <div className="rt-table" >

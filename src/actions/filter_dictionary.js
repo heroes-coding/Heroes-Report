@@ -26,14 +26,16 @@ async function getHOTSDictionary() {
     HOTS.version = version
     window.saveLocal(HOTS,'HOTS')
   }
-  window.HOTS = HOTS
-  window.HOTS.nAwards = _.invert(HOTS.awardN)
+
+  HOTS.nAwards = _.invert(HOTS.awardN)
   window.buildsData = await buildsPromise
   window.buildsData = window.buildsData.data
   const uniqueKeys = Object.keys(HOTS.unique).map(x => parseInt(x))
   const nUnique = uniqueKeys.length
   HOTS.talentPics = {}
   uniqueKeys.map(x => HOTS.unique[x].map(i => { HOTS.talentPics[i] = x }))
+  HOTS.nMapStat = _.invert(HOTS.mapStatN)
+  window.HOTS = HOTS
   await asleep(1) // give other processes a chance to move forward
   const heroes = {}
   const hKeys = Object.keys(HOTS.nHeroes).map(x => parseInt(x,10))

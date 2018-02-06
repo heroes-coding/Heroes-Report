@@ -250,9 +250,21 @@ class Replay extends Component {
   }
   render() {
     const { replayData, handle, bnetID, thisDiv } = this.props
+    if (!replayData) {
+      console.log(replayData)
+      return (
+        <div className="replayFlexHolder row">
+          <div className={`col-12 col-md-6 col-xl-6 replayCol`} align="center">
+            <div className="inner_list_item_right replayFlex">
+              Replay not found.
+            </div>
+          </div>
+        </div>
+      )
+    }
     this.div = thisDiv
     const { mmrs } = this.state
-    const { heroes, handles, slot, team, gameMode, allies, enemies, players, colors, heroNames, globes, maxGlobes, towns, mercs, bans, levels, levelMax, stackedXP, maxTime, bnetIDs, stats, awards, wheelData, MSL } = replayData
+    const { heroes, handles, slot, team, gameMode, allies, enemies, players, colors, heroNames, globes, maxGlobes, towns, mercs, bans, levels, levelMax, stackedXP, maxTime, bnetIDs, stats, awards, wheelData, MSL, mapStats } = replayData
     if (!mmrs && !this.mmrsCalled) {
       this.populateMMRS(bnetIDs, gameMode)
       this.mmrsCalled = true
@@ -451,12 +463,12 @@ class Replay extends Component {
               </div>
             </div>
             {[
+              {category: "Map Specific Stats", stats:mapStats.map(k => [k,window.HOTS.nMapStat[k]])},
               {category: "Overall Stats", stats:[["Experience",null],["Mercs",null],["Globes","Regeneration Globes"],["Level",null],["FireTime","Time on Fire"]]},
               {category: "Death Stats", stats:[["KDA",null],["Deaths",null],["OutnmbdDeaths","Outnumbered Deaths"],["DeadTime","Time Spent Dead"],["Kills",null],["Vengeances",null],["Assists",null],["KillStreak","Kill Streak"]]},
               {category: "Damage Stats", stats:[["HeroDam","Hero Damage"],["TFHeroDam","Teamfight Hero Damage"],["BuildingDam","Building Damage"],["MinionDam","Minion Damage"],["SummonDam"],["Summon Damage"],["CreepDam","Creep Damage"]]},
               {category: "Sustain Stats", stats:[["Healing",null],["SelfHealing","Self Healing"],["ClutchHeals","Clutch Heals"],["Protection",null],["TFDamTaken","Teamfight Damage Taken"],["Escapes",null],["TFEscapes","Teamfight Escapes"]]},
               {category: "Crowd Control", stats:[["CCTime","C.C. Seconds"],["StunTime","Stunning Seconds"],["SilenceTime","Silencing Seconds"],["RootTime","Rooting Seconds"]]},
-
             ].map(c => {
               return (
                 <div key={c.category} className="statCat">

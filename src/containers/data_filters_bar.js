@@ -56,6 +56,7 @@ class DataFilters extends Component {
   }
   render() {
     const [allies, enemies, self] = this.props.filterHeroes
+    const { updatedTime } = this.props
     return (
       <div className="row dataFilters">
         {this.isMenu(0b0101) && <FilterDropDown
@@ -104,7 +105,7 @@ class DataFilters extends Component {
           currentID={modeDic[this.props.prefs.mode].id}
         />
         {/* below I use getHeroTalents if menu is not 1 */}
-        {this.isMenu(0b0101) && <ButtonLabeledSpacer filterName='Update' faIcon='fa-download' onPress={() => { this.isMenu(0b0001) ? this.props.getMainData(this.props.prefs, this.props.rollbackState) : this.getHeroes(this.props.prefs.hero,this.props.prefs) }} />}
+        {this.isMenu(0b0101) && <ButtonLabeledSpacer filterName='Update:' faIcon='fa-download' onPress={() => { this.isMenu(0b0001) ? this.props.getMainData(this.props.prefs, this.props.rollbackState) : this.getHeroes(this.props.prefs.hero,this.props.prefs) }} />}
         {this.isMenu(0b0001) && <UpdateStatCat />}
         {this.isMenu(0b0011) && <IconList className='float-left' iconList={this.props.roles} updateType='ROLE' updateFilter={this.props.updateFilter} />}
         {this.isMenu(0b0011) && <IconList className='float-right' iconList={this.props.franchises} updateType='UNIVERSE' updateFilter={this.props.updateFilter} />}
@@ -177,6 +178,7 @@ class DataFilters extends Component {
           containerClass='halfy input-group filterGroup'
           hideArrow={true}
         />}
+        {updatedTime&&<ButtonLabeledSpacer filterName={`Updated ${updatedTime} ago`} faIcon='fa-bolt' overclass='blackButton' />}
       </div>
     )
   }

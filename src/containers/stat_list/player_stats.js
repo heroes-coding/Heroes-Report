@@ -19,6 +19,16 @@ class PlayerStatList extends Component {
     this.getGraphs = this.getGraphs.bind(this)
     this.changeGraph = this.changeGraph.bind(this)
     this.stat = this.stat.bind(this)
+    this.mapStat = this.mapStat.bind(this)
+  }
+  mapStat(stat,name) {
+    const stats = stat.map(x => x[1])
+    return {
+      name,
+      left: formatNumber(d3.mean(stats)).toString(),
+      right: stats.length > 1 ? formatNumber(d3.deviation(stats)).toString() : '----',
+      statName: name
+    }
   }
   stat(statName,playerData,providedStats,shortName) {
     let stats
@@ -55,7 +65,7 @@ class PlayerStatList extends Component {
     this.setState({stat, statName})
   }
   getGraphs() {
-    const { playerData } = this.props
+    const { playerData, mapSpecificStats } = this.props
     const { stat, statName } = this.state
     let stats, yFormatter
     let showK = true
@@ -88,6 +98,7 @@ class PlayerStatList extends Component {
         </div>
       )
     }
+    let isMapStat = false
     if (stat==='KDA') {
       stats = playerData.map(x => x.KDA === Infinity ? 20 : x.KDA)
       yFormatter = formatNumber
@@ -95,6 +106,10 @@ class PlayerStatList extends Component {
       stats = playerData.map(x => x.Won)
       yFormatter = simplePercent
       showK = false
+    } else if (window.HOTS.mapStatN.hasOwnProperty(stat)) {
+      stats = mapSpecificStats[window.HOTS.mapStatN[stat]]
+      yFormatter = formatNumber
+      isMapStat = true
     } else {
       const index = decoderNumbers[stat]
       stats = playerData.map(x => x.stats[index])
@@ -103,9 +118,29 @@ class PlayerStatList extends Component {
 
     let winrateCorrelationData
     if (showK) {
-      winrateCorrelationData = exponentialSmoothing(playerData.map((x,i) => { return [stats[i],x.Won] }).sort((x,y) => x[0] < y[0] ? -1 : 1))
+      if (isMapStat) {
+        const WRD = stats.map(s => {
+          const [ MSL, stat, won ] = s
+          return [stat, won]
+        })
+        WRD.sort((x,y) => x[0] < y[0] ? -1 : 1)
+        winrateCorrelationData = exponentialSmoothing(WRD)
+        console.log(winrateCorrelationData)
+      } else {
+        winrateCorrelationData = exponentialSmoothing(playerData.map((x,i) => { return [stats[i],x.Won] }).filter(x => x[0]).sort((x,y) => x[0] < y[0] ? -1 : 1))
+      }
     }
-    let data = playerData.map((x,i) => { return [x.MSL,stats[i]] }).reverse()
+    let data
+    if (isMapStat) {
+      data = stats.map(s => {
+        const [ MSL, stat, won ] = s
+        return [ MSL, stat ]
+      })
+      data.sort((x,y) => x[0] < y[0] ? -1 : 1)
+      stats = stats.map(x => x[1])
+    } else {
+      data = playerData.map((x,i) => { return [x.MSL,stats[i]] }).reverse()
+    }
     let expTime = window.performance.now()
     const timedData = exponentialSmoothing(data)
     console.log(`It took ${Math.round(window.performance.now()*100 - 100*expTime)/100} ms to calculate exponentially smoothed line`)
@@ -155,8 +190,8 @@ class PlayerStatList extends Component {
     )
   }
   render() {
-    const { playerData } = this.props
-    const { mmr, stat, percent } = this
+    const { playerData, mapSpecificStats } = this.props
+    const { mmr, stat, percent, mapStat } = this
     if (playerData.length === 0) {
       return <div></div>
     }
@@ -184,6 +219,13 @@ class PlayerStatList extends Component {
                 hasGraphs: true,
                 stats:[
                   ...[['Length','Match Length'],['Votes Received',null],['Globes',null],['Experience',null],['Player Town Kills','Town Kills'],['Team Town Kills','Team T.Kills'],['Mercs Captured','Mercs'],['Team Merc Captures','Team Mercs'],['Time on Fire',null],['Escapes',null]].map(s => { return stat(s[0],playerData,null,s[1]) })
+                ]},
+              {category: 'Map Stats',
+                left:'Mean',
+                right: 'Sigma',
+                hasGraphs: true,
+                stats:[
+                  ...[0,8,1,16,2,3,4,14,5,6,7,15,9,10,11,12,13,17].filter(s => mapSpecificStats[s].length).map(s => mapStat(mapSpecificStats[s], window.HOTS.nMapStat[s]))
                 ]}
             ]}
           />

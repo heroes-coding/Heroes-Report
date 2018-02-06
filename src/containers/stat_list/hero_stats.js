@@ -105,6 +105,7 @@ class HeroStatList extends Component {
     return (
       <div className="graphs">
         <Graph
+          key={statID}
           graphClass="heroStat winrateGraph"
           linePoints={data}
           labelPoints={labelPoints}
@@ -123,11 +124,11 @@ class HeroStatList extends Component {
     )
   }
   render() {
-    if (!this.props[0] || !this.props.HOTS) {
+    window.pops = this.props
+    if (!this.props[0] || !this.props.HOTS || !this.props.builds) {
       return <div></div>
     }
     let hero = this.props.curHero
-    console.log(this.props)
     hero = window.HOTS ? window.HOTS.nHeroes[hero] : hero
     this.hero = hero
     const buildData = this.props[0].builds
@@ -227,7 +228,7 @@ class MatchupTable extends Component {
     }
   }
   getGraphs() {
-    if (!window.HOTS) {
+    if (!window.HOTS || !this.state.graphHero) {
       return <div />
     }
     const {id,name,color} = this.state.graphHero
@@ -367,6 +368,9 @@ class MatchupTable extends Component {
       hero = window.HOTS ? window.HOTS.nHeroes[heroID] : heroID
     }
     const build = this.props.prefs.time
+    if (!this.props[0].dict.hasOwnProperty(build)) {
+      return <div></div>
+    }
     const [ buildType, buildIndex ] = this.props[0].dict[build]
     const buildData = this.props[0][buildType][buildIndex]
     const matchupData = !ready ? [] : buildData.heroes.map((x,i) => {

@@ -193,10 +193,14 @@ class ReplayList extends Component {
       if (sortBy === "Date") {
         playerData.sort((x,y) => x.MSL > y.MSL ? order: -order)
       } else if (sortBy === "KDA") {
-        playerData.sort((x,y) => x.KDA > y.KDA ? order : -order)
+        playerData.sort((x,y) => x.KDA > y.KDA ? order : (x.KDA === y.KDA ? (x.MSL > y.MSL ? order : -order) : -order))
       } else {
         const stat = decoderNumbers[sortBy]
-        playerData.sort((x,y) => x.stats[stat] > y.stats[stat] ? order : -order)
+        playerData.sort((x,y) => {
+          const xStat = x.stats[stat]
+          const yStat = y.stats[stat]
+          return xStat > yStat ? order : (xStat === yStat ? (x.MSL > y.MSL ? order : -order) : -order)
+        })
       }
     }
     /*
@@ -326,54 +330,56 @@ class PlayerMatchupTable extends Component {
     if (!window.HOTS) {
       return <div />
     }
-    const {id,name,color} = this.state.graphHero
-    let hero = window.HOTS.nHeroes[this.props.curHero]
-    const matchupData = !this.props[0] || !window.HOTS ? [] : this.props[0].builds
-    matchupData.sort((x,y) => x[1] < y[1] ? -1 : 1)
-    const data1 = []
-    const labelPoints1 = []
-    const data2 = []
-    const labelPoints2 = []
-    matchupData.map((x,i) => {
-      const [ winsW, matchesW, winsA, matchesA ] = x.heroes[id]
-      const build = x[1]
-      const buildName = window.builds[build].name
-      const [ startTime, endTime, midTime ] = window.builds[build].dates
-      let MSL = DateToMSL(midTime)
-      const buildString = `${name} over ${matchesW} matches during build ${build} (${buildName}), from ${formatDate(startTime)} until ${formatDate(endTime)}`
-      if (matchesW) {
-        let wrW = winsW/matchesW
-        const wrWS = roundedPercent(wrW*1000)
-        data1.push([MSL, wrW])
-        labelPoints1.push({
-          name:`${wrWS} win rate with ${name}`,
-          desc:`${hero} had a win rate of ${wrWS} with ${buildString}`,
-          size:4,
-          color:color,
-          1:wrW,
-          0:MSL
-        })
+    const playerData = this.props.playerData
+    const nReplays = playerData.length
+    const {id, name, color} = this.state.graphHero
+    const withPoints = []
+    const againstPoints = []
+    const asPoints = []
+    for (let r=0;r<nReplays;r++) {
+      const replay = playerData[r]
+      const { allies, enemies, MSL, hero, Won } = replay
+      if (hero===id) {
+        asPoints.push([MSL,Won])
+      } else {
+        for (let a=0;a<5;a++) {
+          const h = allies[a]
+          if (h===id) {
+            withPoints.push([MSL,Won])
+            break
+          }
+        }
       }
-      if (matchesA) {
-        let wrA = winsA/matchesA
-        const wrAS = roundedPercent(wrA*1000)
-        data2.push([MSL, wrA])
-        labelPoints2.push({
-          name:`${wrAS} win rate vs. ${name}`,
-          desc:`${hero} had a win rate of ${wrAS} against ${buildString}`,
-          size:4,
-          color:color,
-          1:wrA,
-          0:MSL
-        })
+      for (let e=0;e<5;e++) {
+        const h = enemies[e]
+        if (h===id) {
+          againstPoints.push([MSL,Won])
+          break
+        }
       }
-    })
+    }
+    withPoints.sort((x,y) => x[0] < y[0] ? -1 : 1)
+    againstPoints.sort((x,y) => x[0] < y[0] ? -1 : 1)
+    asPoints.sort((x,y) => x[0] < y[0] ? -1 : 1)
     return (
       <div className="matchupGraphs">
         <Graph
           graphClass="winrateGraph"
-          linePoints={data1}
-          labelPoints={labelPoints1}
+          linePoints={exponentialSmoothing(asPoints)}
+          xLabel="Date"
+          yLabel='Win rate'
+          title={`Win % as ${name} over time`}
+          xRatio={500}
+          yRatio={290}
+          xOff={70}
+          yOff={90}
+          noArea={true}
+          formatter={MSLToDateString}
+          yFormatter={roundedPercentPercent}
+        />
+        <Graph
+          graphClass="winrateGraph"
+          linePoints={exponentialSmoothing(withPoints)}
           xLabel="Date"
           yLabel='Win rate'
           title={`Win % with ${name} over time`}
@@ -387,8 +393,7 @@ class PlayerMatchupTable extends Component {
         />
         <Graph
           graphClass="winrateGraph"
-          linePoints={data2}
-          labelPoints={labelPoints2}
+          linePoints={exponentialSmoothing(againstPoints)}
           xLabel="Date"
           yLabel='Win rate'
           title={`Win % vs ${name} over time`}

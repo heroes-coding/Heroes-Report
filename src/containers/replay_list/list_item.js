@@ -71,16 +71,6 @@ let talentIcon = (talentIcon,key,row,openPopup,messagePopup,talent,hero,div) => 
 let tinyHero = (hero,key,openPopup,row,messagePopup,div) => {
   return (
     <img
-      onMouseEnter={(event) => {
-        const name = window.HOTS.nHeroes[hero]
-        const desc = ''
-        event.preventDefault()
-        openPopup(row,div,name,desc,`https://heroes.report/squareHeroes/${hero}.jpg`)
-      }}
-      onMouseLeave={(event) => {
-        event.preventDefault()
-        messagePopup()
-      }}
       key={key}
       className={`tinyHero ${hero}`}
       src={`https://heroes.report/squareHeroes/${hero}.jpg`}

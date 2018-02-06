@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect'
 import { getCounts } from '../helpers/smallHelpers'
+import { decoderNumbers, statMults } from '../helpers/binary_defs'
 import _ from 'lodash'
 const playerHistory = state => state.playerData
 const playerInfo = state => state.playerInfo
@@ -10,6 +11,9 @@ const roles = state => state.roles
 const replayPage = state => state.replayPage
 const filterHeroes = state => state.filterHeroes
 const replaysPerPage = 15
+const { mapStatID0, mapStatID1, mapStatValues0, mapStatValues1 } = decoderNumbers
+
+
 let justFlipped = false
 let roleDic
 
@@ -90,9 +94,24 @@ const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises,
       id: n
     })
   }
+  let mapSpecificStats = {}
+  if (window.HOTS && window.HOTS.nMapStat) {
+    Object.keys(window.HOTS.nMapStat).map(k => { mapSpecificStats[k] = [] })
+    for (let r=0;r<nFiltered;r++) {
+      const { MSL, stats, Won } = filteredReplays[r]
+      let ID0 = stats[mapStatID0]
+      if (ID0) {
+        mapSpecificStats[ID0-1].push([MSL,stats[mapStatValues0]*statMults[ID0-1],Won])
+      }
+      let ID1 = stats[mapStatID1]
+      if (ID1) {
+        mapSpecificStats[ID1-1].push([MSL,stats[mapStatValues1]*statMults[ID1-1],Won])
+      }
+    }
+  }
   justFlipped = false
   console.log(`It took ${Math.round(window.performance.now()*100 - 100*startTime)/100} ms to reselect heroes`)
-  return {playerData: filteredReplays, talentDic, playerInfo, pageNames, nReplays: nFiltered}
+  return {playerData: filteredReplays, talentDic, playerInfo, pageNames, nReplays: nFiltered, mapSpecificStats}
 }
 
 const basePlayerDataSelector = createSelector(
