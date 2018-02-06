@@ -2,9 +2,9 @@ This is the new and improved front end for heroes.report.  There are many things
 
 ## Table of Contents
 
-- [The Hero Page](#hero)
-  - [Talent Calculator](#talent-calculator)
-- [More to Come](#more)
+- [The Hero Page](#the-hero-page)
+  - [The Talent Calculator](#the-talent-calculator)
+- [More to Come](#more-to-come)
 
 ## The Hero Page
 
