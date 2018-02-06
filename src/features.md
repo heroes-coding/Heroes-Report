@@ -20,6 +20,6 @@ Incomplete builds are factored into talent win rates by the proportion of observ
 
 So the displayed win rates effectively factor in the information from incomplete builds.  The displayed pick rates of talents are not adjusted according to incomplete builds - they reflect actual picks only.
 
-<a name="more-to-come">More to Come</a>
+<a name="more-to-come">## More to Come</a>
 
 This will be expanded upon later.
