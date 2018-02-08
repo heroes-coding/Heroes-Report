@@ -1,0 +1,22 @@
+@import "./utilities/variables.scss";
+
+.markdown {
+  font-family: $PrimaryFont;
+  font-size: 1.3em;
+  padding: 0 30px;
+
+}
+
+.markdown h2 {
+  color: $Color1;
+  font-size: 1.5em;
+  margin-top: 20px;
+}
+
+.markdown a {
+  color: $Highlight;
+}
+
+.markdown strong {
+  color: $Color2;
+}

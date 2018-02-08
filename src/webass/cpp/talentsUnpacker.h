@@ -5,8 +5,11 @@
 
 
 
-void printBuild(int build[]) {
-    for (int t=0;t<7;t++) {
+void printArray(int build[], int n) {
+    for (int t=0;t<n;t++) {
+      if (t==7) {
+        std::cout << ":::";
+      }
       std::cout << "[ " << build[t] << " ]";
     }
     std::cout << std::endl;
@@ -305,6 +308,7 @@ extern "C" {
       fullBuilds[b][8] = infos[fKey][1];
       fullBuilds[b][9] = infos[fKey][0]*1000;
       fullBuilds[b][10] = infos[fKey][1]*1000;;
+      // printArray(fullBuilds[b],11);
     }
     for (int b=0;b<nPartial;b++) {
       int fKey = partialIndexes[b];
@@ -313,6 +317,7 @@ extern "C" {
       }
       partialBuilds[b][7] = infos[fKey][0];
       partialBuilds[b][8] = infos[fKey][1];
+      // printArray(partialBuilds[b],9);
     }
 
     return sortTalents(partialBuilds,fullBuilds,nPartial,nFull, realTalents, nTalents);

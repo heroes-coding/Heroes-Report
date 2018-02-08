@@ -1,6 +1,7 @@
 @import "filters.scss";
 @import "react-table.scss";
 @import "overall.scss";
+@import "markdown.scss";
 @import "../containers/nav_bar/nav.scss";
 @import "scroll-bar.scss";
 @import "../containers/replay_list/replay_list.scss";
@@ -10,7 +11,9 @@
 @import "../containers/heroPage/talentBox.scss";
 @import "../components/graph/graph.scss";
 @import "./utilities/variables.scss";
+@import "footer.scss";
 
+/*
 :export {
   Highlight: $Highlight;
   Color1: $Color1;
@@ -23,3 +26,4 @@
   Container: $Container;
   DimText: $DimText;
 }
+*/

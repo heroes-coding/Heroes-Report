@@ -5,16 +5,16 @@ const mainDataSelector = state => state.main
 const categoriesSelector = state => state.statCat
 const selectedHeroesSelector = state => state.selectedHeroes
 const mainOrderSelector = state => state.mainOrder
-const DEFAULT_N_HEROES = 76
 
 const getMainData = (main, statCat, selectedHeroes, order) => {
   const startTime = window.performance.now()
   // This also receives the right data
   const statCatStats = statCat.stats
   let heroes = _.values(selectedHeroes)
-  let nHeroes
+  let nHeroes = Object.keys(main).length || 77
+  console.log(nHeroes)
   if (heroes[0] === 'l') {
-    nHeroes = DEFAULT_N_HEROES
+    nHeroes = (window.configCheck && window.configCheck.heroCount) || 76
     heroes = []
     for (let h = 0; h < nHeroes; h++) {
       heroes.push({name: '', id: h})

@@ -1,6 +1,6 @@
 import Remarkable from 'remarkable'
 import React, { Component } from 'react'
-const parser = new Remarkable({html: true,linkify: true, breaks: true, xhtmlOut: true})
+const parser = new Remarkable({html: true, linkify: true, breaks: true, xhtmlOut: true})
 
 class Markdown extends Component {
   componentWillMount() {
@@ -10,7 +10,6 @@ class Markdown extends Component {
         return response.text()
       })
       .then(text => {
-        console.log(text)
         this.setState({
           markdown: parser.render(text)
         })
@@ -25,9 +24,11 @@ class Markdown extends Component {
     return (
       <div className="overall">
         <div className="row d-flex justify-content-end" id="playerPageHolder">
-          <div className="container-fluid col-12 col-md-12 col-lg-12" id="talentBox">
-            <div className="container-fluid col-12 col-md-12 col-lg-12" id="talentBox">
-              <div dangerouslySetInnerHTML={{__html:markdown}} />
+          <div className="container-fluid col-12 col-md-10 col-lg-8" id="talentBox">
+            <div className="replay_item_container">
+              <div className="replayItem row">
+                <div className="markdown" dangerouslySetInnerHTML={{__html:markdown}} />
+              </div>
             </div>
           </div>
         </div>

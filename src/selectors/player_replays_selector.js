@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect'
-import { getCounts } from '../helpers/smallHelpers'
+import { getCounts, fakeLaunchDate, DateToMSL } from '../helpers/smallHelpers'
 import { decoderNumbers, statMults } from '../helpers/binary_defs'
 import _ from 'lodash'
 const playerHistory = state => state.playerData
@@ -10,6 +10,7 @@ const franchises = state => state.franchises
 const roles = state => state.roles
 const replayPage = state => state.replayPage
 const filterHeroes = state => state.filterHeroes
+const timeRange = state => state.timeRange
 const replaysPerPage = 15
 const { mapStatID0, mapStatID1, mapStatValues0, mapStatValues1 } = decoderNumbers
 
@@ -19,7 +20,7 @@ let roleDic
 
 const modeDic = {0:[1,2,3,4],1:[1],2:[2],3:[3],4:[4],5:[5],6:[1,2],7:[3,4]}
 
-const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises, roles, filterHeroes) => {
+const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises, roles, filterHeroes, timeRange) => {
   const playerHero = filterHeroes[2][0]
   const startTime = window.performance.now()
   const nReplays = playerData.length
@@ -71,9 +72,14 @@ const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises,
     return false
   }
 
+  let startDate = DateToMSL(new Date())
+  let endDate = DateToMSL(new Date())
   for (let r=0;r<nReplays;r++) {
     const rep = playerData[r]
+    const MSL = rep.MSL
+    startDate = MSL < startDate ? MSL : startDate
     if (
+      (timeRange && (MSL < timeRange[0] || MSL > timeRange[1])) ||
       (playerHero && rep.hero !== playerHero) ||
       (prefs.map !== 99 && rep.map !== prefs.map) ||
       (!modeDic[prefs.mode].includes(rep.mode)) ||
@@ -95,6 +101,7 @@ const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises,
     })
   }
   let mapSpecificStats = {}
+
   if (window.HOTS && window.HOTS.nMapStat) {
     Object.keys(window.HOTS.nMapStat).map(k => { mapSpecificStats[k] = [] })
     for (let r=0;r<nFiltered;r++) {
@@ -111,7 +118,7 @@ const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises,
   }
   justFlipped = false
   console.log(`It took ${Math.round(window.performance.now()*100 - 100*startTime)/100} ms to reselect heroes`)
-  return {playerData: filteredReplays, talentDic, playerInfo, pageNames, nReplays: nFiltered, mapSpecificStats}
+  return {playerData: filteredReplays, talentDic, playerInfo, pageNames, nReplays: nFiltered, mapSpecificStats, startDate, endDate}
 }
 
 const basePlayerDataSelector = createSelector(
@@ -122,6 +129,7 @@ const basePlayerDataSelector = createSelector(
   franchises,
   roles,
   filterHeroes,
+  timeRange,
   getPlayerBaseData
 )
 

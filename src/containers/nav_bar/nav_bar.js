@@ -16,6 +16,7 @@ class Nav extends React.Component {
     super(props)
     this.playerSearch = this.playerSearch.bind(this)
     this.updateHero = this.updateHero.bind(this)
+    this.state = { curHero: null }
   }
   updateHero(newHero) {
     this.props.updatePreferences('hero', newHero)
@@ -25,6 +26,7 @@ class Nav extends React.Component {
       this.props.getTimedData(this.props.prefs,newHero)
     }
     this.props.history.push(`/heroes/${newHero}`)
+    this.setState({curHero: newHero})
   }
   playerSearch(player) {
     console.log(`Searching for ${player}...`)
@@ -34,7 +36,7 @@ class Nav extends React.Component {
     } else {
       this.props.history.push(`/playerlist/${player}`)
     }
-
+    this.setState({curHero: null})
   }
   render() {
     const playerSearch = _.debounce((term) => { this.playerSearch(term) }, 500)
@@ -47,11 +49,12 @@ class Nav extends React.Component {
               exact className="nav-link"
               activeClassName="active"
               isActive={linkFunction}
+              onClick={() => this.setState({curHero: null})}
             >Stats</NavLink>
           </li>
           <FilterDropDown
             currentSelection="Heroes"
-            buttonLabel='Heroes'
+            buttonLabel={this.state.curHero ? renderTinyHero(this.state.curHero) : 'Heroes'}
             name=''
             id='gameMap'
             dropdowns={this.props.HOTS.sortedHeroes ? this.props.HOTS.sortedHeroes : []}
@@ -71,6 +74,7 @@ class Nav extends React.Component {
               exact className="nav-link"
               activeClassName="active"
               isActive={linkFunction}
+              onClick={() => this.setState({curHero: null})}
             >You</NavLink>
           </li>
           <li className="searchBar nav-item list-inline-item">

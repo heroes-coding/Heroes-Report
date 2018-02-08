@@ -1,0 +1,19 @@
+@import "./utilities/variables.scss";
+
+.footer .nav-link {
+  top: 0px;
+  color: $Light;
+  border-radius: 0px 0px 5px 5px;
+}
+.footer .nav-link.active {
+  background: darken($Light,20%) !important;
+  color: $Dark !important;
+}
+.footer .nav-link:hover {
+  background: darken($Light,20%) !important;
+  color: $Dark !important;
+}
+
+.footer {
+  border-bottom: none !important;
+}

@@ -19,86 +19,86 @@ def getMax(array):
 
 replayBitDic = [
 #3 Structures 1-2 / firstTo10 / firstTo20 / Player Three Percentiles 9 /Player 6 Talents 1-2
-getBytes(6*6*3*5**6*100*5*5),
+getBytes(6*6*3*5**4*4*6*100*5*5),
 ['pStructures[0]', 'pStructure0', 2, 6, 1],
 ['pStructures[1]', 'pStructure0', 2, 6, 1],
 ['firstTo10Result', 'FirstTo10', 2, 3, 1],
 ['pTalents[2][1]', 'talent21', 2, 5, 1],
-['pTalents[2][2]', 'talent22', 2, 5, 1],
+['pTalents[2][2]', 'talent22', 2, 4, 1],
 ['pTalents[2][3]', 'talent23', 2, 5, 1],
 ['pTalents[2][4]', 'talent24', 2, 5, 1],
 ['pTalents[2][5]', 'talent25', 2, 5, 1],
-['pTalents[2][6]', 'talent26', 2, 5, 1],
+['pTalents[2][6]', 'talent26', 2, 6, 1],
 ['mmrPercentiles[8]', 'mmrPercentiles8', 2, 100, 1],
 ['pTalents[5][0]', 'talent50', 2, 5, 1],
 ['pTalents[5][1]', 'talent51', 2, 5, 1],
 #4  Mercs 1 / 2  / Player Four Talents / First Fort / Player 6 Talent 5 Player 1 Talent 6 & 7 
-getBytes(12*12*5**7*3*5*5*5),
+getBytes(12*12*5**5*4*4*3*6*6),
 ['pMercs[0]', 'mercs0', 3, 12, 1],
 ['pMercs[1]', 'mercs1', 3, 12, 1],
 ['pTalents[3][0]', 'talent30', 3, 5, 1],
-['pTalents[3][1]', 'talent31', 3, 5, 1],
-['pTalents[3][2]', 'talent32', 3, 5, 1],
+['pTalents[4][6]', 'talent46', 3, 6, 1],
+['pTalents[3][2]', 'talent32', 3, 4, 1],
 ['pTalents[3][3]', 'talent33', 3, 5, 1],
 ['pTalents[3][4]', 'talent34', 3, 5, 1],
 ['pTalents[3][5]', 'talent35', 3, 5, 1],
-['pTalents[3][6]', 'talent36', 3, 5, 1],
+['pTalents[3][6]', 'talent36', 3, 6, 1],
 ['firstFortResult', 'FirstFort', 3, 3, 1],
 ['pTalents[5][4]', 'talent64', 3, 5, 1],
 ['pTalents[0][5]', 'talent05', 3, 5, 1],
-['pTalents[0][6]', 'talent06', 3, 5, 1],
+['pTalents[4][2]', 'talent42', 3, 4, 1],
 #5 Mercs  6 / Player Five Talents +strucs 5-6 
-getBytes(12*5**7*5**3*6*6),
+getBytes(12*5**4*4*6*6*5**3*5*6),
 ['pMercs[5]', 'mercs5', 4, 12, 1],
 ['pTalents[4][0]', 'talent40', 4, 5, 1],
 ['pTalents[4][1]', 'talent41', 4, 5, 1],
-['pTalents[4][2]', 'talent42', 4, 5, 1],
+['pTalents[0][6]', 'talent06', 4, 6, 1],
 ['pTalents[4][3]', 'talent43', 4, 5, 1],
 ['pTalents[4][4]', 'talent44', 4, 5, 1],
 ['pTalents[4][5]', 'talent45', 4, 5, 1],
-['pTalents[4][6]', 'talent46', 4, 5, 1],
+['pTalents[3][1]', 'talent31', 4, 5, 1],
 ['pTalents[6][0]', 'talent60', 4, 5, 1],
 ['pTalents[6][1]', 'talent61', 4, 5, 1],
-['pTalents[6][2]', 'talent62', 4, 5, 1],
+['pTalents[6][2]', 'talent62', 4, 4, 1],
 ['pStructures[4]', 'pStructure4', 4, 6, 1],
 ['pStructures[5]', 'pStructure5', 4, 6, 1],
 
 #9 Player 10 Talents 1-6 + Player 9 Talents 7  + Mercs 8 Globes 8 Strucs 7
-getBytes(147*5**7*60*6),
+getBytes(147*5**5*4*6*60*6),
 ['heroes[9]', 'Player9', 8, 147, 1],
 ['pTalents[9][0]', 'talent90', 8, 5, 1],
 ['pTalents[9][1]', 'talent91', 8, 5, 1],
-['pTalents[9][2]', 'talent92', 8, 5, 1],
+['pTalents[9][2]', 'talent92', 8, 4, 1],
 ['pTalents[9][3]', 'talent93', 8, 5, 1],
 ['pTalents[9][4]', 'talent94', 8, 5, 1],
 ['pTalents[9][5]', 'talent95', 8, 5, 1],
-['pTalents[8][6]', 'talent86', 8, 5, 1],
+['pTalents[8][6]', 'talent86', 8, 6, 1],
 ['pGlobes[7]', 'pGlobes7', 8, 60, 1],
 ['pStructures[6]', 'pStructure6', 8, 6, 1],
 
 
 #12 KDA 3-4, Mercs 9, Struct 10, Player 2 Talents 1-6, Struct 3
-getBytes(25**2*12*6*5**6*6),
+getBytes(25**2*12*6*5**4*6*4*6),
 ['KDA[2]', 'KDA2', 11, 25, 1],
 ['KDA[3]', 'KDA3', 11, 25, 1],
 ['pMercs[8]', 'mercs8', 11, 12, 1],
 ['pStructures[9]', 'pStructure9', 11, 6, 1],
 ['pTalents[1][0]', 'talent10', 11, 5, 1],
 ['pTalents[1][1]', 'talent11', 11, 5, 1],
-['pTalents[1][2]', 'talent12', 11, 5, 1],
-['pTalents[1][3]', 'talent13', 11, 5, 1],
+['pTalents[1][2]', 'talent12', 11, 4, 1],
+['pTalents[1][6]', 'talent16', 11, 6, 1],
 ['pTalents[1][4]', 'talent14', 11, 5, 1],
 ['pTalents[1][5]', 'talent15', 11, 5, 1],
 ['pStructures[2]', 'pStructure2', 11, 6, 1],
 #13 KDA 5-8, globes 2, struct 9 talent 7 for player 2 strucs 4 
-getBytes(25**4*60*6*5*6),
+getBytes(25**4*60*6*6*5),
 ['KDA[4]', 'KDA4', 12, 25, 1],
 ['KDA[5]', 'KDA5', 12, 25, 1],
 ['KDA[6]', 'KDA6', 12, 25, 1],
 ['KDA[7]', 'KDA7', 12, 25, 1],
 ['pGlobes[1]', 'Globe1', 12, 60, 1],
 ['pStructures[8]', 'pStructure8', 12, 6, 1],
-['pTalents[1][6]', 'talent16', 12, 5, 1],
+['pTalents[1][3]', 'talent13', 12, 5, 1],
 ['pStructures[3]', 'pStructure3', 12, 6, 1],
 #14 Globes 3-6, Build
 getBytes(60**4*321),
@@ -109,34 +109,43 @@ getBytes(60**4*321),
 ['buildIndex', 'buildIndex', 13, 321, 1],
 
 #1Globes 1 / Player One & Player 9 & Player ONe Talents 1-5
-getBytes(60*5**5*147*147),
+getBytes(60*5**5*4*147*147),
 ['pGlobes[0]', 'Globe0', 0, 60, 1],
 ['heroes[8]', 'Player8', 0, 147, 1],
 ['heroes[0]', 'Player0', 0, 147, 1],
 ['pTalents[0][0]', 'talent00', 0, 5, 1],
-['pTalents[0][1]', 'talent01', 0, 5, 1],
-['pTalents[0][2]', 'talent02', 0, 5, 1],
+['pTalents[5][6]', 'talent56', 0, 6, 1],
+['pTalents[0][2]', 'talent02', 0, 4, 1],
 ['pTalents[0][3]', 'talent03', 0, 5, 1],
 ['pTalents[0][4]', 'talent04', 0, 5, 1],
 
 #6 Mercs 3-5, Player 7 Talents + Player 6 Talents 3-4 + Player Four
-getBytes(5**4*5*5*147*12*147),
+getBytes(5**2*4*6*5*5*147*12*147),
 ['pMercs[4]', 'mercs4', 5, 12, 1],
 ['heroes[2]', 'Player2', 5, 147, 1],
 ['pTalents[6][3]', 'talent63', 5, 5, 1],
 ['pTalents[6][4]', 'talent64', 5, 5, 1],
 ['pTalents[6][5]', 'talent65', 5, 5, 1],
-['pTalents[6][6]', 'talent66', 5, 5, 1],
-['pTalents[5][2]', 'talent62', 5, 5, 1],
+['pTalents[6][6]', 'talent66', 5, 6, 1],
+['pTalents[5][2]', 'talent62', 5, 4, 1],
 ['pTalents[5][3]', 'talent63', 5, 5, 1],
 ['heroes[3]', 'Player3', 5, 147, 1],
 
+#7  + Percentile 4 + avg lev diff
+getBytes(100**3*70*6*12),
+['pTalents[8][3]', 'talent83', 6, 5, 1],
+['pMercs[7]', 'mercs7', 6, 12, 1],
+['mmrPercentiles[6]', 'mmrPercentiles6', 6, 100, 1],
+['mmrPercentiles[7]', 'mmrPercentiles7', 6, 100, 1],
+['mmrPercentiles[4]', 'mmrPercentiles4', 6, 100, 1],
+['avgLevelDifference', 'LevelDifference', 6, 70, 1],
+
 #8 Player 9 Talents 1-6 + Player Six + Mercs 7 + Player Seven
-getBytes(5**6*147 * 12 * 147),
+getBytes(5**5*4*147 * 12 * 147),
 ['pTalents[8][0]', 'talent80', 7, 5, 1],
 ['pTalents[8][1]', 'talent81', 7, 5, 1],
-['pTalents[8][2]', 'talent82', 7, 5, 1],
-['pTalents[8][3]', 'talent83', 7, 5, 1],
+['pTalents[8][2]', 'talent82', 7, 4, 1],
+['pTalents[9][6]', 'talent96', 7, 6, 1],
 ['pTalents[8][4]', 'talent84', 7, 5, 1],
 ['pTalents[8][5]', 'talent85', 7, 5, 1],
 ['heroes[5]', 'Player5', 7, 147, 1],
@@ -145,20 +154,19 @@ getBytes(5**6*147 * 12 * 147),
 
 
 #16 Player 8 Talents + Mercs 3-4 KDA 9 
-getBytes(3*12*12*5*5**7*25),
+getBytes(3*12*12*5*5**5*4*6*25),
 ['firstTo20Result', 'FirstTo20', 15, 3, 1],
 ['pMercs[2]', 'mercs2', 15, 12, 1],
 ['pMercs[3]', 'mercs3', 15, 12, 1],
 ['pTalents[2][0]', 'talent20', 15, 5, 1],
 ['pTalents[7][0]', 'talent70', 15, 5, 1],
 ['pTalents[7][1]', 'talent71', 15, 5, 1],
-['pTalents[7][2]', 'talent72', 15, 5, 1],
+['pTalents[7][2]', 'talent72', 15, 4, 1],
 ['pTalents[7][3]', 'talent73', 15, 5, 1],
 ['pTalents[7][4]', 'talent74', 15, 5, 1],
 ['pTalents[7][5]', 'talent75', 15, 5, 1],
-['pTalents[7][6]', 'talent76', 15, 5, 1],
+['pTalents[7][6]', 'talent76', 15, 6, 1],
 ['KDA[8]', 'KDA8', 15, 25, 1],
-1127/0.04
 #15 + Player Five + Player 6 Talents 6-7 percentiles 2-4 
 getBytes(100**4*42),
 ['choppedGameLengthMinutesMinusOne', 'GameLengthMinsMinusOne', 14, 42, 1],
@@ -189,21 +197,12 @@ getBytes(30*147*60*147*100),
 getBytes(147*5*5*4*2*60*24*100),
 ['heroes[4]', 'Player4', 9, 147, 1],
 ['pTalents[5][5]', 'talent55', 9, 5, 1],
-['pTalents[5][6]', 'talent56', 9, 5, 1],
+['pTalents[0][1]', 'talent01', 9, 5, 1],
 ['minusOneRegion', 'minusOneRegion', 9, 4, 1],
 ['winners', 'Winners', 9, 2, 1],
 ['minSinceDay','MSD', 9, 60,1],
-['hoursSinceDay','HSD',9,24,1]
+['hoursSinceDay','HSD',9,24,1],
 ['mmrPercentiles[5]', 'mmrPercentiles5', 9, 100, 1],
-
-#7  + Percentile 4 + avg lev diff
-getBytes(100**3*70*5*12),
-['pTalents[9][6]', 'talent96', 6, 5, 1],
-['pMercs[7]', 'mercs7', 6, 12, 1],
-['mmrPercentiles[6]', 'mmrPercentiles6', 6, 100, 1],
-['mmrPercentiles[7]', 'mmrPercentiles7', 6, 100, 1],
-['mmrPercentiles[4]', 'mmrPercentiles4', 6, 100, 1],
-['avgLevelDifference', 'LevelDifference', 6, 70, 1],
 
 ]
 
@@ -279,18 +278,14 @@ for byte, vals in replayBits.items():
 lengths = [len(r) for r in decoderList]
 
 print("const int nInts = {};".format(len(lengths)))
-
 print("const int nOuts = {};".format(sum(lengths)))
-
 print ("const int intLengths[{}] = {{ {} }};".format(len(lengths),", ".join([str(l) for l in lengths])))
-
 print ("const int decoders[{}][{}][{}] = {{ {} }};".format(len(lengths),max(lengths),3,
        ", ".join([ "{{ {} }}".format( 
                ", ".join(
     ["{{ {} }}".format(", ".join([str(x) for x in e])) for e in decoderList[i]]
 )) for i in range(len(lengths))])))
 
-decoderList
 
 print ("[]{ {24, 25, 26, 27}, {20, 21, 22, 23} };
 
@@ -406,8 +401,6 @@ getBytes (4950*100*100 * 38 * 2)
 
 8. // Team merc captures / Votes / Minion Damage - 1000/ Hero Killed Structures / Team Killed Structures / Level /  Wet Noodle / Dangerous Nurse  Voted For 
 getBytes(85*11* 251 * 6 * 12 *  21 * 2 * 2 * 3 )
-
-
 
 # Parse Build will always come at the end of the eight integer from off the top (added at the end)
 ", ".join(["['talent{}',5,1]".format(i) for i in range(7)])

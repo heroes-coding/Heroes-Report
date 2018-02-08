@@ -256,6 +256,7 @@ img {
 .replayItem {
   background: darken($Dark,3%);
   border: 1px solid black;
+  display:flex;
 }
 
 .gameModeBox {

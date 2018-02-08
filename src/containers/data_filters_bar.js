@@ -3,10 +3,13 @@ import FilterDropDown from '../containers/filter_drop_down'
 import ButtonLabeledSpacer from '../components/button_labeled_spacer'
 import IconList from '../containers/icon_list'
 import { modeChoices, modeDic, mmrChoices, mmrDic } from '../helpers/definitions'
+import { formatDate } from '../helpers/smallHelpers'
 import { renderTime, renderNothing, renderTinyMap, renderPeeps, renderTinyHero, renderTeam } from '../components/filterComponents'
 import { connect } from 'react-redux'
-import { updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData } from '../actions'
+import { updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime } from '../actions'
 import UpdateStatCat from './update_stat_cat'
+import TimeLine from './replay_list/timeline'
+import PlayerReplaysSelector from '../selectors/player_replays_selector'
 
 const roleDropdownData = ['Assassin','Warrior','Support','Specialist'].map(x => { return {name:x, id:x} })
 
@@ -178,14 +181,20 @@ class DataFilters extends Component {
           containerClass='halfy input-group filterGroup'
           hideArrow={true}
         />}
+        {this.isMenu(0b100) && <ButtonLabeledSpacer filterName={`Dates:  ${this.props.timeRange ? formatDate(this.props.timeRange[2]) + " - " + formatDate(this.props.timeRange[3]) : 'All'}`} faIcon='fa-calendar' overclass='halfy blackButton' />}
+        {this.isMenu(0b1000) && <TimeLine
+          minMSL={this.props.startDate}
+          maxMSL={this.props.endDate}
+        />}
         {updatedTime&&<ButtonLabeledSpacer filterName={`Stats updated ${updatedTime} ago`} faIcon='fa-bolt' overclass='blackButton' />}
       </div>
     )
   }
 }
 
-function mapStateToProps({HOTS, prefs, status, roles, franchises, filterHeroes}) {
-  return {HOTS, prefs, status, roles, franchises, filterHeroes}
+function mapStateToProps(state) {
+  const { HOTS, prefs, status, roles, franchises, filterHeroes, timeRange } = state
+  return { ...PlayerReplaysSelector(state), HOTS, prefs, status, roles, franchises, filterHeroes, timeRange }
 }
 
-export default connect(mapStateToProps, {updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData})(DataFilters)
+export default connect(mapStateToProps, { updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime })(DataFilters)

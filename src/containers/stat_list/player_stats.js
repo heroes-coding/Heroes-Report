@@ -199,7 +199,7 @@ class PlayerStatList extends Component {
     const outcomes = playerData.map(x => x.Won)
     const mmrData = [h&&mmr(mmrNames.h,h),q&&mmr(mmrNames.q,q),t&&mmr(mmrNames.t,t),u&&mmr(mmrNames.u,u)].filter(x => x)
     return (
-      <div className='flex statsList col-12 col-sm 6 col-lg-3 order-lg-first'>
+
         <div className='stat_item_container row'>
           <StatListTemplate
             clickFunction={this.changeGraph}
@@ -270,7 +270,6 @@ class PlayerStatList extends Component {
             ]}
           />
         </div>
-      </div>
     )
   }
 }

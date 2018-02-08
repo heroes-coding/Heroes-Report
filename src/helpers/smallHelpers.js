@@ -1,6 +1,6 @@
 export function getRandomString() { return Math.random().toString(36).replace(/[^a-z]+/g, '') }
 
-let fakeLaunchDate = (new Date(2015, 5, 1, 20, 0, 0, 0)).getTime()
+export const fakeLaunchDate = (new Date(2015, 5, 1, 20, 0, 0, 0)).getTime()
 export const minSinceLaunchToDate = function(minSinceLaunch) {
   return new Date(fakeLaunchDate + minSinceLaunch*60000)
 }

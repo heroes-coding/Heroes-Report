@@ -25,7 +25,7 @@ const replayVals = [
   [['hero2',147,1],['hero3',147,1],['hero4',147,1], ['hero5',147,1], ['FirstTo10',3,1], ['winners',2,1]],
   [['hero6',147,1],['hero7',147,1],['hero8',147,1], ['hero9',147,1], ['FirstTo20',3,1], ['FirstFort',3,1]],
   // 0
-  [['Vengeances',23,1], ['Kills',57,1], ['mapStatID0',40,1], ['talent0',5,1], ['talent1',5,1], ['talent2',5,1], ['talent3',5,1], ['talent4',5,1], ['talent5',5,1], ['talent6',5,1]],
+  [['Vengeances',23,1], ['Kills',57,1], ['mapStatID0',40,1], ['talent0',5,1], ['talent1',5,1], ['talent2',4,1], ['talent3',5,1], ['talent4',5,1], ['talent5',5,1], ['talent6',6,1]],
   // 1
   [['Siege Damage',307,1000],['Mercs Captured',34,1],['mapStatID1',40,1], ['Experience',50,1000], ['Assists',99,1]],
   // 2

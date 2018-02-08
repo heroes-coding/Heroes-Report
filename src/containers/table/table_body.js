@@ -6,6 +6,7 @@ export default class TableBody extends Component {
     // I THINK this is the only way to get rows to render with even - odd backgrounds without rerendering the entire component each time.
     let even = true
     const nHeroes = this.props.rows.length
+    console.log('How many heroes?', nHeroes)
     for (let h = 0; h < nHeroes; h++) {
       if (this.props.rows[h].visible) {
         document.getElementById(`row${this.props.rows[h].id}`).className = `rt-tr-group ${even ? '-even' : '-odd'}`

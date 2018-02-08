@@ -26,6 +26,7 @@ export default function(HOTS, buildsData) {
   }
   builds['All'] = {name: 'All Time', id: 'All', count: 0, dates: [9999999999999, new Date()]}
   let currentBuild = Object.keys(buildsData).map(function(x) { return parseInt(x,10) }).reduce(function(a, b) { return Math.max(a, b) })
+  const buildsArray = []
   for (let b = 0; b < bKeys.length; b++) {
     let build = bKeys[b]
     let count = buildsData[build][1] / 10
@@ -49,7 +50,11 @@ export default function(HOTS, buildsData) {
       minDate = new Date(today.setDate(today.getDate() - build))
       maxDate = new Date()
     }
-    builds[build] = {name: name, id: build, count: count, dates: [minDate, maxDate]}
+    const finalBuild = {name: name, id: build, count: count, dates: [minDate, maxDate]}
+    if (build > 90) {
+      buildsArray.push(finalBuild)
+    }
+    builds[build] = finalBuild
   }
   builds[currentBuild].dates[1] = new Date()
   builds[currentBuild].name = 'Current Build'
@@ -62,5 +67,5 @@ export default function(HOTS, buildsData) {
     build.dates.push(new Date(build.dates[0] * 0.5 + build.dates[1] * 0.5))
     orderedBuilds.push(build)
   }
-  return orderedBuilds
+  return { times: orderedBuilds, builds, buildsArray }
 }
