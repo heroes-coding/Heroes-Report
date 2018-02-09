@@ -118,7 +118,7 @@ const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises,
   }
   justFlipped = false
   console.log(`It took ${Math.round(window.performance.now()*100 - 100*startTime)/100} ms to reselect heroes`)
-  return {playerData: filteredReplays, talentDic, playerInfo, pageNames, nReplays: nFiltered, mapSpecificStats, startDate, endDate}
+  return {playerData: filteredReplays, talentDic, playerInfo, pageNames, nReplays: nFiltered, mapSpecificStats, startDate, endDate }
 }
 
 const basePlayerDataSelector = createSelector(
@@ -130,7 +130,7 @@ const basePlayerDataSelector = createSelector(
   roles,
   filterHeroes,
   timeRange,
-  getPlayerBaseData
+  getPlayerBaseData,
 )
 
 const getPlayerData = (basePlayerData, page) => {

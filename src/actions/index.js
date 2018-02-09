@@ -12,6 +12,7 @@ export const UPDATE_REPLAY_PAGE = 'update_replay_page'
 export const ADD_HERO_FILTER = 'add_hero_filter'
 export const SELECT_TALENT = 'select_talent'
 export const UPDATE_TIME = 'update_time'
+export const UPDATE_TALENT_HERO = 'update_talent_hero'
 export const TEST_URL = 'https://heroes.report/stats/o/52351/3/10/99.json'
 export * from './filter_heroes'
 export * from './filter_dictionary'
@@ -25,6 +26,13 @@ export function updateMainSorting(id) {
   return {
     type: UPDATE_MAIN_SORTING,
     id
+  }
+}
+
+export function updateTalentHero(hero) {
+  return {
+    type: UPDATE_TALENT_HERO,
+    hero
   }
 }
 
@@ -67,8 +75,10 @@ export function selectTalent(lev, tal, state, talentData) {
     ignoreCounts.push(c)
   }
   let filteredTalents = null
+  console.log(toIgnore,ignoreCounts)
   if (ignoreStuff) {
     filteredTalents = refilterTalents(talentData,toIgnore,ignoreCounts)
+    console.log('FILTERED IN INDEX', filteredTalents)
   }
   return {
     type: SELECT_TALENT,
@@ -78,6 +88,7 @@ export function selectTalent(lev, tal, state, talentData) {
 }
 
 export function addHeroFilter(team,hero) {
+  console.log(team,hero)
   return {
     type: ADD_HERO_FILTER,
     team,

@@ -19,6 +19,7 @@ import SelectTalent from './select_talent_reducer'
 import GetFilteredTalents from './filtered_talents_reducer'
 import GetTimedData from './timed_data_reducer'
 import GetTimeRange from './time_range_reducer'
+import UpdateTalentHero from './talent_hero_reducer'
 
 const rootReducer = combineReducers({
   HOTS: HOTSDictionaryReducer,
@@ -37,6 +38,7 @@ const rootReducer = combineReducers({
   playerInfo: PlayerInfoReducer,
   talentData: AddHeroTalents,
   talentDic: TalentDicReducer,
+  talentHero: UpdateTalentHero,
   timedData: GetTimedData,
   filterHeroes: AddHeroFilter,
   playerSearchResults: PlayerSearchList,

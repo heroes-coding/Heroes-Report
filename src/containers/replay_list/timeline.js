@@ -80,7 +80,6 @@ class TimeLine extends React.Component {
         count
       })
     }
-    console.log(builds)
     const buildRects = TimeLineSVG.selectAll("g").data(builds).enter().append("g")
       .attr("transform", function(d) { return `translate(${d.x0},0)` })
     // buildRects.attr("x", function(d) { return d.x0 })
@@ -126,7 +125,6 @@ class TimeLine extends React.Component {
         d1[0] = d3.timeDay.floor(d0[0])
         d1[1] = d3.timeDay.ceil(d1[0])
       }
-      console.log(d1)
       d3.select(this).transition().call(d3.event.target.move, d1.map(x))
       that.updateDates(d1[0],d1[1])
     }

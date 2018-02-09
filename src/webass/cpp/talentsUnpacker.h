@@ -2,7 +2,7 @@
 #include <memory>
 #include <iostream>
 #include <vector>
-
+#include <map>
 
 
 void printArray(int build[], int n) {
@@ -214,6 +214,126 @@ uint32_t * sortTalents (int partialBuilds[][9], int fullBuilds[][11], int nParti
 extern "C" {
 
 
+
+  EMSCRIPTEN_KEEPALIVE
+  uint32_t * getBuilds (
+    int32_t *buf,
+    int nBuilds
+  ) {
+    /* Takes in hero builds and deconstructs them into their talents and partial and complete builds. */
+    int z = 0;
+    std::vector< std::vector<int> > realTalents(7);
+    int nFull = 0;
+    int nPartial = 0;
+    int nTalents = 0;
+    std::map<int,std::vector<int> > fullBuilds;
+    std::map<int,std::vector<int> > partialBuilds;
+
+    for (int b=0;b<nBuilds;b++) {
+      bool isComplete = true;
+      int buildInt = 0;
+      int Won=buf[z++];
+      for (int t=0;t<7;t++) {
+        int tal = buf[z++];
+        int talIndex = realTalents[t].size();
+        bool foundTal = false;
+        if (tal==0) {
+          buildInt*=16;
+          isComplete=false;
+          continue;
+        }
+        for (int s=0;s<talIndex;s++) {
+          if (tal == realTalents[t][s]) {
+            foundTal = true;
+            talIndex = s;
+            break;
+          }
+        }
+        // std::cout << "[" << tal << ":" << talIndex << ":" << buf[z] << ":" << z << ":" << Won << "]";
+        if (!foundTal) {
+          nTalents += 1;
+          realTalents[t].push_back(tal);
+        }
+        buildInt = buildInt*16 + talIndex+1;
+      }
+      if (isComplete) {
+        if (!fullBuilds.count(buildInt)) {
+          fullBuilds[buildInt] = {0,0};
+          nFull += 1;
+        }
+        fullBuilds[buildInt][0] += Won;
+        fullBuilds[buildInt][1] += 1;
+      } else {
+        if (!partialBuilds.count(buildInt)) {
+          partialBuilds[buildInt] = {0,0};
+          nPartial += 1;
+        }
+        partialBuilds[buildInt][0] += Won;
+        partialBuilds[buildInt][1] += 1;
+      }
+      // std::cout << std::endl;
+    }
+
+    int pBuilds[nPartial][9];
+    int fBuilds[nFull][11];
+    int fCount = 0;
+    int pCount = 0;
+    for( auto const& [key, val] : fullBuilds )
+      {
+          int buildInt = key;
+          for (int t=6;t>=0;t--) {
+            int talIndex = buildInt%16;
+            if (talIndex) {
+              fBuilds[fCount][t] = realTalents[t][talIndex-1];
+            } else {
+              fBuilds[fCount][t] = 0;
+            }
+            buildInt = buildInt/16;
+          }
+          fBuilds[fCount][7] = val[0];
+          fBuilds[fCount][8]= val[1];
+          fBuilds[fCount][9] = val[0]*1000;
+          fBuilds[fCount][10]= val[1]*1000;
+          // printArray(fBuilds[fCount],11);
+          fCount++;
+          /* std::cout << key         // string (key)
+                    << ':'
+                    << val[0]        // string's value
+                    << ':'
+                    << val[1]
+                    << std::endl ; */
+      }
+      for( auto const& [key, val] : partialBuilds )
+        {
+            int buildInt = key;
+            for (int t=6;t>=0;t--) {
+              int talIndex = buildInt%16;
+              if (talIndex) {
+                pBuilds[pCount][t] = realTalents[t][talIndex-1];
+              } else {
+                pBuilds[pCount][t] = 0;
+              }
+              buildInt = buildInt/16;
+            }
+            pBuilds[pCount][7] = val[0];
+            pBuilds[pCount][8] = val[1];
+            // printArray(pBuilds[pCount],9);
+            pCount++;
+            /* std::cout << key         // string (key)
+                      << ':'
+                      << val[0]        // string's value
+                      << ':'
+                      << val[1]
+                      << std::endl ; */
+        }
+
+    // printTwoDeep(realTalents);
+    return sortTalents(pBuilds,fBuilds,nPartial,nFull, realTalents, nTalents);
+
+  }
+
+
+
   EMSCRIPTEN_KEEPALIVE
   uint32_t * decodeTalents (
     int32_t *buf,
@@ -307,7 +427,7 @@ extern "C" {
       fullBuilds[b][7] = infos[fKey][0];
       fullBuilds[b][8] = infos[fKey][1];
       fullBuilds[b][9] = infos[fKey][0]*1000;
-      fullBuilds[b][10] = infos[fKey][1]*1000;;
+      fullBuilds[b][10] = infos[fKey][1]*1000;
       // printArray(fullBuilds[b],11);
     }
     for (int b=0;b<nPartial;b++) {

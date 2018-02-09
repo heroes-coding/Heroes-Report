@@ -118,9 +118,9 @@ class PlayerMatchupTable extends Component {
   renderInfo(value, id) {
     let display
     if (id%2) {
-      display=roundedPercent(value*1000)
+      display=isNaN(value) ? value : roundedPercent(value*1000)
     } else {
-      display=formatNumber(value)
+      display=isNaN(value) ? value : formatNumber(value)
     }
 
     return (
@@ -195,15 +195,15 @@ class PlayerMatchupTable extends Component {
         id: i,
         color: window.HOTS.ColorsDic[i],
         stats: [
-          { value:matchesU, id: 0 },
-          { value:winsU === 0 ? 0 : winsU/matchesU, id: 1 },
-          { value:matchesW, id: 2 },
-          { value:matchesW === 0 ? 0 : winsW/matchesW, id:3 },
-          { value:matchesA, id: 4 },
-          { value:matchesA === 0 ? 0 : winsA/matchesA, id: 5 }
+          { value:matchesU === 0 ? '-' : matchesU, id: 0 },
+          { value:matchesU === 0 ? '-' : winsU/matchesU, id: 1 },
+          { value:matchesW === 0 ? '-' : matchesW, id: 2 },
+          { value:matchesW === 0 ? '-' : winsW/matchesW, id:3 },
+          { value:matchesA === 0 ? '-' : matchesA, id: 4 },
+          { value:matchesA === 0 ? '-' : winsA/matchesA, id: 5 }
         ]
       }
-    }).filter(x => x.stats[0].value || x.stats[2].value || x.stats[4].value)
+    }).filter(x => x.stats[0].value !== "-" || x.stats[2].value !== "-" || x.stats[4].value !== "-")
     const { orderID, desc } = this.state
     rows.sort((x,y) => {
       if (isNaN(orderID)) {

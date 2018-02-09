@@ -1,5 +1,7 @@
 export default function getTalentWinrates(talentData,toIgnore,ignoreCounts) {
-  const {nTalents, nFull, nPartial, talentCounts, talents, partialBuilds, partialCounts, fullBuilds} = talentData
+  const {nTalents, nFull, nPartial, talentCounts, talents, partialBuilds, fullBuilds} = talentData
+  console.log(toIgnore,ignoreCounts)
+  console.log(nTalents, nFull, nPartial, talentCounts, talents, partialBuilds, fullBuilds)
   // let selectTime = window.performance.now()
   window.toIgnore = toIgnore
   // console.log(talentCounts)

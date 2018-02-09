@@ -2,10 +2,10 @@ import 'react-table/react-table.css'
 import { roundedPercent, updatedTime } from '../../helpers/smallHelpers'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import TalentBox from './talentBox'
+import TalentBox from '../heroPage/talentBox'
 import Popup from '../../components/popup'
-import { getHeroTalents, getHOTSDictionary, selectTalent } from '../../actions'
-import TalentsSelector from '../../selectors/talents_selector'
+import { updateTalentHero, selectTalent, addHeroFilter } from '../../actions'
+import PlayerTalentsSelector from '../../selectors/player_talents_selector'
 
 class TalentCalculator extends Component {
   constructor(props) {
@@ -22,9 +22,19 @@ class TalentCalculator extends Component {
     this.closePopup = this.closePopup.bind(this)
     this.messagePopup = this.messagePopup.bind(this)
   }
-  componentDidMount() {
-    this.props.getHeroTalents(this.props.curHero, this.props.prefs)
+  componentWillMount() {
+    // this.props.getHeroTalents(this.props.curHero, this.props.prefs)
+    this.props.updateTalentHero(this.props.hero)
+    this.props.addHeroFilter(2, this.props.hero)
     this.props.selectTalent('reset')
+  }
+  shouldComponentUpdate(nextProps) {
+    if (this.props.hero !== nextProps.hero) {
+      this.props.updateTalentHero(nextProps.hero)
+      this.props.addHeroFilter(2, nextProps.hero)
+      this.props.selectTalent('reset')
+    }
+    return true
   }
   openPopup(row,col, popupName, popupDesc, popupPic) {
     if (this.popupTimeout) {
@@ -49,10 +59,14 @@ class TalentCalculator extends Component {
     })
   }
   render() {
-    const { filteredTalents, dataTime, talentCounts, hero } = this.props.talentData
-    console.log(this.props.talentData)
-    // I really wish there was a better way of doing this.  The problem is the old talents are passed back with the new hero id.  I don't know why props are being updated before the talent data is when I am only connecting to getHeroTalents
-    let curHero = parseInt(this.props.curHero)
+    if (!this.props.nBuilds) {
+      return <div></div>
+    }
+    const { hero } = this.props
+    const { filteredTalents } = this.props
+    if (!filteredTalents) {
+      return <div></div>
+    }
     return (
       <div className="container-fluid col-12 col-md-12 col-lg-9 order-lg-last" id="talentBox">
         <Popup
@@ -66,8 +80,7 @@ class TalentCalculator extends Component {
           pic={this.state.popupPic}
         />
         {window.HOTS && <div className="talentCalcHeader row" >
-          Talent Calculator for &nbsp;<span style={{color:window.HOTS.ColorsDic[curHero]}}>{window.HOTS.nHeroes[curHero]}</span>&nbsp;&nbsp;<i className="fa fa-undo iconOnButton resetButton" onClick={() => this.props.selectTalent('reset')} aria-hidden="true"></i>
-          <span className="talentTime">&nbsp;&nbsp;(This talent data last updated {updatedTime(dataTime)} ago)</span>
+          Talent Calculator for &nbsp;<span style={{color:window.HOTS.ColorsDic[hero]}}>{window.HOTS.nHeroes[hero]}</span>&nbsp;&nbsp;<i className="fa fa-undo iconOnButton resetButton" onClick={() => this.props.selectTalent('reset')} aria-hidden="true"></i>
         </div>
         }
         {filteredTalents && window.HOTS && filteredTalents.map((tals,l) => {
@@ -125,7 +138,7 @@ class TalentCalculator extends Component {
 
 function mapStateToProps(state, ownProps) {
   const {prefs, HOTS} = state
-  return {...TalentsSelector(state), prefs, HOTS, ...ownProps}
+  return {...PlayerTalentsSelector(state), prefs, HOTS, ...ownProps}
 }
 
-export default connect(mapStateToProps,{getHeroTalents, getHOTSDictionary, selectTalent})(TalentCalculator)
+export default connect(mapStateToProps,{updateTalentHero, selectTalent, addHeroFilter })(TalentCalculator)

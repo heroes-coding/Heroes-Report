@@ -3,15 +3,18 @@ import { connect } from 'react-redux'
 import DataFiltersBar from './data_filters_bar'
 import ReplayList from './replay_list/replay_list'
 import PlayerMatchupTable from './replay_list/player_matchup_table'
+import PlayerTalentCalculator from './replay_list/player_talent_calculator'
 import PlayerStats from './stat_list/player_stats'
 import StatList from './stat_list/stat_list'
-import { getPlayerData, updateTime } from '../actions'
+import { getPlayerData, updateTime, addHeroFilter } from '../actions'
 import TimeLine from './replay_list/timeline'
 import PlayerReplaysSelector from '../selectors/player_replays_selector'
 import ButtonLabeledSpacer from '../components/button_labeled_spacer'
 import { formatDate } from '../helpers/smallHelpers'
 import FilterDropDown from '../containers/filter_drop_down'
 import { renderNothing, renderTinyHero } from '../components/filterComponents'
+
+const today = new Date()
 
 class PlayerPage extends Component {
   constructor(props) {
@@ -27,6 +30,7 @@ class PlayerPage extends Component {
   reset() {
     this.needToUpdate = true
     this.setState({...this.state, curHero: null})
+    this.props.addHeroFilter(2,"A") // resets player to none so talent tab doesn't become annoying
   }
   componentDidMount() {
     const {id} = this.props.match.params
@@ -34,7 +38,6 @@ class PlayerPage extends Component {
     this.props.updateTime('reset',null)
   }
   shouldComponentUpdate(nextProps, nextState) {
-    console.log(this.props,nextProps,this.state,nextState)
     const oldID = this.props.match.params.id
     const newID = nextProps.match.params.id
     if (oldID !== newID) {
@@ -54,7 +57,6 @@ class PlayerPage extends Component {
     const {id} = this.props.match.params
     const { curHero } = this.state
     const conClass = 'heroDropDown playerNav'
-    console.log(conClass)
     return (
       <div className="overall">
         <div className="filtersHolder">
@@ -65,7 +67,7 @@ class PlayerPage extends Component {
 
             <div className="replayItem timeBar">
               <ButtonLabeledSpacer
-                filterName={`Dates:  ${this.props.timeRange ? formatDate(this.props.timeRange[2]) + " - " + formatDate(this.props.timeRange[3]) : 'All'}`} faIcon='fa-calendar'
+                filterName={`Dates:  ${this.props.timeRange ? formatDate(this.props.timeRange[2]) + " - " + formatDate(this.props.timeRange[3] > today ? today : this.props.timeRange[3]) : 'All'}`} faIcon='fa-calendar'
                 overclass='blackButton calendar'
               />
               <TimeLine
@@ -95,7 +97,7 @@ class PlayerPage extends Component {
               />
             </ul>
             {!curHero && <ReplayList playerID={id} />}
-            {curHero && <div>{curHero}</div>}
+            {curHero && <PlayerTalentCalculator hero={curHero} />}
             <PlayerMatchupTable />
           </div>
           <div className='flex statsList col-12 col-sm 6 col-lg-3 order-lg-first'>
@@ -111,4 +113,4 @@ function mapStateToProps(state, ownProps) {
   return {...PlayerReplaysSelector(state), HOTS:state.HOTS, timeRange:state.timeRange, ...ownProps}
 }
 
-export default connect(mapStateToProps,{getPlayerData, updateTime})(PlayerPage)
+export default connect(mapStateToProps,{getPlayerData, updateTime, addHeroFilter})(PlayerPage)

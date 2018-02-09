@@ -64,7 +64,6 @@ async function getHOTSDictionary() {
   sortedMaps.sort((x, y) => x.name < y.name ? -1 : 1)
   sortedHeroes.sort((x, y) => x.name < y.name ? -1 : 1)
   const { times, builds, buildsArray } = timeUnpacker(HOTS, window.buildsData)
-  console.log(times,builds,buildsArray,'heeya')
   const d = {
     heroes,
     roles: HOTS.roles.map(x => { return {id: x} }),
