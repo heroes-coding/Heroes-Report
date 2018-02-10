@@ -40,10 +40,19 @@ void printTwoDeep(std::vector< std::vector<int> > BKD) {
 
 uint32_t * sortTalents (int partialBuilds[][9], int fullBuilds[][11], int nPartial, int nFull, std::vector< std::vector<int> > realTalents, int nTalents) {
 
+
+  for (int i=0;i<nFull;i++) {
+    printArray(fullBuilds[i],11);
+  }
+  for (int i=0;i<nPartial;i++) {
+    printArray(partialBuilds[i],9);
+  }
+
   std::vector< std::vector< std::vector<int> > > buildKeyDic;
   std::vector< std::vector< std::vector<int> > > talentResults;
 
   buildKeyDic.reserve(14*nFull);
+  talentResults.reserve(200+nFull*6);
   for (int l=0;l<7;l++) {
     std::vector< std::vector<int> > levKeys;
     std::vector< std::vector<int> > levKeys2;
@@ -155,7 +164,6 @@ uint32_t * sortTalents (int partialBuilds[][9], int fullBuilds[][11], int nParti
         if (realTalents[l][t] == fullBuilds[b][l]) {
           talentResults[l][t][0] += fullBuilds[b][9];
           talentResults[l][t][1] += fullBuilds[b][10];
-
           break;
         }
       }
@@ -216,7 +224,7 @@ extern "C" {
 
 
   EMSCRIPTEN_KEEPALIVE
-  uint32_t * getBuilds (
+  uint32_t * getBuilds(
     int32_t *buf,
     int nBuilds
   ) {
@@ -227,12 +235,15 @@ extern "C" {
     int nPartial = 0;
     int nTalents = 0;
     std::map<int,std::vector<int> > fullBuilds;
+    // fullBuilds.reserve(nBuilds*11);
     std::map<int,std::vector<int> > partialBuilds;
+    // fullBuilds.reserve(nBuilds*9);
 
     for (int b=0;b<nBuilds;b++) {
       bool isComplete = true;
       int buildInt = 0;
       int Won=buf[z++];
+      std::cout << "[WON:" << Won << "]";
       for (int t=0;t<7;t++) {
         int tal = buf[z++];
         int talIndex = realTalents[t].size();
@@ -258,14 +269,18 @@ extern "C" {
       }
       if (isComplete) {
         if (!fullBuilds.count(buildInt)) {
-          fullBuilds[buildInt] = {0,0};
+          fullBuilds[buildInt][0] = 0;
+          fullBuilds[buildInt][1] = 0;
+          std::cout << "fullBuilds[[buildInt][0]:" << fullBuilds[buildInt][0] << ",Won:" << Won << "]";
           nFull += 1;
         }
         fullBuilds[buildInt][0] += Won;
         fullBuilds[buildInt][1] += 1;
       } else {
         if (!partialBuilds.count(buildInt)) {
-          partialBuilds[buildInt] = {0,0};
+          partialBuilds[buildInt][0] = 0;
+          partialBuilds[buildInt][1] = 0;
+          std::cout << "partialBuilds[[buildInt][0]:" << partialBuilds[buildInt][0] << ",Won:" << Won << "]";
           nPartial += 1;
         }
         partialBuilds[buildInt][0] += Won;
@@ -294,14 +309,16 @@ extern "C" {
           fBuilds[fCount][8]= val[1];
           fBuilds[fCount][9] = val[0]*1000;
           fBuilds[fCount][10]= val[1]*1000;
-          // printArray(fBuilds[fCount],11);
           fCount++;
-          /* std::cout << key         // string (key)
+          /*
+          printArray(fBuilds[fCount],11);
+          std::cout << key         // string (key)
                     << ':'
                     << val[0]        // string's value
                     << ':'
                     << val[1]
-                    << std::endl ; */
+                    << std::endl ;
+          */
       }
       for( auto const& [key, val] : partialBuilds )
         {

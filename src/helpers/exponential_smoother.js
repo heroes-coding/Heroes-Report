@@ -37,7 +37,7 @@ export function exponentialSmoothingCP(timedData) {
 }
 
 export function exponentialSmoothing(timedData) {
-  return exponentialSmoothingCP(timedData)
+  // return exponentialSmoothingCP(timedData)
   const nTime = timedData.length
   timedData.sort((x,y) => x[0] < y[0] ? -1 : 1)
   if (nTime>500) {
