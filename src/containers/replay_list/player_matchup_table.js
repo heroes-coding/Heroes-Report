@@ -206,11 +206,17 @@ class PlayerMatchupTable extends Component {
     }).filter(x => x.stats[0].value !== "-" || x.stats[2].value !== "-" || x.stats[4].value !== "-")
     const { orderID, desc } = this.state
     rows.sort((x,y) => {
+      let xVal, yVal
       if (isNaN(orderID)) {
-        return x[orderID] < y[orderID] ? 1 : -1
+        xVal = x[orderID]
+        yVal = y[orderID]
       } else {
-        return x.stats[orderID].value < y.stats[orderID].value ? 1 : -1
+        xVal = x.stats[orderID].value
+        yVal =y.stats[orderID].value
       }
+      xVal = xVal === '-' ? (desc ? -1 : Infinity) : xVal
+      yVal = yVal === '-' ? (desc ? -1 : Infinity) : yVal
+      return xVal < yVal ? 1 : -1
     })
     if (!desc) {
       rows.reverse()

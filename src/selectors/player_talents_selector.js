@@ -31,7 +31,6 @@ const getFinalTalents = (baseData, filteredTalents, selectedTalents) => {
   const {selectedHero, buildsArray, nBuilds, talentData} = baseData
   if (!filteredTalents && talentData) {
     filteredTalents = refilterTalents(talentData,[],[0,0,0,0,0,0,0])
-    console.log(filteredTalents)
   }
   return {selectedHero, buildsArray, nBuilds, talentData, filteredTalents, selectedTalents}
 }

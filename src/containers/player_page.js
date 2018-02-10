@@ -75,29 +75,32 @@ class PlayerPage extends Component {
                 maxMSL={this.props.endDate}
               />
             </div>
-            <ul className="nav playerTabs">
-              <li className="nav-item playerReplays">
-                <a className={`nav-link playerNav ${curHero ? '' : 'active'}`}
-                  href="#"
-                  onClick={() => { this.reset() }}
-                >Replay Listing</a>
-              </li>
-              <FilterDropDown
-                currentSelection="Heroes"
-                buttonLabel={curHero ? <span>Talents for {renderTinyHero(curHero)} </span> : 'Talents'}
-                name=''
-                id='gameMap'
-                dropdowns={this.props.HOTS.sortedHeroes ? this.props.HOTS.sortedHeroes : []}
-                updateFunction={this.updateHero}
-                leftComponentRenderer={renderTinyHero}
-                rightComponentRenderer={renderNothing}
-                renderDropdownName={true}
-                containerClass={conClass}
-                currentID={99}
-              />
-            </ul>
-            {!curHero && <ReplayList playerID={id} />}
-            {curHero && <PlayerTalentCalculator hero={curHero} />}
+            <div className="playerHolder">
+              <ul className="nav playerTabs">
+                <li className="nav-item playerReplays">
+                  <a className={`nav-link playerNav ${curHero ? '' : 'active'}`}
+                    href="#"
+                    onClick={() => { this.reset() }}
+                  >Replay Listing</a>
+                </li>
+                <FilterDropDown
+                  currentSelection="Heroes"
+                  buttonLabel={curHero ? <span>Talents for {renderTinyHero(curHero)} </span> : 'Talents'}
+                  name=''
+                  id='gameMap'
+                  dropdowns={this.props.HOTS.sortedHeroes ? this.props.HOTS.sortedHeroes : []}
+                  updateFunction={this.updateHero}
+                  leftComponentRenderer={renderTinyHero}
+                  rightComponentRenderer={renderNothing}
+                  renderDropdownName={true}
+                  containerClass={conClass}
+                  currentID={99}
+                  active={curHero ? true : false}
+                />
+              </ul>
+              {!curHero && <ReplayList playerID={id} />}
+              {curHero && <PlayerTalentCalculator hero={curHero} />}
+            </div>
             <PlayerMatchupTable />
           </div>
           <div className='flex statsList col-12 col-sm 6 col-lg-3 order-lg-first'>

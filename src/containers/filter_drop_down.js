@@ -33,7 +33,7 @@ function renderButtonLabel(props) {
 
 export default (props) => {
   return (
-    <form className={`${props.containerClass ? props.containerClass : 'input-group filterGroup '}` + ' justify-content-center'}>
+    <form className={`${props.containerClass ? props.containerClass : 'input-group filterGroup '}` + ' justify-content-center'} >
       {props.resetFunction && <button
         className='btn btn-small btn-link iconFilter'
         onClick={(event) => {

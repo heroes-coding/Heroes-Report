@@ -75,10 +75,8 @@ export function selectTalent(lev, tal, state, talentData) {
     ignoreCounts.push(c)
   }
   let filteredTalents = null
-  console.log(toIgnore,ignoreCounts)
   if (ignoreStuff) {
     filteredTalents = refilterTalents(talentData,toIgnore,ignoreCounts)
-    console.log('FILTERED IN INDEX', filteredTalents)
   }
   return {
     type: SELECT_TALENT,
@@ -88,7 +86,6 @@ export function selectTalent(lev, tal, state, talentData) {
 }
 
 export function addHeroFilter(team,hero) {
-  console.log(team,hero)
   return {
     type: ADD_HERO_FILTER,
     team,

@@ -11,6 +11,7 @@ import '../node_modules/font-awesome/css/font-awesome.min.css'
 import * as styles from './style/style.css'
 
 window.styles = styles
+window.timings = {}
 
 window.save = function(data, filename) {
   if (!data) {

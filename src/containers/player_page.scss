@@ -6,13 +6,7 @@ div#playerPageHolder {
     /* display: flex; */
 }
 
-.playerTabs {
-  margin: 5px -11px -4px -11px;
-  height: 36px;
-  display: flex;
-  border-radius: 5px 5px 0px 0px;
-  background: lighten($Dark,15%);
-}
+
 
 .playerReplays {
   flex: 1 0;
@@ -20,7 +14,7 @@ div#playerPageHolder {
 
 
 .nav-link.playerNav {
-  border: 1px solid $Dark;
+  // border: 1px solid $Dark;
 }
 
 .nav-link.playerNav.active, .nav-link.playerNav:hover {
@@ -28,15 +22,33 @@ div#playerPageHolder {
   border-radius: 5px 5px 0px 0px;
 }
 
+.playerTabs {
+  margin: 5px -10px -5px -10px;
+  height: 36px;
+  display: flex;
+  border-radius: 5px 5px 0px 0px;
+  background: darken($Dark,8%);
+}
+
+.playerHolder {
+    background: darken($Dark,8%);
+    margin: 5px -10px 10px -10px;
+    padding: 0px 11px 0px 11px;
+    border-radius: 5px 5px 0px 0px;
+}
+
+
 
 
 .playerNav {
   flex: 1 0;
   height: 34px;
   position: relative;
-  top: 2px;
+  top: 1px;
+  margin: 0px 1px !important;
   text-align: center;
   color: $Light;
+  border: none;
 }
 
 .timelineHolder {

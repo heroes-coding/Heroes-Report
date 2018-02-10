@@ -2,6 +2,8 @@
 #include <math.h>
 #include "playerparser.h"
 #include "replayparser.h"
+#include "kdensity.h"
+#include "exponentialSmoother.h"
 #include "getTalentWinrates.h"
 #include <memory>
 #include <iostream>
