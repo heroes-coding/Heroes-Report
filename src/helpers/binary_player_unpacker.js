@@ -12,7 +12,6 @@ function heapFromBytes(buffer) {
       // need to get access to some stuff from the dictionary to proceed
       await asleep(10)
     }
-    const startTime = window.performance.now()
     const nHeroes = window.HOTS.fullHeroNames.length
     const offset = specialLocations.length+nHeroes
 
@@ -22,23 +21,18 @@ function heapFromBytes(buffer) {
     window.intsArray = intsArray
     intsArray.set(initialArray)
     intsArray.set(realInts,offset)
-
-    console.log(`It took ${Math.round(window.performance.now()*100 - 100*startTime)/100} ms to unpack ints`)
     while (!window.moduleLoaded) {
       // need to get access to some stuff from the dictionary to proceed
       await asleep(10)
     }
     let buf, error, replays
     try {
-      const bufferTime = window.performance.now()
-      console.log('should be allocating',offset + nReplays*12,offset)
       buf = window.Module._malloc((offset + nReplays*12)*4,4)
       window.Module.HEAPU32.set(intsArray,buf >> 2)
-      console.log(`It took ${Math.round(window.performance.now()*100 - 100*bufferTime)/100} ms to move ints into buffer`)
       window.ints = intsArray
-      let startTime5 = window.performance.now()
+      let startTime = window.performance.now()
       const replaysPointer = window.Module._decodeReplays(buf, replayDecoderLengths.length, replayDecoder.length/2, nReplays, nPredefined, decoderIndex, nHeroes)
-      console.log(`It took ${Math.round(window.performance.now()*100 - 100*startTime5)/100} ms to DECODE REPLAYS`)
+      window.timings['unpack time for player'] = (window.performance.now()*100 - 100*startTime)/100
       replays = []
       const heap = window.Module.HEAPU32
       const startTime7 = window.performance.now()

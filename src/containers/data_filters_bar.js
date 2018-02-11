@@ -181,7 +181,6 @@ class DataFilters extends Component {
           containerClass='halfy input-group filterGroup'
           hideArrow={true}
         />}
-        {this.isMenu(0b100) && <ButtonLabeledSpacer filterName={`Dates:  ${this.props.timeRange ? formatDate(this.props.timeRange[2]) + " - " + formatDate(this.props.timeRange[3]) : 'All'}`} faIcon='fa-calendar' overclass='halfy blackButton' />}
         {this.isMenu(0b1000) && <TimeLine
           minMSL={this.props.startDate}
           maxMSL={this.props.endDate}

@@ -154,7 +154,7 @@ class Graph extends React.Component {
           {!simple&&yTicks.reverse().map((y,i) => {
             const tick = yFormatter ? yFormatter(y) : y
             if (usedTicks.includes(tick)) {
-              return <g></g>
+              return <g key={i}></g>
             }
             usedTicks.push(tick)
             y = yScale(y)

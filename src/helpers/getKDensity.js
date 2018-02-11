@@ -3,7 +3,7 @@ export default function getKDensity(k, bins, values) {
   const nVals = values.length
   let buf, error, kDensities
   try {
-    buf = window.Module._malloc((nBins+nVals+1)*4,4)
+    buf = window.Module._malloc((nBins+nVals+1)*16,4)
     let data = [].concat(k,bins,values)
     data = new Float32Array(data)
     window.Module.HEAPF32.set(data,buf >> 2)

@@ -29,7 +29,6 @@ class Nav extends React.Component {
     this.setState({curHero: newHero})
   }
   playerSearch(player) {
-    console.log(`Searching for ${player}...`)
     this.props.dispatchPlayerSearch(player)
     if (player==='') {
       this.props.history.push('/')
@@ -40,7 +39,6 @@ class Nav extends React.Component {
   }
   render() {
     const playerSearch = _.debounce((term) => {
-      console.log('Should be searching for ', term)
       this.playerSearch(term)
     }, 500)
     return (
@@ -81,7 +79,7 @@ class Nav extends React.Component {
             >You</NavLink>
           </li>
           <li className="searchBar nav-item list-inline-item">
-            <SearchBar placeholder="player#1234" onSearchTermChange={this.playerSearch}/>
+            <SearchBar placeholder="player#1234" onSearchTermChange={playerSearch}/>
           </li>
         </ul>
       </div>

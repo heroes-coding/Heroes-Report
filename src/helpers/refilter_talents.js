@@ -1,7 +1,6 @@
 export default function getTalentWinrates(talentData,toIgnore,ignoreCounts) {
   const {nTalents, nFull, nPartial, talentCounts, talents, partialBuilds, fullBuilds} = talentData
   // let selectTime = window.performance.now()
-  console.log({nTalents, nFull, nPartial, talentCounts, talents, partialBuilds, fullBuilds})
   window.toIgnore = toIgnore
   // console.log(talentCounts)
   let startArray = new Int32Array([].concat(ignoreCounts,toIgnore,talentCounts))
@@ -33,7 +32,6 @@ export default function getTalentWinrates(talentData,toIgnore,ignoreCounts) {
         o += 7
       }
     }
-    console.log(returnees)
     // console.log(`It took ${Math.round(window.performance.now()*100 - 100*selectTime)/100} ms to get talent winrates`)
     window.returnees = returnees
   } catch (e) {

@@ -50,7 +50,6 @@ class TalentCalculator extends Component {
   }
   render() {
     const { filteredTalents, dataTime, talentCounts, hero } = this.props.talentData
-    console.log(this.props.talentData)
     // I really wish there was a better way of doing this.  The problem is the old talents are passed back with the new hero id.  I don't know why props are being updated before the talent data is when I am only connecting to getHeroTalents
     let curHero = parseInt(this.props.curHero)
     return (
