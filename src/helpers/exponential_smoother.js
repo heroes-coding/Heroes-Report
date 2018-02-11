@@ -14,7 +14,7 @@ export function exponentialSmoothingCP(timedData) {
   const nTime = timedData.length
   let buf, timedPoints, error
   try {
-    buf = window.Module._malloc(nTime*16,4) // this HAS to be sufficient for internal manipulation in C++.  Setting it lower results in unpredictable errors that are very hard to predict.  (ALONG WITH A BUNCH OF OTHER THINGS THAT CAN CAUSE MEMORY ERRORS.  C++ is a little bit deep for me...)
+    buf = window.Module._malloc(nTime*32,4) // this HAS to be sufficient for internal manipulation in C++.  Setting it lower results in unpredictable errors that are very hard to predict.  (ALONG WITH A BUNCH OF OTHER THINGS THAT CAN CAUSE MEMORY ERRORS.  C++ is a little bit deep for me...)
     let data = [].concat(...timedData)
     data = new Float32Array(data)
     window.Module.HEAPF32.set(data,buf >> 2)
@@ -39,7 +39,6 @@ export function exponentialSmoothingCP(timedData) {
     window.Module._free(buf)
   }
   if (error) throw error
-  console.log(timedPoints)
   return timedPoints
 }
 

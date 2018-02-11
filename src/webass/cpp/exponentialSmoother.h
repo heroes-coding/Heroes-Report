@@ -1,11 +1,5 @@
 #include <memory>
 #include <iostream>
-#include <cmath>
-#include <utility>
-#include <algorithm>
-#include <vector>
-#include <numeric>
-#include <math.h>
 
 
 
@@ -47,21 +41,60 @@ float* getData(float timedData[], int nPoints) {
     // std::cout << "[" << num << "/" << den << "(" << res << ")] ";
     smoothedY[x-2] = res;
   }
-  std::cout << std::endl;
+  // std::cout << std::endl;
 
   // float returnees[(nPoints-2)*2+1]; // DON'T DO THIS!!!
   float *returnees = (float*) std::malloc(sizeof(*returnees));
-  int r = 0;
-  returnees[r++] = nPoints-2;
-  for (int i=0;i<nPoints-2;i++) {
-    returnees[r++] = timedData[i*2+4];
-    returnees[r++] = smoothedY[i];
-    // std::cout << "[" << i << ":" << theData[i].first << "," << theData[i].second << ']';
+  if (nPoints < 500) {
+    int r = 0;
+    returnees[r++] = nPoints-2;
+    for (int i=0;i<nPoints-2;i++) {
+      returnees[r++] = timedData[i*2+4];
+      returnees[r++] = smoothedY[i];
+      // std::cout << "[" << i << ":" << theData[i].first << "," << theData[i].second << ']';
+    }
+  } else {
+    // just average nearby points together
+    float binSize = (nPoints-2)/500;
+    int r = 0;
+    int p = 0;
+    int c = 0;
+    double totX = 0;
+    double totY = 0;
+    float prevX = timedData[p*2+4];
+    while (p<nPoints-2) {
+      float x = timedData[p*2+4];
+      float y = smoothedY[p];
+      if (p/binSize > r && x - prevX > 0.001) {
+        prevX = x;
+        float xResult = float(totX/c);
+        float yResult = float(totY/c);
+        returnees[r*2+1] = xResult;
+        returnees[r*2+2] = yResult;
+        // std::cout << "[XRESULT:" << xResult << "|YRESULT:" << yResult << "]";
+        r++;
+        totX = 0;
+        totY = 0;
+        c = 0;
+      }
+      totX += x;
+      totY += y;
+      p++;
+      c++;
+      // std::cout << "[p:" << p << "|c:" << c << "|x:" << x << "|y:" << y << "|totX:" << totX << "|totY:" << totY << "] ";
+    }
+    returnees[r*2+1] = float(totX/c);
+    returnees[r*2+2] = float(totY/c);
+    returnees[0] = r;
   }
+  // std::cout << std::endl;
+
   float* arrayPtr = &returnees[0];
   // std::free(returnees);
   return arrayPtr;
 }
+
+
 
 
 extern "C" {

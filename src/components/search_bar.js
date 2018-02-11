@@ -9,7 +9,7 @@ class SearchBar extends Component {
     return (
       <input
         placeholder={ this.props.placeholder }
-        className="searchInput"
+        className={this.props.overClass || "searchInput"}
         value = { this.state.term }
         onChange={ event => this.onInputChange(event.target.value)}
         style={ this.props.style }

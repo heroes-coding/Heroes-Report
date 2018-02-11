@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import FilterDropDown from '../containers/filter_drop_down'
+import _ from 'lodash'
 import ButtonLabeledSpacer from '../components/button_labeled_spacer'
 import IconList from '../containers/icon_list'
 import { modeChoices, modeDic, mmrChoices, mmrDic } from '../helpers/definitions'
 import { formatDate } from '../helpers/smallHelpers'
+import SearchBar from '../components/search_bar'
 import { renderTime, renderNothing, renderTinyMap, renderPeeps, renderTinyHero, renderTeam } from '../components/filterComponents'
 import { connect } from 'react-redux'
-import { updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime } from '../actions'
+import { updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime, heroSearch } from '../actions'
 import UpdateStatCat from './update_stat_cat'
 import TimeLine from './replay_list/timeline'
 import PlayerReplaysSelector from '../selectors/player_replays_selector'
@@ -25,6 +27,7 @@ class DataFilters extends Component {
     this.updateSelf = this.updateSelf.bind(this)
     this.isMenu = this.isMenu.bind(this)
     this.getHeroes = this.getHeroes.bind(this)
+    this.heroSearch = this.heroSearch.bind(this)
   }
   getHeroes() {
     this.props.getHeroTalents(this.props.prefs.hero,this.props.prefs)
@@ -57,7 +60,22 @@ class DataFilters extends Component {
     // So the first screen (0) is the rightmost bit, etc.  Ignore eslint suggestion.
     return bits & (1<<this.props.menu) ? true : false
   }
+  heroSearch(term) {
+    this.props.heroSearch(term)
+    /*
+    this.props.dispatchPlayerSearch(player)
+    if (player==='') {
+      this.props.history.push('/')
+    } else {
+      this.props.history.push(`/playerlist/${player}`)
+    }
+    this.setState({curHero: null})
+    */
+  }
   render() {
+    const heroSearch = _.debounce((term) => {
+      this.heroSearch(term)
+    }, 500)
     const [allies, enemies, self] = this.props.filterHeroes
     const { updatedTime } = this.props
     return (
@@ -135,6 +153,7 @@ class DataFilters extends Component {
           containerClass='halfy input-group filterGroup'
           hideArrow={true}
         />}
+        {this.isMenu(0b0011) && <form className="halfy input-group filterGroup buttonSpacer blackButton"><SearchBar placeholder="Hero search" overClass="btn btn-small btn-link iconFilter" onSearchTermChange={heroSearch}/></form>}
         {this.isMenu(0b0010) && <FilterDropDown
           currentSelection=""
           resetFunction={this.updateAllies}
@@ -196,4 +215,4 @@ function mapStateToProps(state) {
   return { ...PlayerReplaysSelector(state), HOTS, prefs, status, roles, franchises, filterHeroes, timeRange }
 }
 
-export default connect(mapStateToProps, { updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime })(DataFilters)
+export default connect(mapStateToProps, { updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime, heroSearch })(DataFilters)
