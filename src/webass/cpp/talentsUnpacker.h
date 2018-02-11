@@ -4,7 +4,6 @@
 #include <vector>
 #include <map>
 
-
 void printArray(int build[], int n) {
     for (int t=0;t<n;t++) {
       if (t==7) {
@@ -37,16 +36,16 @@ void printTwoDeep(std::vector< std::vector<int> > BKD) {
   }
 }
 
-
 uint32_t * sortTalents (int partialBuilds[][9], int fullBuilds[][11], int nPartial, int nFull, std::vector< std::vector<int> > realTalents, int nTalents) {
 
-
+  /*
   for (int i=0;i<nFull;i++) {
     printArray(fullBuilds[i],11);
   }
   for (int i=0;i<nPartial;i++) {
     printArray(partialBuilds[i],9);
   }
+  */
 
   std::vector< std::vector< std::vector<int> > > buildKeyDic;
   std::vector< std::vector< std::vector<int> > > talentResults;
@@ -269,8 +268,12 @@ extern "C" {
       }
       if (isComplete) {
         if (!fullBuilds.count(buildInt)) {
-          fullBuilds[buildInt][0] = 0;
-          fullBuilds[buildInt][1] = 0;
+          std::vector<int> fB(2);
+          fB.push_back(0);
+          fB.push_back(0);
+          fullBuilds[buildInt] = fB;
+          // fullBuilds[buildInt][0] = 0;
+          // fullBuilds[buildInt][1] = 0;
           std::cout << "fullBuilds[[buildInt][0]:" << fullBuilds[buildInt][0] << ",Won:" << Won << "]";
           nFull += 1;
         }
@@ -278,8 +281,13 @@ extern "C" {
         fullBuilds[buildInt][1] += 1;
       } else {
         if (!partialBuilds.count(buildInt)) {
-          partialBuilds[buildInt][0] = 0;
-          partialBuilds[buildInt][1] = 0;
+          std::vector<int> fB(2);
+          fB.push_back(0);
+          fB.push_back(0);
+          partialBuilds[buildInt] = fB;
+          // partialBuilds[buildInt] = {0,0};
+          // partialBuilds[buildInt][0] = 0;
+          // partialBuilds[buildInt][1] = 0;
           std::cout << "partialBuilds[[buildInt][0]:" << partialBuilds[buildInt][0] << ",Won:" << Won << "]";
           nPartial += 1;
         }

@@ -16,7 +16,19 @@ def getMax(array):
         total = (total*n)+n
     return total
 
-
+732*2928
+842085136
+getBytes(4293913866)
+16**7
+5*16
+0*16+5
+5812/4
+5%16
+5//16
+2113536000/1024/1024/1024
+10000*4*3/1024
+16777216/1024/1024
+80/4
 replayBitDic = [
 #3 Structures 1-2 / firstTo10 / firstTo20 / Player Three Percentiles 9 /Player 6 Talents 1-2
 getBytes(6*6*3*5**4*4*6*100*5*5),
@@ -287,17 +299,13 @@ print ("const int decoders[{}][{}][{}] = {{ {} }};".format(len(lengths),max(leng
 )) for i in range(len(lengths))])))
 
 
-print ("[]{ {24, 25, 26, 27}, {20, 21, 22, 23} };
-
-
+6000000/300/60/60
+    
+# Another check
 sorted(decoderVals,key=lambda x: x[-1])
 
 
-    "pTalents[7][6]"[-2]
-replayBits
-
 terms = 'pGlobes', 'pStructures', 'pMercs', 'heroes', 'KDA', 'mmrPercentiles', "pTalents[0]", "pTalents[1]", "pTalents[2]", "pTalents[3]", "pTalents[4]", "pTalents[5]", "pTalents[6]", 
-
 
 
 for p in range(10):
@@ -369,6 +377,23 @@ def getMax(vals):
       
 2**32/
 ''' Individual Player stuff '''
+  // 0
+  [[Vengeances,23,1], [Kills,57,1],[mapStatIDs[0],40,1], ...talentSlots.map(x => [x, 5, 1]) ],
+  // 1
+  [[SiegeDamage,307,1000], [MercenaryCampCaptures,34,1],[mapStatIDs[1],40,1], [ExperienceContribution,50,1000], [Assists,99,1]],
+  //2
+  [[SecondsofRoots, 91,1],  [SecondsSpentDead,646,1], [SelfHealing,69,1000], ...endingLevels],
+  //3
+  [[HeroDamage,138,1000], [StructureDamage,92,1000], [Feeder,2,1], [TeamfightDamageTaken,123,1000], [SecondsonFire,679,1], [BigTalker,2,1]],
+
+  //5
+  [[RegenGlobesCollected,120,1],[Escapes,27,1], [Healing,156,1000], [SecondsofSilence, 94, 1],  [TeamfightHeroDamage,82,1000]],
+  //6
+  [[Award,40,1], [Deaths,40,1], [mapStatValues[1],500,getStatMaxMultiplier(mapStatIDs[1]-1)], [mapStatValues[0],500,getStatMaxMultiplier(mapStatIDs[0]-1)], [slot, 10, 1]],
+  //7
+  [[SecondsofCrowdControl,4950,1],[SecondsofStuns,100,1], [ProtectionGiventoAllies,100,1000], [OutnumberedDeaths,38,1], [Pinger,2,1]],
+  //8
+  [[teamMercCaptures[team],85,1], [votesReceived[h],11,1],[MinionDamage,251,1000], [heroTownKills[h],6,1], [teamTownKills[team],12,1], [WetNoodle,2,1], [DangerousNurse,2,1], [VotedFor,3,1]]
 
 
 // 0. Vengeances / K / MapStat 1 / Talents
@@ -401,6 +426,8 @@ getBytes (4950*100*100 * 38 * 2)
 
 8. // Team merc captures / Votes / Minion Damage - 1000/ Hero Killed Structures / Team Killed Structures / Level /  Wet Noodle / Dangerous Nurse  Voted For 
 getBytes(85*11* 251 * 6 * 12 *  21 * 2 * 2 * 3 )
+
+
 
 # Parse Build will always come at the end of the eight integer from off the top (added at the end)
 ", ".join(["['talent{}',5,1]".format(i) for i in range(7)])

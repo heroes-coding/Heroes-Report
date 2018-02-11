@@ -12,34 +12,44 @@ for (let i=1;i<=ALPHAcutoff;i++) {
 
 export function exponentialSmoothingCP(timedData) {
   const nTime = timedData.length
-  const buf = window.Module._malloc(nTime*8,4)
-  let data = [].concat(...timedData)
-  data = new Float32Array(data)
-  window.Module.HEAPF32.set(data,buf >> 2)
-  const pointsPointer = window.Module._getExponentiallySmoothedData(buf, nTime)
-  let o = pointsPointer/4
-  const nPoints = window.Module.HEAPF32[o]
-  const points = window.Module.HEAPF32.slice(o+1, o+1+nPoints*2)
-  const timedPoints = []
-
-  let pMSL = 0
-  for (let p=0;p<nPoints;p++) {
-    let MSL = points[p*2]
-    if (MSL < pMSL) {
-      console.log(p,MSL,pMSL)
+  let buf, timedPoints, error
+  try {
+    buf = window.Module._malloc(nTime*16,4)
+    let data = [].concat(...timedData)
+    data = new Float32Array(data)
+    window.Module.HEAPF32.set(data,buf >> 2)
+    const pointsPointer = window.Module._getExponentiallySmoothedData(buf, nTime)
+    let o = pointsPointer/4
+    const nPoints = window.Module.HEAPF32[o]
+    const points = window.Module.HEAPF32.slice(o+1, o+1+nPoints*2)
+    timedPoints = []
+    let pMSL = 0
+    for (let p=0;p<nPoints;p++) {
+      let MSL = points[p*2]
+      if (MSL < pMSL) {
+        console.log(p,MSL,pMSL)
+      }
+      pMSL = MSL
+      timedPoints.push([points[p*2],points[p*2+1]])
     }
-    pMSL = MSL
-    timedPoints.push([points[p*2],points[p*2+1]])
+    window.timedPoints = timedPoints
+  } catch (e) {
+    error = e
+  } finally {
+    window.Module._free(buf)
   }
-  // console.log('did we do it?', points, timedPoints)
+  if (error) throw error
 
   return timedPoints
 }
 
 export function exponentialSmoothing(timedData) {
+  window.timedData = timedData
+  window.exponentialSmoothingCP = exponentialSmoothingCP
+  timedData.sort((x,y) => x[0] < y[0] ? -1 : 1)
+  // console.log(timedData)
   // return exponentialSmoothingCP(timedData)
   const nTime = timedData.length
-  timedData.sort((x,y) => x[0] < y[0] ? -1 : 1)
   if (nTime>500) {
     let minTime = timedData[0][0]
     let maxTime = timedData[nTime-1][0]

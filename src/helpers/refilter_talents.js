@@ -19,21 +19,28 @@ export default function getTalentWinrates(talentData,toIgnore,ignoreCounts) {
   }
   fullArray.set(partialBuilds,offset)
   fullArray.set(fullBuilds,offset+nPartial*9)
-  // console.log(fullArray,'FULL ARRAY')
-  const buf = window.Module._malloc(arrayLength*4,4)
-  window.Module.HEAP32.set(fullArray,buf >> 2)
-  const talentsPointer = window.Module._getTalentWinrates(buf,nFull,nPartial,nTalents)
-  let o = talentsPointer/4
-  const returnees = []
-  for (let l=0;l<7;l++) {
-    returnees.push([])
-    for (let c=0;c<talentCounts[l];c++) {
-      returnees[l].push(window.Module.HEAPU32.slice(o,o+7))
-      o += 7
+  let buf, error, returnees
+  try {
+    buf = window.Module._malloc(arrayLength*4,4)
+    window.Module.HEAP32.set(fullArray,buf >> 2)
+    const talentsPointer = window.Module._getTalentWinrates(buf,nFull,nPartial,nTalents)
+    let o = talentsPointer/4
+    returnees = []
+    for (let l=0;l<7;l++) {
+      returnees.push([])
+      for (let c=0;c<talentCounts[l];c++) {
+        returnees[l].push(window.Module.HEAPU32.slice(o,o+7))
+        o += 7
+      }
     }
+    console.log(returnees)
+    // console.log(`It took ${Math.round(window.performance.now()*100 - 100*selectTime)/100} ms to get talent winrates`)
+    window.returnees = returnees
+  } catch (e) {
+    error = e
+  } finally {
+    window.Module._free(buf)
   }
-  console.log(returnees)
-  // console.log(`It took ${Math.round(window.performance.now()*100 - 100*selectTime)/100} ms to get talent winrates`)
-  window.returnees = returnees
+  if (error) throw error
   return returnees
 }

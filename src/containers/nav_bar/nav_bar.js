@@ -39,7 +39,10 @@ class Nav extends React.Component {
     this.setState({curHero: null})
   }
   render() {
-    const playerSearch = _.debounce((term) => { this.playerSearch(term) }, 500)
+    const playerSearch = _.debounce((term) => {
+      console.log('Should be searching for ', term)
+      this.playerSearch(term)
+    }, 500)
     return (
       <div className="d-flex">
         <ul className="list-inline mx-auto justify-content-center">
@@ -78,7 +81,7 @@ class Nav extends React.Component {
             >You</NavLink>
           </li>
           <li className="searchBar nav-item list-inline-item">
-            <SearchBar placeholder="player#1234" onSearchTermChange={playerSearch}/>
+            <SearchBar placeholder="player#1234" onSearchTermChange={this.playerSearch}/>
           </li>
         </ul>
       </div>

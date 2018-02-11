@@ -14,7 +14,9 @@ float* kernelDensity (int k, float X[], float V[], int nX, int nV) {
   // k is the kDensity parameter / smoothing factor
   // X is the bins of X
   // V are all of the values
-  float *kDensity = (float*) std::malloc(sizeof(*kDensity));
+
+  float kDensity[nX];
+  // float *kDensity = (float*) std::malloc(sizeof(*kDensity));
   for (int i=0;i<nX;i++) {
     float x = X[i];
     float kSum = 0;

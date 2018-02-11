@@ -84,6 +84,9 @@ class Graph extends React.Component {
     const yPad = yRange*0.025
     const xScale = d3.scaleLinear().range([xOff+1, xRatio]).domain([xMin-xPad,xMax+xPad])
     const xTicks = xScale.ticks(8)
+    if (xTicks.length < 3) {
+      return <div></div>
+    }
     const xTickOffset = xTicks[xTicks.length-1].toString().length > 2 ? 5 : 0
     const xTickRotation = xTicks[xTicks.length-1].toString().length <= 2 ? "rotate(-90)" : "rotate(-45)"
     const yScale =

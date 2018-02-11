@@ -16,31 +16,39 @@ function heapFromBytes(response, hero) {
       console.log('loading...')
       await asleep(10)
     }
+    let buf, error, results
+    try {
+      buf = window.Module._malloc(realInts.length*4,4)
+      window.Module.HEAP32.set(realInts,buf >> 2)
+      let decodeTime = window.performance.now()
+      const replaysPointer = window.Module._decodeTalents(buf,nBuilds)
 
-    const buf = window.Module._malloc(realInts.length*4,4)
-    window.Module.HEAP32.set(realInts,buf >> 2)
-    let decodeTime = window.performance.now()
-    const replaysPointer = window.Module._decodeTalents(buf,nBuilds)
-
-    let o = replaysPointer/4
-    const nTalents = window.Module.HEAPU32[o]
-    const nFull = window.Module.HEAPU32[o+1]
-    const nPartial = window.Module.HEAPU32[o+2]
-    const talentCounts = [3,4,5,6,7,8,9].map(x => window.Module.HEAPU32[o+x])
-    o = o+10
-    const talents = []
-    for (let l=0;l<7;l++) {
-      talents.push([])
-      for (let c=0;c<talentCounts[l];c++) {
-        talents[l].push(window.Module.HEAPU32.slice(o,o+7))
-        o += 7
+      let o = replaysPointer/4
+      const nTalents = window.Module.HEAPU32[o]
+      const nFull = window.Module.HEAPU32[o+1]
+      const nPartial = window.Module.HEAPU32[o+2]
+      const talentCounts = [3,4,5,6,7,8,9].map(x => window.Module.HEAPU32[o+x])
+      o = o+10
+      const talents = []
+      for (let l=0;l<7;l++) {
+        talents.push([])
+        for (let c=0;c<talentCounts[l];c++) {
+          talents[l].push(window.Module.HEAPU32.slice(o,o+7))
+          o += 7
+        }
       }
+      const fullBuilds = window.Module.HEAPU32.slice(o,o+nFull*11)
+      const partialBuilds = window.Module.HEAPU32.slice(o+nFull*11,o+nFull*11+nPartial*9)
+      console.log(`It took ${Math.round(window.performance.now()*100 - 100*decodeTime)/100} ms to decode talents`)
+      results = {nTalents,nFull,nPartial,talentCounts,talents,fullBuilds,partialBuilds,dataTime, hero}
+      window.talentResults = results
+    } catch (e) {
+      error = e
+    } finally {
+      window.Module._free(buf)
     }
-    const fullBuilds = window.Module.HEAPU32.slice(o,o+nFull*11)
-    const partialBuilds = window.Module.HEAPU32.slice(o+nFull*11,o+nFull*11+nPartial*9)
-    console.log(`It took ${Math.round(window.performance.now()*100 - 100*decodeTime)/100} ms to decode talents`)
-    const results = {nTalents,nFull,nPartial,talentCounts,talents,fullBuilds,partialBuilds,dataTime, hero}
-    window.talentResults = results
+    if (error) throw error
+    // window.Module._free(buf)
     resolve(results)
   })
   return promise
