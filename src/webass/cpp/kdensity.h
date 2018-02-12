@@ -15,7 +15,10 @@ float* kernelDensity (int k, std::vector<float> &X, std::vector<float> &V, int n
   // V are all of the values
 
   // float kDensity[nX];
-  float *kDensity = (float*) std::malloc(sizeof(*kDensity));
+  // float * kDensity;
+  // std::unique_ptr<float> kDensity(new float(nX));
+  // float *kDensity = (float*) std::malloc(sizeof(*kDensity));
+  std::vector<float> kDensity(nX);
   for (int i=0;i<nX;i++) {
     float x = X[i];
     float kSum = 0;
@@ -24,7 +27,10 @@ float* kernelDensity (int k, std::vector<float> &X, std::vector<float> &V, int n
       float v = V[j];
       kSum += kernelEpanechnikov(k,x-v);
     }
+
     // std::cout << " ||| TOTAL: " << kSum << std::endl;
+    // *(kDensity+i) = kSum/nV;
+    // kDensity++;
     kDensity[i] = kSum/nV;
   }
   auto arrayPtr = &kDensity[0];
@@ -55,6 +61,26 @@ extern "C" {
         V[l++] = v;
       }
     }
-    return kernelDensity(k, X, V, nX, l);
+    nV = l;
+    // std::vector<float> kDensity(nX);
+    for (int i=0;i<nX;i++) {
+      float x = X[i];
+      float kSum = 0;
+      // std::cout << x << ":";
+      for (int j=0;j<nV;j++) {
+        float v = V[j];
+        kSum += kernelEpanechnikov(k,x-v);
+      }
+
+      // std::cout << " ||| TOTAL: " << kSum << std::endl;
+      // *(kDensity+i) = kSum/nV;
+      // kDensity++;
+      buf[i] = kSum/nV;
+    }
+    std::cout << "FINISHED WITH kdensity pointer: " << (uintptr_t)&buf[0]/4 << std::endl;
+    return buf;
+
+
+    // return kernelDensity(k, X, V, nX, l);
   }
 }

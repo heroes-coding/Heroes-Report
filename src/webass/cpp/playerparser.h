@@ -85,7 +85,9 @@ extern "C" {
 
     // And finally, to declare the buffer that will be pointed to when completely filled
     // uint32_t replays [nItemsToDecode*nReplays];
+    // std::unique_ptr<uint32_t> replays(new uint32_t(nItemsToDecode*nReplays));
     std::vector<unsigned int> replays(nItemsToDecode*nReplays);
+    // uint32_t *replays = (uint32_t*) std::malloc(sizeof(*replays));
 
     for (int r=0;r<nReplays;r++) {
       int slot;
@@ -224,8 +226,11 @@ extern "C" {
         }
       }
     }
-    auto arrayPtr = &replays[0];
-    return arrayPtr;
+    for (int i=0;i<nItemsToDecode*nReplays;i++) {
+      buf[i] = replays[i];
+    }
+    return buf;
+
   }
 
 

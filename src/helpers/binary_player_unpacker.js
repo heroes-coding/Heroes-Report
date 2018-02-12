@@ -67,7 +67,9 @@ function heapFromBytes(buffer) {
     } catch (e) {
       error = e
     } finally {
-      window.Module._free(buf)
+      if (buf) {
+        window.Module._free(buf)
+      }
     }
     if (error) throw error
     resolve(replays)

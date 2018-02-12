@@ -2,10 +2,12 @@ const safePrefs = "C:/webass/emsdk_env.bat & echo Building... & emcc -o ./public
 
 const bareMetal = "C:/webass/emsdk_env.bat & echo Building... & emcc -o ./public/appWASM.js ./src/webass/cpp/emscripten.cpp -O3 -s ALLOW_MEMORY_GROWTH=1 -s WASM=1 -s NO_EXIT_RUNTIME=1 -std=c++1z && python C:/heroes/correctPath.py"
 
+const test = "C:/webass/emsdk_env.bat & echo Building... & emcc ./src/webass/cpp/emscripten.cpp -o ./public/appWASM.js -O3 -s ALLOW_MEMORY_GROWTH=1 -s WASM=1 -s NO_EXIT_RUNTIME=1 -std=c++1z && python C:/heroes/correctPath.py"
+
 module.exports = grunt => {
   grunt.initConfig({
     exec: {
-      build: bareMetal
+      build: test
     },
     watch: {
       cpp: {
