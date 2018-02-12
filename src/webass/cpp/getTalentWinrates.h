@@ -8,7 +8,7 @@ extern "C" {
 
 
   EMSCRIPTEN_KEEPALIVE
-  uint32_t * getTalentWinrates (
+  int32_t * getTalentWinrates (
     int32_t *buf,
     int nFull,
     int nPartials,
@@ -19,7 +19,7 @@ extern "C" {
     */
 
     int z = 0;
-    int ignoreCounts [7];
+    std::vector<int> ignoreCounts(7);
     int maxLevCount = 0;
     for (int l=0;l<7;l++) {
       ignoreCounts[l] = buf[z++];
@@ -36,7 +36,7 @@ extern "C" {
 
     // printTwoDeep(toIgnore);
 
-    int talentCounts [7];
+    std::vector<int> talentCounts (7);
     for (int l=0;l<7;l++) {
       talentCounts[l] = buf[z++];
     }
@@ -153,18 +153,17 @@ extern "C" {
     // std::cout << std::endl;
 
     // printBuildKeyDic(talentResults);
-    uint32_t returneeTalents [nTalents*7];
     int y=0;
     for (int l=0;l<7;l++) {
       for (int t=0;t<talentResults[l].size();t++) {
         for (int n=0;n<7;n++) {
-          returneeTalents[y++] = talentResults[l][t][n];
+          buf[y++] = talentResults[l][t][n];
         }
       }
     }
 
-    auto arrayPtr = &returneeTalents[0];
-    return arrayPtr;
+    // std::cout << "FINISHED WITH getTalentWinrates pointer: " << (uintptr_t)&buf[0]/4 << std::endl;
+    return buf;
 
 
   } // End function

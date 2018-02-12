@@ -1,10 +1,17 @@
 export default function getTalentWinrates(talentData,toIgnore,ignoreCounts) {
+
   const {nTalents, nFull, nPartial, talentCounts, talents, partialBuilds, fullBuilds} = talentData
+  console.log('refilter talents called',nFull,nPartial,!nFull,!nPartial)
+  if (!nFull || !nPartial) {
+    console.log('should be returning')
+    return []
+  }
   // let selectTime = window.performance.now()
   window.toIgnore = toIgnore
   // console.log(talentCounts)
   let startArray = new Int32Array([].concat(ignoreCounts,toIgnore,talentCounts))
   let arrayLength = 14+toIgnore.length + nTalents*7 +nFull*11+nPartial*9
+  console.log(arrayLength,'arrayLength')
   let fullArray = new Int32Array(arrayLength)
   fullArray.set(startArray)
   // console.log(startArray,talentCounts)
@@ -28,7 +35,7 @@ export default function getTalentWinrates(talentData,toIgnore,ignoreCounts) {
     for (let l=0;l<7;l++) {
       returnees.push([])
       for (let c=0;c<talentCounts[l];c++) {
-        returnees[l].push(window.Module.HEAPU32.slice(o,o+7))
+        returnees[l].push(window.Module.HEAP32.slice(o,o+7))
         o += 7
       }
     }

@@ -9,6 +9,7 @@ function heapFromBytes(response, hero) {
     window.response = response
     window.data = data
     const nBuilds = response.length-8
+    console.log('unpacking talents for... ', hero, nBuilds)
     let realInts = new Int32Array(data)
     window.realInts = realInts
     console.log(`It took ${Math.round(window.performance.now()*100 - 100*unpackTime)/100} ms to shift talents`)
@@ -18,7 +19,8 @@ function heapFromBytes(response, hero) {
     }
     let buf, error, results
     try {
-      buf = window.Module._malloc(realInts.length*4,4)
+      // int32_t returneeBuilds [nFull*11+nPartial*9+nTalents*7+7]; // changed to buf
+      buf = window.Module._malloc(realInts.length*11*4+400,4) // needs enough space for above call
       window.Module.HEAP32.set(realInts,buf >> 2)
       let decodeTime = window.performance.now()
       const replaysPointer = window.Module._decodeTalents(buf,nBuilds)

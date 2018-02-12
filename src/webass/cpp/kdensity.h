@@ -77,7 +77,7 @@ extern "C" {
       // kDensity++;
       buf[i] = kSum/nV;
     }
-    std::cout << "FINISHED WITH kdensity pointer: " << (uintptr_t)&buf[0]/4 << std::endl;
+    // std::cout << "FINISHED WITH kdensity pointer: " << (uintptr_t)&buf[0]/4 << std::endl;
     return buf;
 
 

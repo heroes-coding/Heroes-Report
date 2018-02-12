@@ -229,6 +229,8 @@ extern "C" {
     for (int i=0;i<nItemsToDecode*nReplays;i++) {
       buf[i] = replays[i];
     }
+
+    // std::cout << "FINISHED WITH player pointer: " << (uintptr_t)&buf[0]/4 << std::endl;
     return buf;
 
   }

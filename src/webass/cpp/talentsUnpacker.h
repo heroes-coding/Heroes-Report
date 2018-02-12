@@ -36,7 +36,7 @@ void printTwoDeep(std::vector< std::vector<int> > BKD) {
   }
 }
 
-uint32_t * sortTalents (int partialBuilds[][9], int fullBuilds[][11], int nPartial, int nFull, std::vector< std::vector<int> > realTalents, int nTalents) {
+int32_t * sortTalents (int32_t *buf, std::vector< std::vector<int> > partialBuilds, std::vector< std::vector<int> > fullBuilds, int nPartial, int nFull, std::vector< std::vector<int> > realTalents, int nTalents) {
 
   std::vector< std::vector< std::vector<int> > > buildKeyDic;
   std::vector< std::vector< std::vector<int> > > talentResults;
@@ -164,24 +164,24 @@ uint32_t * sortTalents (int partialBuilds[][9], int fullBuilds[][11], int nParti
   // printTwoDeep(realTalents);
   // printBuildKeyDic(buildKeyDic);
 
-  uint32_t returneeBuilds [nFull*11+nPartial*9+nTalents*7+7];
+  // int32_t returneeBuilds [nFull*11+nPartial*9+nTalents*7+7];
   int o = 0;
 
-  returneeBuilds[o++] = nTalents;
-  returneeBuilds[o++] = nFull;
-  returneeBuilds[o++] = nPartial;
+  buf[o++] = nTalents;
+  buf[o++] = nFull;
+  buf[o++] = nPartial;
 
   // Talent counts
   for (int l=0;l<7;l++) {
-    returneeBuilds[o++] = realTalents[l].size();
+    buf[o++] = realTalents[l].size();
   }
 
   // Talents first
   for (int l=0;l<7;l++) {
     for (int t=0;t<realTalents[l].size();t++) {
-      returneeBuilds[o++] = realTalents[l][t];
+      buf[o++] = realTalents[l][t];
       for (int n=0;n<6;n++) {
-        returneeBuilds[o++] = talentResults[l][t][n];
+        buf[o++] = talentResults[l][t][n];
       }
     }
   }
@@ -195,18 +195,20 @@ uint32_t * sortTalents (int partialBuilds[][9], int fullBuilds[][11], int nParti
     std::cout << std::endl;
     */
     for (int k=0;k<11;k++) {
-      returneeBuilds[o++] = fullBuilds[b][k];
+      buf[o++] = fullBuilds[b][k];
     }
   }
   // Then partial builds
   for (int b=0;b<nPartial;b++) {
     for (int k=0;k<9;k++) {
-      returneeBuilds[o++] = partialBuilds[b][k];
+      buf[o++] = partialBuilds[b][k];
     }
   }
 
-  auto arrayPtr = &returneeBuilds[0];
-  return arrayPtr;
+  // std::cout << "FINISHED WITH talents unpacker pointer: " << (uintptr_t)&buf[0]/4 << std::endl;
+  return buf;
+  // auto arrayPtr = &returneeBuilds[0];
+  // return arrayPtr;
 }
 
 extern "C" {
@@ -214,7 +216,7 @@ extern "C" {
 
 
   EMSCRIPTEN_KEEPALIVE
-  uint32_t * getBuilds(
+  int32_t * getBuilds(
     int32_t *buf,
     int nBuilds
   ) {
@@ -225,15 +227,13 @@ extern "C" {
     int nPartial = 0;
     int nTalents = 0;
     std::map<int,std::vector<int> > fullBuilds;
-    // fullBuilds.reserve(nBuilds*11);
     std::map<int,std::vector<int> > partialBuilds;
-    // fullBuilds.reserve(nBuilds*9);
 
     for (int b=0;b<nBuilds;b++) {
       bool isComplete = true;
       int buildInt = 0;
       int Won=buf[z++];
-      std::cout << "[WON:" << Won << "]";
+      // std::cout << "[WON:" << Won << "]";
       for (int t=0;t<7;t++) {
         int tal = buf[z++];
         int talIndex = realTalents[t].size();
@@ -265,7 +265,7 @@ extern "C" {
           fullBuilds[buildInt] = fB;
           // fullBuilds[buildInt][0] = 0;
           // fullBuilds[buildInt][1] = 0;
-          std::cout << "fullBuilds[[buildInt][0]:" << fullBuilds[buildInt][0] << ",Won:" << Won << "]";
+          // std::cout << "fullBuilds[[buildInt][0]:" << fullBuilds[buildInt][0] << ",Won:" << Won << "]";
           nFull += 1;
         }
         fullBuilds[buildInt][0] += Won;
@@ -279,7 +279,7 @@ extern "C" {
           // partialBuilds[buildInt] = {0,0};
           // partialBuilds[buildInt][0] = 0;
           // partialBuilds[buildInt][1] = 0;
-          std::cout << "partialBuilds[[buildInt][0]:" << partialBuilds[buildInt][0] << ",Won:" << Won << "]";
+          // std::cout << "partialBuilds[[buildInt][0]:" << partialBuilds[buildInt][0] << ",Won:" << Won << "]";
           nPartial += 1;
         }
         partialBuilds[buildInt][0] += Won;
@@ -288,8 +288,18 @@ extern "C" {
       // std::cout << std::endl;
     }
 
-    int pBuilds[nPartial][9];
-    int fBuilds[nFull][11];
+    std::vector< std::vector<int> > pBuilds;
+    std::vector< std::vector<int> > fBuilds;
+    for (int b=0;b<nPartial;b++) {
+      std::vector<int> temp(9);
+      pBuilds.push_back(temp);
+    }
+    for (int b=0;b<nFull;b++) {
+      std::vector<int> temp(11);
+      fBuilds.push_back(temp);
+    }
+    // int pBuilds[nPartial][9];
+    // int fBuilds[nFull][11];
     int fCount = 0;
     int pCount = 0;
     for( auto const& [key, val] : fullBuilds )
@@ -344,14 +354,19 @@ extern "C" {
         }
 
     // printTwoDeep(realTalents);
-    return sortTalents(pBuilds,fBuilds,nPartial,nFull, realTalents, nTalents);
+    // std::cout << "nFull: " << nFull << "nPartial: " << nPartial << std::endl;
+    if (nPartial == 0 || nFull == 0) {
+      buf[0] = 0;
+      return buf;
+    }
+    return sortTalents(buf, pBuilds,fBuilds,nPartial,nFull, realTalents, nTalents);
 
   }
 
 
 
   EMSCRIPTEN_KEEPALIVE
-  uint32_t * decodeTalents (
+  int32_t * decodeTalents (
     int32_t *buf,
     int nBuilds
   ) {
@@ -383,16 +398,26 @@ extern "C" {
       talentList[l] = talentTiers;
     }
 
-    int builds[nBuilds][7];
-    int infos[nBuilds][2];
+
+    std::vector< std::vector<int> > builds;
+    std::vector< std::vector<int> > infos;
+    for (int b=0;b<nBuilds;b++) {
+      std::vector<int> temp{0,0,0,0,0,0,0};
+      builds.push_back(temp);
+      std::vector<int> temp2{0,0};
+      infos.push_back(temp2);
+    }
+
+    // int builds[nBuilds][7];
+    // int infos[nBuilds][2];
     /*
     std::vector< std::vector<int> > builds;
     builds.reserve(7*nBuilds);
     std::vector< std::vector<float> > info;
     infos.reserve(2*nBuilds);
     */
-    int fullIndexes[nBuilds];
-    int partialIndexes[nBuilds];
+    std::vector<int> fullIndexes(nBuilds);
+    std::vector<int> partialIndexes(nBuilds);
 
     // std::vector<int> buildKeyDic[7][maxLevCount];
 
@@ -433,8 +458,19 @@ extern "C" {
 
     }
 
-    int fullBuilds[nFull][11];
-    int partialBuilds[nPartial][9];
+
+    std::vector< std::vector<int> > partialBuilds;
+    std::vector< std::vector<int> > fullBuilds;
+    for (int b=0;b<nPartial;b++) {
+      std::vector<int> temp(9);
+      partialBuilds.push_back(temp);
+    }
+    for (int b=0;b<nFull;b++) {
+      std::vector<int> temp(11);
+      fullBuilds.push_back(temp);
+    }
+    // int fullBuilds[nFull][11];
+    // int partialBuilds[nPartial][9];
     for (int b=0;b<nFull;b++) {
       int fKey = fullIndexes[b];
       for (int k=0;k<7;k++) {
@@ -456,7 +492,7 @@ extern "C" {
       // printArray(partialBuilds[b],9);
     }
 
-    return sortTalents(partialBuilds,fullBuilds,nPartial,nFull, realTalents, nTalents);
+    return sortTalents(buf, partialBuilds,fullBuilds,nPartial,nFull, realTalents, nTalents);
 
   }
 

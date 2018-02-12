@@ -32,7 +32,7 @@ export default (props) => {
   const xRange = xMax-xMin
   const xPad = xRange*0.05
   const xScale = d3.scaleLinear().range([40, 480]).domain([xMin-xPad,xMax+xPad])
-  const xTicks = xScale.ticks(50).filter(x => x >= 0)
+  const xTicks = xScale.ticks(25).filter(x => x >= 0)
   /*
   let expTime = window.performance.now()
   let densityPoints = kernelDensityEstimator(kernelEpanechnikov(7), xTicks)(X)
