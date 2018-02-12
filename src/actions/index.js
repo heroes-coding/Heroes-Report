@@ -1,5 +1,8 @@
 import axios from 'axios'
 import refilterTalents from '../helpers/refilter_talents'
+import Fuse from 'fuse.js'
+import { max } from 'd3'
+let fuse
 
 export const GET_TALENT_DATA = 'get_talent_data'
 export const UPDATE_FILTER = 'update_filter'
@@ -30,7 +33,57 @@ export function updateMainSorting(id) {
   }
 }
 
-export function heroSearch(heroSearchTerm) {
+export function heroSearch(term) {
+  let heroSearchTerm = null
+  if (!window.HOTS) {
+    return {
+      type: HERO_SEARCH,
+      heroSearchTerm: null
+    }
+  }
+  if (!window.HOTS.searchDic) {
+    window.HOTS.searchDic = []
+    const heroNames = []
+    for (let h=0;h<window.HOTS.fullHeroNames.length;h++) {
+      const invis = window.HOTS.invisText[h].split(" ")
+      const [role, franchise] = invis
+      const nick = window.HOTS.nickNames[h]
+      window.HOTS.searchDic.push({id: h, role, franchise, nick})
+      heroNames.push([])
+    }
+    const heroKeys = Object.keys(window.HOTS.heroDic)
+    heroKeys.map(k => {
+      const hero = window.HOTS.heroDic[k]
+      heroNames[hero].push(k)
+    })
+    const maxNames = max(heroNames.map(x => x.length))
+    window.HOTS.fullHeroNames.map((h,i) => {
+      for (let n=0;n<maxNames;n++) {
+        window.HOTS.searchDic[i][n] = ""
+      }
+    })
+    heroNames.map((names,i) => {
+      names.map((name,j) => {
+        window.HOTS.searchDic[i][j] = name
+      })
+    })
+    const ids = Array.from({length:maxNames},(v,k) => (k).toString())
+    const keys = [].concat(["role","franchise","nick"],ids)
+    const options = {
+      shouldSort: true,
+      threshold: 0.25,
+      location: 0,
+      distance: 100,
+      maxPatternLength: 32,
+      minMatchCharLength: 1,
+      keys
+    }
+    fuse = new Fuse(window.HOTS.searchDic, options)
+  }
+  const result = fuse.search(term)
+  if (result.length > 0) {
+    heroSearchTerm = result.map(x => x.id)
+  }
   return {
     type: HERO_SEARCH,
     heroSearchTerm

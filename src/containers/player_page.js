@@ -6,7 +6,7 @@ import PlayerMatchupTable from './replay_list/player_matchup_table'
 import PlayerTalentCalculator from './replay_list/player_talent_calculator'
 import PlayerStats from './stat_list/player_stats'
 import StatList from './stat_list/stat_list'
-import { getPlayerData, updateTime, addHeroFilter } from '../actions'
+import { getPlayerData, updateTime, addHeroFilter, heroSearch } from '../actions'
 import TimeLine from './replay_list/timeline'
 import PlayerReplaysSelector from '../selectors/player_replays_selector'
 import ButtonLabeledSpacer from '../components/button_labeled_spacer'
@@ -31,6 +31,9 @@ class PlayerPage extends Component {
     this.needToUpdate = true
     this.setState({...this.state, curHero: null})
     this.props.addHeroFilter(2,"A") // resets player to none so talent tab doesn't become annoying
+  }
+  componentWillMount() {
+    this.props.heroSearch("")
   }
   componentDidMount() {
     const {id} = this.props.match.params
@@ -116,4 +119,4 @@ function mapStateToProps(state, ownProps) {
   return {...PlayerReplaysSelector(state), HOTS:state.HOTS, timeRange:state.timeRange, ...ownProps}
 }
 
-export default connect(mapStateToProps,{getPlayerData, updateTime, addHeroFilter})(PlayerPage)
+export default connect(mapStateToProps,{getPlayerData, updateTime, addHeroFilter, heroSearch })(PlayerPage)

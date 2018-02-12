@@ -58,7 +58,7 @@ class TableRow extends Component {
     return (
       <div id={`row${id}`} className="rt-tr-group">
         <div className="rt-tr">
-          <div className="rt-td roundedPort">
+          <div onClick={() => { this.updateHero(id) }} className="rt-td roundedPort">
             <img
               className='roundedPort'
               alt={name}

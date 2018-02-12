@@ -4,12 +4,15 @@ import TableHeader from './table_header'
 import TableBody from './table_body'
 import SelectedMainData from '../../selectors/selected_main_data'
 import DataFiltersBar from '../data_filters_bar'
-import { updateMainSorting, updatePreferences, getMainData } from '../../actions'
+import { updateMainSorting, updatePreferences, getMainData, heroSearch } from '../../actions'
 import { updatedTimeMins } from '../../helpers/smallHelpers'
 
 class DataTable extends Component {
   componentDidMount() {
     this.props.getMainData(this.props.prefs)
+    if (window.HOTS && window.HOTS.searchDic) {
+      this.props.heroSearch("")
+    }
   }
   constructor(props) {
     super(props)
@@ -24,7 +27,12 @@ class DataTable extends Component {
     this.props.updateMainSorting(id)
   }
   render() {
-    const updatedTime =  updatedTimeMins(this.props.data.updatedMins)
+    let rows = this.props.data.rows
+    const searchHeroes = this.props.heroSearchTerm
+    if (searchHeroes) {
+      rows = rows.filter(x => searchHeroes.includes(x.id))
+    }
+    const updatedTime = updatedTimeMins(this.props.data.updatedMins)
     return (
       <div className="overall">
         <div className="filtersHolder">
@@ -43,7 +51,7 @@ class DataTable extends Component {
               />
             </div>
             <TableBody
-              rows={this.props.data.rows}
+              rows={rows}
               prefsID={this.props.data.prefsID}
               cat={this.props.data.cat}
               showWL={this.state.showWL}
@@ -58,8 +66,9 @@ class DataTable extends Component {
 const mapStateToProps = state => {
   return {
     data: SelectedMainData(state),
-    prefs: state.prefs
+    prefs: state.prefs,
+    heroSearchTerm: state.searchTerm
   }
 }
 
-export default connect(mapStateToProps,{updateMainSorting, updatePreferences, getMainData})(DataTable)
+export default connect(mapStateToProps,{updateMainSorting, updatePreferences, getMainData, heroSearch})(DataTable)

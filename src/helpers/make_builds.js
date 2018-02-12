@@ -2,7 +2,7 @@ export default function getBuilds(buildsArray, nBuilds) {
 
   let buf, error, results
   try {
-    buf = window.Module._malloc(nBuilds*8*16,4)
+    buf = window.Module._malloc(nBuilds*8*32,4)
     window.Module.HEAP32.set(buildsArray,buf >> 2)
     const replaysPointer = window.Module._getBuilds(buf,nBuilds)
     let o = replaysPointer/4

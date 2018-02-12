@@ -12,7 +12,6 @@ int main(int argc, char const *argv[]) {
     emscripten_run_script("typeof window!='undefined' && window.dispatchEvent(new CustomEvent('wasmLoaded'))");
     return 0;
 }
-
 /*
 let pointer = Module._get20Nums()
 console.log(Module.HEAPU32.slice(pointer/4,pointer/4+20))

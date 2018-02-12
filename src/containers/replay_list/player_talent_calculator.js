@@ -4,7 +4,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import TalentBox from '../heroPage/talentBox'
 import Popup from '../../components/popup'
-import { updateTalentHero, selectTalent, addHeroFilter } from '../../actions'
+import { updateTalentHero, selectTalent, addHeroFilter, heroSearch } from '../../actions'
 import PlayerTalentsSelector from '../../selectors/player_talents_selector'
 
 class TalentCalculator extends Component {
@@ -27,6 +27,7 @@ class TalentCalculator extends Component {
     this.props.updateTalentHero(this.props.hero)
     this.props.addHeroFilter(2, this.props.hero)
     this.props.selectTalent('reset')
+    this.props.heroSearch("")
   }
   shouldComponentUpdate(nextProps) {
     if (this.props.hero !== nextProps.hero) {
@@ -142,4 +143,4 @@ function mapStateToProps(state, ownProps) {
   return {...PlayerTalentsSelector(state), prefs, HOTS, ...ownProps}
 }
 
-export default connect(mapStateToProps,{updateTalentHero, selectTalent, addHeroFilter })(TalentCalculator)
+export default connect(mapStateToProps,{ updateTalentHero, selectTalent, addHeroFilter, heroSearch })(TalentCalculator)

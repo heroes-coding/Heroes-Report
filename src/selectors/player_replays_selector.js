@@ -11,6 +11,7 @@ const roles = state => state.roles
 const replayPage = state => state.replayPage
 const filterHeroes = state => state.filterHeroes
 const timeRange = state => state.timeRange
+const heroTerms = state => state.searchTerm
 const replaysPerPage = 15
 const { mapStatID0, mapStatID1, mapStatValues0, mapStatValues1 } = decoderNumbers
 
@@ -20,7 +21,7 @@ let roleDic
 
 const modeDic = {0:[1,2,3,4],1:[1],2:[2],3:[3],4:[4],5:[5],6:[1,2],7:[3,4]}
 
-const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises, roles, filterHeroes, timeRange) => {
+const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises, roles, filterHeroes, timeRange, heroTerms) => {
   const playerHero = filterHeroes[2][0]
   const startTime = window.performance.now()
   const nReplays = playerData.length
@@ -85,7 +86,7 @@ const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises,
       (!modeDic[prefs.mode].includes(rep.mode)) ||
       (!allFranchises && !franchises[rep.franchise].selected) ||
       (!allRoles && !roles[rep.role].selected) ||
-      missingHeroes(rep)
+      missingHeroes(rep) || (heroTerms && !heroTerms.includes(rep.hero))
     ) {
       continue
     } else {
@@ -130,6 +131,7 @@ const basePlayerDataSelector = createSelector(
   roles,
   filterHeroes,
   timeRange,
+  heroTerms,
   getPlayerBaseData,
 )
 
