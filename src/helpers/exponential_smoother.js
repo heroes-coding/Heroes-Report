@@ -32,6 +32,7 @@ export function exponentialSmoothingCP(timedData) {
       pMSL = MSL
       timedPoints.push([points[p*2],points[p*2+1]])
     }
+    console.log(timedPoints)
     window.timedPoints = timedPoints
   } catch (e) {
     error = e

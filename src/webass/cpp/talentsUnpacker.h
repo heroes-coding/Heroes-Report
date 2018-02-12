@@ -38,15 +38,6 @@ void printTwoDeep(std::vector< std::vector<int> > BKD) {
 
 uint32_t * sortTalents (int partialBuilds[][9], int fullBuilds[][11], int nPartial, int nFull, std::vector< std::vector<int> > realTalents, int nTalents) {
 
-  /*
-  for (int i=0;i<nFull;i++) {
-    printArray(fullBuilds[i],11);
-  }
-  for (int i=0;i<nPartial;i++) {
-    printArray(partialBuilds[i],9);
-  }
-  */
-
   std::vector< std::vector< std::vector<int> > > buildKeyDic;
   std::vector< std::vector< std::vector<int> > > talentResults;
 

@@ -1,15 +1,15 @@
 #include <memory>
 #include <iostream>
+#include <vector>
 
 
 
-
-float* getData(float timedData[], int nPoints) {
+float* getData(std::vector<float> &timedData, int nPoints) {
   // timedData needs to come presorted because of bug of finding size within the function
   double ALPHA = 0.01;
   int ALPHAcutoff = 458; // round(log(0.01)/(log(1-ALPHA)));
-  double expDen[458];
-  double expVals[458];
+  std::vector<double> expDen(458);
+  std::vector<double> expVals(458);
   expDen[0] = 1;
   expVals[0] = 1;
   // std::cout << "ALPHACUTOFF: " << ALPHAcutoff ;
@@ -19,10 +19,11 @@ float* getData(float timedData[], int nPoints) {
     expDen[i] = expDen[i-1]+newWeight;
     // std::cout << "[" << i << ":" << newWeight << "," << expVals[i] << "," << expDen[i] << "]";
   }
+  // std::cout << std::endl;
 
 
   int n = 0;
-  float smoothedY[nPoints-2];
+  std::vector<float> smoothedY(nPoints-2);
   for (int x=1;x<nPoints;x++) {
     double num = timedData[x*2+1];
     double den = expDen[std::min(ALPHAcutoff,x)];
@@ -43,15 +44,19 @@ float* getData(float timedData[], int nPoints) {
   }
   // std::cout << std::endl;
 
+
   // float returnees[(nPoints-2)*2+1]; // DON'T DO THIS!!!
   float *returnees = (float*) std::malloc(sizeof(*returnees));
+  // std::vector<float> returnees((nPoints-2)*2+1);
+  std::cout << "FINISHED WITH returnees alloc" << std::endl;
   if (nPoints < 500) {
+    std::cout << "TDATA SIZE: " << timedData.size() << "|nPoint: " << nPoints << "|smoothedY size: " << smoothedY.size();
     int r = 0;
     returnees[r++] = nPoints-2;
     for (int i=0;i<nPoints-2;i++) {
       returnees[r++] = timedData[i*2+4];
       returnees[r++] = smoothedY[i];
-      // std::cout << "[" << i << ":" << theData[i].first << "," << theData[i].second << ']';
+      //std::cout << "[" << i << ":" << timedData[i*2+4] << "," << smoothedY[i] << ']';
     }
   } else {
     // just average nearby points together
@@ -71,7 +76,7 @@ float* getData(float timedData[], int nPoints) {
         float yResult = float(totY/c);
         returnees[r*2+1] = xResult;
         returnees[r*2+2] = yResult;
-        // std::cout << "[XRESULT:" << xResult << "|YRESULT:" << yResult << "]";
+        std::cout << "[XRESULT:" << xResult << "|YRESULT:" << yResult << "]";
         r++;
         totX = 0;
         totY = 0;
@@ -87,9 +92,14 @@ float* getData(float timedData[], int nPoints) {
     returnees[r*2+2] = float(totY/c);
     returnees[0] = r;
   }
+  std::cout << "FINISHED WITH returnees" << std::endl;
   // std::cout << std::endl;
+  for (int i=0;i<(nPoints-2)*2+1;i++) {
+    std::cout << "[" << i << ":" << returnees[i] << ']';
+  }
 
   float* arrayPtr = &returnees[0];
+  std::cout << "FINISHED WITH pointer: " << std::endl << arrayPtr;
   // std::free(returnees);
   return arrayPtr;
 }
@@ -102,7 +112,8 @@ extern "C" {
   float* getExponentiallySmoothedData (float *buf, int nTime) {
     // std::cout << "nTime: " << nTime << std::endl;
     int z = 0;
-    float theData[nTime*2];
+    std::vector<float> theData(nTime*2);
+    // float theData[nTime*2];
     for (int i=0;i<nTime;i++) {
       theData[i*2] = buf[z++];
       theData[i*2+1] = buf[z++];

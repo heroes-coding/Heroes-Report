@@ -1,7 +1,7 @@
 #include <memory>
 #include <iostream>
-#include "printNumber.h"
 #include <cmath>
+#include <vector>
 
 float kernelEpanechnikov(float k,float v) {
     v = abs(v/k);
@@ -9,8 +9,7 @@ float kernelEpanechnikov(float k,float v) {
     // std::cout << "[" << v << ":" << r << "]";
     return r;
 }
-
-float* kernelDensity (int k, float X[], float V[], int nX, int nV) {
+float* kernelDensity (int k, std::vector<float> &X, std::vector<float> &V, int nX, int nV) {
   // k is the kDensity parameter / smoothing factor
   // X is the bins of X
   // V are all of the values
@@ -41,8 +40,8 @@ extern "C" {
     int z = 0;
     int k = buf[z++];
     float totX = 0;
-    float X[nX];
-    float V[nV];
+    std::vector<float> X(nX);
+    std::vector<float> V(nV);
     for (int i=0;i<nX;i++) {
       float x = buf[z++];
       totX += x;

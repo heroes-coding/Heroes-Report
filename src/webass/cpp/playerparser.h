@@ -1,19 +1,7 @@
 #include <math.h>
 #include <memory>
 #include <iostream>
-
-
-// These are constant positions for where data is returned in a given replay's data range
-const int oWon= 28;
-const int oWinners= 29;
-const int oFirstTo10= 30;
-const int oFirstTo20= 31;
-const int oFirstFort= 32;
-const int oHeroes [10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-const int oTalents [7] = { 33, 34, 35, 36, 37, 38, 39 };
-const int oAllies [5] = { 10, 11, 12, 13, 14 };
-const int oEnemies [5] = { 15, 16, 17, 18, 19 };
-const int oRoleArray [2][4] = { {24, 25, 26, 27}, {20, 21, 22, 23} };
+#include <vector>
 
 
 extern "C" {
@@ -30,6 +18,17 @@ extern "C" {
     int nHeroes
   ) {
 
+    // These are constant positions for where data is returned in a given replay's data range
+    const int oWon= 28;
+    const int oWinners= 29;
+    const int oFirstTo10= 30;
+    const int oFirstTo20= 31;
+    const int oFirstFort= 32;
+    std::vector<int> oHeroes{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    std::vector<int> oTalents{ 33, 34, 35, 36, 37, 38, 39 };
+    std::vector<int> oAllies{ 10, 11, 12, 13, 14 };
+    std::vector<int> oEnemies{ 15, 16, 17, 18, 19 };
+    std::vector< std::vector<int> > oRoleArray{ {24, 25, 26, 27}, {20, 21, 22, 23} };
     /*
     cout << "nPackedInts " << nPackedInts << endl;
     cout << "nDecoders " << nDecoders << endl;
@@ -40,15 +39,15 @@ extern "C" {
 
     int z = 0; // my real index in the buffer
     // Determine how many things are packed in each int
-    int intLengths [nPackedInts];
+    std::vector<int> intLengths (nPackedInts);
     for (int i=0;i<nPackedInts;i++) {
       intLengths[i] = buf[z];
       z++;
     }
 
     // Get the actual decoders
-    int decoderMaxes [nDecoders];
-    int decoderMults [nDecoders];
+    std::vector<int> decoderMaxes(nDecoders);
+    std::vector<int> decoderMults (nDecoders);
     for (int i=0;i<nDecoders;i++) {
       decoderMaxes[i] = buf[z];
       decoderMults[i] = buf[z+1];
@@ -79,18 +78,20 @@ extern "C" {
     const int iTAL5 = buf[z++];
     const int iTAL6 = buf[z++];
 
-    int roleList [nHeroes];
+    std::vector<int> roleList(nHeroes);
     for (int h=0;h<nHeroes;h++) {
       roleList[h] = buf[z++];
     }
 
     // And finally, to declare the buffer that will be pointed to when completely filled
-    uint32_t replays [nItemsToDecode*nReplays];
+    // uint32_t replays [nItemsToDecode*nReplays];
+    std::vector<unsigned int> replays(nItemsToDecode*nReplays);
+
     for (int r=0;r<nReplays;r++) {
       int slot;
       int winners;
-      int heroes [10];
-      int talents [7];
+      std::vector<int> heroes(10);
+      std::vector<int>talents(7);
       int first10;
       int first20;
       int firstFORT;

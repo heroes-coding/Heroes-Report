@@ -16,7 +16,7 @@ def getMax(array):
         total = (total*n)+n
     return total
 
-732*2928
+2928/732
 842085136
 getBytes(4293913866)
 16**7
