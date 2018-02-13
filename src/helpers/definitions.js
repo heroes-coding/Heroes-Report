@@ -12,6 +12,24 @@ export const defaultPreferences = {
   sortStats: ['KDA','Experience', 'Globes']
 }
 
+export const rehgarDic = {
+  // why are the devs messing around with already established talent names?
+  'rehgarlightningshieldearthshield': 1029,
+  'rehgarearthbindtotemearthgrasptotem': 1036,
+  'rehgarearthbindtotemcolossaltotem': 1030,
+  'rehgarwolfrun': 1037,
+  'rehgarferalheart': 1025,
+  'rehgarancestralhealing': 1038,
+  'rehgarbloodandthunder': 1027,
+  'rehgarancestralhealingfarseersblessing': 1039,
+  'rehgarhealingtotem': 1018,
+  'rehgarlightningshieldelectriccharge': 1020,
+  'rehgarlightningshieldrisingstorm': 1033,
+  'rehgarlightningshieldstormcaller': 1019,
+  'rehgarbloodlust': 1026,
+  'rehgarfarsight': 1024
+}
+
 export const brawlMapIDs = [11, 13, 15, 16, 18]
 export const allBrawlMapIDs = [11, 13, 15, 16, 18, 0, 8, 3]
 

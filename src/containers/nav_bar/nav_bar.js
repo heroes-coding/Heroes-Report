@@ -3,7 +3,7 @@ import FilterDropDown from '../../containers/filter_drop_down'
 import { renderNothing, renderTinyHero } from '../../components/filterComponents'
 import SearchBar from '../../components/search_bar'
 import { connect } from 'react-redux'
-import { updatePreferences, selectTalent, getMainData, dispatchPlayerSearch, getHeroTalents, getTimedData } from '../../actions'
+import { updatePreferences, selectTalent, getMainData, dispatchPlayerSearch, getHeroTalents, getTimedData, addHeroFilter } from '../../actions'
 import { NavLink, withRouter } from 'react-router-dom'
 import _ from 'lodash'
 import unpackTalents from '../../helpers/unpack_talents'
@@ -75,7 +75,13 @@ class Nav extends React.Component {
               exact className="nav-link"
               activeClassName="active"
               isActive={linkFunction}
-              onClick={() => this.setState({curHero: null})}
+              onClick={() => {
+                // RESET ALL HEROES
+                this.props.addHeroFilter(0, 'A')
+                this.props.addHeroFilter(1, 'A')
+                this.props.addHeroFilter(2, 'A')
+                this.setState({curHero: null})}
+              }
             >You</NavLink>
           </li>
           <li className="searchBar nav-item list-inline-item">
@@ -91,4 +97,4 @@ function mapStateToProps({HOTS, prefs}, ownProps) {
   return {...ownProps, HOTS, prefs}
 }
 
-export default withRouter(connect(mapStateToProps, {updatePreferences, dispatchPlayerSearch, getMainData, selectTalent, getHeroTalents, getTimedData })(Nav))
+export default withRouter(connect(mapStateToProps, { updatePreferences, dispatchPlayerSearch, getMainData, selectTalent, getHeroTalents, getTimedData, addHeroFilter })(Nav))

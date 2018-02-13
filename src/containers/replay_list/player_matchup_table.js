@@ -64,6 +64,7 @@ class PlayerMatchupTable extends Component {
       <div className="matchupGraphs">
         <Graph
           graphClass="winrateGraph"
+          containerClass="graphHolder matchupGraphHolder"
           linePoints={exponentialSmoothing(asPoints)}
           xLabel="Date"
           yLabel='Win rate'
@@ -78,6 +79,7 @@ class PlayerMatchupTable extends Component {
         />
         <Graph
           graphClass="winrateGraph"
+          containerClass="graphHolder matchupGraphHolder"
           linePoints={exponentialSmoothing(withPoints)}
           xLabel="Date"
           yLabel='Win rate'
@@ -92,6 +94,7 @@ class PlayerMatchupTable extends Component {
         />
         <Graph
           graphClass="winrateGraph"
+          containerClass="graphHolder matchupGraphHolder"
           linePoints={exponentialSmoothing(againstPoints)}
           xLabel="Date"
           yLabel='Win rate'
@@ -135,13 +138,14 @@ class PlayerMatchupTable extends Component {
       graphHero: {id,name,color}
     })
   }
-  nameRenderer(id,name,color) {
+  nameRenderer(id,name,color, stats) {
+    const showGraphs = stats[0].value > 3 || stats[2].value > 3 || stats[4].value > 3 ? true : false
     return (
       <NameHolder
         id={id}
         name={name}
         color={color}
-        updateFunction={this.showGraphs}
+        updateFunction={showGraphs ? this.showGraphs : null}
       />
     )
   }

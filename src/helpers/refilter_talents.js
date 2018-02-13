@@ -1,9 +1,9 @@
 export default function getTalentWinrates(talentData,toIgnore,ignoreCounts) {
 
   const {nTalents, nFull, nPartial, talentCounts, talents, partialBuilds, fullBuilds} = talentData
-  console.log('refilter talents called',nFull,nPartial,!nFull,!nPartial)
+  // console.log('refilter talents called',nFull,nPartial,!nFull,!nPartial)
   if (!nFull || !nPartial) {
-    console.log('should be returning')
+    // console.log('should be returning')
     return []
   }
   // let selectTime = window.performance.now()
@@ -11,7 +11,7 @@ export default function getTalentWinrates(talentData,toIgnore,ignoreCounts) {
   // console.log(talentCounts)
   let startArray = new Int32Array([].concat(ignoreCounts,toIgnore,talentCounts))
   let arrayLength = 14+toIgnore.length + nTalents*7 +nFull*11+nPartial*9
-  console.log(arrayLength,'arrayLength')
+  // console.log(arrayLength,'arrayLength')
   let fullArray = new Int32Array(arrayLength)
   fullArray.set(startArray)
   // console.log(startArray,talentCounts)

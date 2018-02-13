@@ -4,6 +4,10 @@ class SearchBar extends Component {
   constructor(props) {
     super(props)
     this.state = { term: '' }
+    this.clearSearch = this.clearSearch.bind(this)
+  }
+  clearSearch() {
+    this.setState({term: ''})
   }
   render() {
     return (
@@ -11,7 +15,9 @@ class SearchBar extends Component {
         placeholder={ this.props.placeholder }
         className={this.props.overClass || "searchInput"}
         value = { this.state.term }
-        onChange={ event => this.onInputChange(event.target.value)}
+        onChange={ event => {
+          this.onInputChange(event.target.value)
+        }}
         style={ this.props.style }
       />
     )
@@ -19,6 +25,10 @@ class SearchBar extends Component {
   onInputChange(term) {
     this.setState({term})
     this.props.onSearchTermChange(term)
+    if (this.clearTimeout) {
+      clearTimeout(this.clearTimeout)
+    }
+    this.clearTimeout = setTimeout(this.clearSearch, 5000)
   }
 }
 

@@ -194,7 +194,7 @@ class replay extends Component {
       window.rep = props
       const hashInput = `${mode}${Math.round(Length/60)}${heroes.join("")}${winners}${MSL}${map}${build}`
       const hashPath = `https://heroes.report/stats/replays/${hashString(hashInput)}.json`
-      console.log(hashInput,hashPath)
+      console.log(hashPath)
       const results = await axios.get(hashPath)
       let replay = results.data
       if (replay.hasOwnProperty('replay')) {

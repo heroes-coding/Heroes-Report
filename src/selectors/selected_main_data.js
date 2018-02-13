@@ -12,7 +12,7 @@ const getMainData = (main, statCat, selectedHeroes, order) => {
   const statCatStats = statCat.stats
   let heroes = _.values(selectedHeroes)
   let nHeroes = Object.keys(main).length || 77
-  console.log(nHeroes)
+  // console.log(nHeroes)
   if (heroes[0] === 'l') {
     nHeroes = (window.configCheck && window.configCheck.heroCount) || 76
     heroes = []
@@ -82,7 +82,7 @@ const getMainData = (main, statCat, selectedHeroes, order) => {
     heroes.push(mrBig)
   }
   const selectedStuff = {rows: heroes, headers: statCat.headers, cat:statCat.cat, order, updatedMins: main.updatedMins}
-  window.debug(`Reslecting of main data took ${Math.round(window.performance.now()*100 - startTime*100)/100} ms`)
+  // window.debug(`Reslecting of main data took ${Math.round(window.performance.now()*100 - startTime*100)/100} ms`)
   return selectedStuff
 }
 

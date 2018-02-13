@@ -55,7 +55,7 @@ class PlayerPage extends Component {
     }
   }
   sendSearch(playerid) {
-    console.log(`got a player search ${playerid}`)
+    // console.log(`got a player search ${playerid}`)
   }
   componentDidMount() {
     const {id} = this.props.match.params

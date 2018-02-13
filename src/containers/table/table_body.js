@@ -19,11 +19,11 @@ export default class TableBody extends Component {
     this.oddifyRows()
   }
   componentWillUpdate() {
-    console.time('Sorting...')
+    // console.time('Sorting...')
   }
   componentDidUpdate() {
     this.oddifyRows()
-    console.timeEnd('Sorting...')
+    // console.timeEnd('Sorting...')
   }
   render() {
     return (

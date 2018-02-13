@@ -1,6 +1,7 @@
 import getPlayerBinary from '../helpers/binary_player_unpacker'
 import asleep from '../helpers/asleep'
 import axios from 'axios'
+import { rehgarDic } from '../helpers/definitions'
 import _ from 'lodash'
 const GET_PLAYER_DATA = 'get_player_data'
 export { GET_PLAYER_DATA, getPlayerData }
@@ -38,6 +39,7 @@ async function getPlayerData(bnetID) {
         if (tal && isNaN(tal)) {
           if (!window.HOTS.talentsN) {
             window.HOTS.talentsN = _.invert(window.HOTS.nTalents)
+            window.HOTS.talentsN = {...window.HOTS.talentsN, ...rehgarDic}
           }
           tal = parseInt(window.HOTS.talentsN[tal])
           window.talentDic[rep.build][rep.hero][i][x] = tal

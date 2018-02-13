@@ -5,11 +5,11 @@ export default (props) => {
   const { name, id, color, updateFunction } = props
   return (
     <div className={`rt-td`} >
-      <i
+      {updateFunction &&<i
         className="fa fa-line-chart"
         aria-hidden="true"
         onClick={() => updateFunction(id,name,color)}
-      />
+      />}
       &nbsp;
       <span
         className='heroName'

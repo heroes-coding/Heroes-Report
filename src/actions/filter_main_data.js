@@ -143,7 +143,7 @@ async function filterData(json,prefs) {
       }
     }
   }
-  window.debug(`Unpacking of main data took ${Math.round(window.performance.now()*100 - startTime*100)/100} ms`)
+  // window.debug(`Unpacking of main data took ${Math.round(window.performance.now()*100 - startTime*100)/100} ms`)
   while (!window.HOTS) {
     await asleep(10)
   }

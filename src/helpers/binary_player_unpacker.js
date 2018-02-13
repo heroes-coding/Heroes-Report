@@ -63,7 +63,7 @@ function heapFromBytes(buffer) {
         rep.buildIndex = rep.stats[decoderNumbers.buildIndex]
         replays.push(rep)
       }
-      console.log(`It took ${Math.round(window.performance.now()*100 - 100*startTime7)/100} ms to unpack returned data`)
+      // console.log(`It took ${Math.round(window.performance.now()*100 - 100*startTime7)/100} ms to unpack returned data`)
     } catch (e) {
       error = e
     } finally {

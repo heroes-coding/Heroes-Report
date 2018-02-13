@@ -9,10 +9,10 @@ function heapFromBytes(response, hero) {
     window.response = response
     window.data = data
     const nBuilds = response.length-8
-    console.log('unpacking talents for... ', hero, nBuilds)
+    // console.log('unpacking talents for... ', hero, nBuilds)
     let realInts = new Int32Array(data)
     window.realInts = realInts
-    console.log(`It took ${Math.round(window.performance.now()*100 - 100*unpackTime)/100} ms to shift talents`)
+    // console.log(`It took ${Math.round(window.performance.now()*100 - 100*unpackTime)/100} ms to shift talents`)
     while (!window.moduleLoaded) {
       console.log('loading...')
       await asleep(10)
@@ -41,7 +41,7 @@ function heapFromBytes(response, hero) {
       }
       const fullBuilds = window.Module.HEAPU32.slice(o,o+nFull*11)
       const partialBuilds = window.Module.HEAPU32.slice(o+nFull*11,o+nFull*11+nPartial*9)
-      console.log(`It took ${Math.round(window.performance.now()*100 - 100*decodeTime)/100} ms to decode talents`)
+      // console.log(`It took ${Math.round(window.performance.now()*100 - 100*decodeTime)/100} ms to decode talents`)
       results = {nTalents,nFull,nPartial,talentCounts,talents,fullBuilds,partialBuilds,dataTime, hero}
       window.talentResults = results
     } catch (e) {
@@ -60,7 +60,7 @@ export default async function getPackedTalents(hero, prefs) {
   let promise = new Promise(function(resolve, reject) {
     const binaryReq = new window.XMLHttpRequest()
     const url =`https://heroes.report/stats/z/${prefs.time}/${prefs.mode}/${prefs.mmr}/${prefs.map}/${hero}.json?${getRandomString()}`
-    console.log('downloading ',url)
+    // console.log('downloading ',url)
     binaryReq.open("GET",url, true)
     binaryReq.onload = async function(oEvent) {
       let response = binaryReq.response

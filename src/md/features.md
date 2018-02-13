@@ -5,8 +5,9 @@ If you find the features of heroes.report useful, and appreciate all of the hard
 ## Site Features
 - [The Hero Page](#hero)
   - [The Talent Calculator](#calc)
-- [Individual Player Replays](#player)
+- [Individual Player Replays and Statistics](#player)
   - [The Wheels](#wheels)
+  - [The Stat Graphs](#graphs)
 - [The Front End](#front)
 - [The Back End](#back)
 - [More to Come](#more)
@@ -39,7 +40,10 @@ Player ids or battletags and a lot of additional information is not included in 
 
 The Wheel of Death and Wheel of Murder present data that would otherwise take 24 graphs to represent (1 graph for a breakdown of each player's murders or deaths of or by players of the other team, plus two for each team).  Currently, it is only enabled to work in Chrome / Chrome based browsers, as it is otherwise either too slow (mobile) or buggy (Firefox).
 
-Contrary to other sites' presentation of the data, there is nothing in the replay files that show who is credited with a kill - the event has the players who participated in a takedown listed in their 'slot' in the replay files' order.  I am pretty sure HOTSLogs and other sites assume the the first listed player is the killer, but the players are always listed in their slot order.
+Contrary to other sites' presentation of the data, there is nothing in the replay files that show who is credited with a kill - the event has the players who participated in a takedown listed in their 'slot' in the replay files' order.  I am pretty sure HOTSLogs and other sites assume the first listed player is the killer, but the players are always listed in their slot order.
+
+## <a name="graphs">The Stat Graphs</a>
+The stat graphs from player aggregate statistics use exponential smoothing of the data, which results in a lagging indicator.
 
 ## <a name="front">The Front End</a>
 

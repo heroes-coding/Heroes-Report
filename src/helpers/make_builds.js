@@ -9,11 +9,11 @@ export default function getBuilds(buildsArray, nBuilds) {
     fullBuilds:[],
     partialBuilds:[]}
   if (nBuilds < 1) {
-    console.log('Not enough data for builds')
-    console.log(nBuilds,buildsArray)
+    // console.log('Not enough data for builds')
+    // console.log(nBuilds,buildsArray)
     return emptyResult
   }
-  console.log('get builds called!',nBuilds,buildsArray)
+  // console.log('get builds called!',nBuilds,buildsArray)
   let buf, error, results
   try {
     buf = window.Module._malloc(nBuilds*8*32,4)

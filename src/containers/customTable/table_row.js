@@ -21,7 +21,7 @@ class TableRow extends Component {
       <div id={id} className={rowClass}>
         <div className="rt-tr">
           {picRenderer(id,color)}
-          {nameRenderer(id,name,color)}
+          {nameRenderer(id,name,color,stats)}
           {stats && stats.map(stat => {
             let { value, id } = stat
             return cellRenderer(value,id)

@@ -3,7 +3,7 @@
 $minReplayWidth: 360px;
 
 .replayFlex {
-  margin: 10px 0px;
+  margin: 10px 0px 10px -20px;
   // max-width: $minReplayWidth+30;
   font-size: 1.2em;
   padding: 0px !important;
@@ -16,7 +16,8 @@ $minReplayWidth: 360px;
   margin: 10px 5px 10px 25px;
 }
 .replayCol {
-    padding: 0px 20px;
+    padding: 0px 2px;
+    margin: 0px 0px 0px 0px;
 }
 
 .barHolder {
