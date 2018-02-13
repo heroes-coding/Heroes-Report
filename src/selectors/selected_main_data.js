@@ -7,7 +7,7 @@ const selectedHeroesSelector = state => state.selectedHeroes
 const mainOrderSelector = state => state.mainOrder
 
 const getMainData = (main, statCat, selectedHeroes, order) => {
-  const startTime = window.performance.now()
+  // const startTime = window.performance.now()
   // This also receives the right data
   const statCatStats = statCat.stats
   let heroes = _.values(selectedHeroes)

@@ -234,8 +234,11 @@ class MatchupTable extends Component {
     const labelPoints1 = []
     const data2 = []
     const labelPoints2 = []
-    console.log(matchupData, this.props[0])
     matchupData.map((x,i) => {
+      const heroData = x.heroes[id]
+      if (!heroData) {
+        return
+      }
       const [ winsW, matchesW, winsA, matchesA ] = x.heroes[id]
       const build = x[1]
       const buildName = window.builds[build].name

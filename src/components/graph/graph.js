@@ -32,7 +32,6 @@ class Graph extends React.Component {
     x = x*width/xRatio-width/2
     y = y*height/yRatio+height/2
     */
-    console.log(x,y)
     window.div = this.div
     this.setState({
       ...this.state,

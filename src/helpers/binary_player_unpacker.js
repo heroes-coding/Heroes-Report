@@ -25,7 +25,7 @@ function heapFromBytes(buffer) {
       // need to get access to some stuff from the dictionary to proceed
       await asleep(10)
     }
-    console.log('binary player unpacker called',window.moduleLoaded)
+    // console.log('binary player unpacker called',window.moduleLoaded)
     let buf, error, replays
     try {
       buf = window.Module._malloc((offset + nReplays*12)*4,4)

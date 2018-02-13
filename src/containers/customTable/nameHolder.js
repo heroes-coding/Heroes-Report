@@ -2,7 +2,7 @@ import React from 'react'
 import Arc from '../../components/arc'
 
 export default (props) => {
-  const { name, id, color, updateFunction } = props
+  let { name, id, color, updateFunction } = props
   return (
     <div className={`rt-td`} >
       {updateFunction &&<i
@@ -14,7 +14,6 @@ export default (props) => {
       <span
         className='heroName'
         style={{color:color}}
-        onClick={() => { updateFunction(id,name,color) }}
       >
         {name}
       </span>

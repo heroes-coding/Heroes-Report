@@ -16,7 +16,7 @@ async function getPlayerData(bnetID) {
     playerInfo = {handle:bnetID}
     console.log(e)
   }
-  console.log(playerInfo)
+  // console.log(playerInfo)
   playerInfo.bnetID = parseInt(bnetID)
   const repsPromise = getPlayerBinary(bnetID)
   const reps = await repsPromise

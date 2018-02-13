@@ -1,6 +1,6 @@
 export default function getBuilds(buildsArray, nBuilds) {
   // {nTalents,nFull,nPartial,talentCounts,talents,fullBuilds,partialBuilds}
-  console.log('get builds called ', window.moduleLoaded)
+  // console.log('get builds called ', window.moduleLoaded)
   const emptyResult = {
     nTalents: 0,
     nFull:0,
