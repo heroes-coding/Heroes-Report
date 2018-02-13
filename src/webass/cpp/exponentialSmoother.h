@@ -13,7 +13,6 @@ extern "C" {
       timedData[i*2] = buf[z++]/multiplier;
       timedData[i*2+1] = buf[z++]/multiplier;
     }
-
     int nPoints = nTime;
     float ALPHA = 0.01;
     int ALPHAcutoff = 458; // round(log(0.01)/(log(1-ALPHA)));

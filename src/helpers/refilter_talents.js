@@ -6,6 +6,7 @@ export default function getTalentWinrates(talentData,toIgnore,ignoreCounts) {
     // console.log('should be returning')
     return []
   }
+  console.log('refilter talents called ',window.moduleLoaded)
   // let selectTime = window.performance.now()
   window.toIgnore = toIgnore
   // console.log(talentCounts)

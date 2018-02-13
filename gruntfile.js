@@ -9,7 +9,7 @@ let test = `C:/webass/emsdk_env.bat & echo Building... & emcc ./src/webass/cpp/e
 module.exports = grunt => {
   grunt.initConfig({
     exec: {
-      build: bareMetal
+      build: test
     },
     watch: {
       cpp: {

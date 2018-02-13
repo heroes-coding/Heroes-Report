@@ -7,7 +7,6 @@ const GET_PLAYER_DATA = 'get_player_data'
 export { GET_PLAYER_DATA, getPlayerData }
 
 async function getPlayerData(bnetID) {
-  const repsPromise = getPlayerBinary(bnetID)
   // const saveName = `player${bnetID}`
   let playerInfo
   try {
@@ -17,7 +16,9 @@ async function getPlayerData(bnetID) {
     playerInfo = {handle:bnetID}
     console.log(e)
   }
+  console.log(playerInfo)
   playerInfo.bnetID = parseInt(bnetID)
+  const repsPromise = getPlayerBinary(bnetID)
   const reps = await repsPromise
   const goodReps = []
   while (!window.HOTS || !window.buildDic) {

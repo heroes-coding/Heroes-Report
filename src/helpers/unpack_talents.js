@@ -17,6 +17,7 @@ function heapFromBytes(response, hero) {
       console.log('loading...')
       await asleep(10)
     }
+    console.log('unpack talents called',window.moduleLoaded)
     let buf, error, results
     try {
       // int32_t returneeBuilds [nFull*11+nPartial*9+nTalents*7+7]; // changed to buf

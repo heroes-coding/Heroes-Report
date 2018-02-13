@@ -11,6 +11,7 @@ for (let i=1;i<=ALPHAcutoff;i++) {
 }
 
 export function exponentialSmoothingCP(timedData,shouldSmooth=0) {
+  console.log('exponential smoothing CP called',window.moduleLoaded)
   const nTime = timedData.length
   let buf, timedPoints, error
   try {
