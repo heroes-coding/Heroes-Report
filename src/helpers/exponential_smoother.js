@@ -10,7 +10,7 @@ for (let i=1;i<=ALPHAcutoff;i++) {
   expDen.push(expDen[i-1]+newWeight)
 }
 
-export function exponentialSmoothingCP(timedData) {
+export function exponentialSmoothingCP(timedData,shouldSmooth=0) {
   const nTime = timedData.length
   let buf, timedPoints, error
   try {
@@ -18,7 +18,7 @@ export function exponentialSmoothingCP(timedData) {
     let data = [].concat(...timedData)
     data = new Float32Array(data)
     window.Module.HEAPF32.set(data,buf >> 2)
-    const pointsPointer = window.Module._getExponentiallySmoothedData(buf, nTime)
+    const pointsPointer = window.Module._getExponentiallySmoothedData(buf, nTime,shouldSmooth)
     let o = pointsPointer/4
     const nPoints = window.Module.HEAPF32[o]
     const points = window.Module.HEAPF32.slice(o+1, o+1+nPoints*2)
@@ -42,7 +42,7 @@ export function exponentialSmoothingCP(timedData) {
   return timedPoints
 }
 
-export function exponentialSmoothing(timedData) {
+export function exponentialSmoothing(timedData, shouldSmooth=1) {
   window.timedData = timedData
   window.exponentialSmoothingCP = exponentialSmoothingCP
   timedData.sort((x,y) => x[0] < y[0] ? -1 : 1)
@@ -50,7 +50,7 @@ export function exponentialSmoothing(timedData) {
   if (timedData.length < 4) {
     return []
   }
-  return exponentialSmoothingCP(timedData) // fixed ??
+  return exponentialSmoothingCP(timedData, shouldSmooth) // fixed ??
   const nTime = timedData.length
   if (nTime>500) {
     let minTime = timedData[0][0]

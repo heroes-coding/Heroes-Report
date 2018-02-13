@@ -9,7 +9,6 @@ import { formatNumber, roundedPercent, MSLToDateString, simplePercent, tinyPerce
 import { decoderNumbers } from '../../helpers/binary_defs'
 import { formatPercentile } from '../player_list/player_list'
 import { exponentialSmoothing } from '../../helpers/exponential_smoother'
-window.exponentialSmoothing = exponentialSmoothing
 const mmrNames = {q: 'Quick Match', h: 'Hero League', t: 'Team League', u: "Urnk. Draft"}
 
 class PlayerStatList extends Component {
@@ -135,11 +134,11 @@ class PlayerStatList extends Component {
           return [stat, won]
         })
         WRD.sort((x,y) => x[0] < y[0] ? -1 : 1)
-        winrateCorrelationData = exponentialSmoothing(WRD)
+        winrateCorrelationData = exponentialSmoothing(WRD,0)
         window.timings['Winrate correlation Data (' + statName + ')'] = Math.round(window.performance.now()*100 - 100*expTime)/100
       } else {
         let expTime = window.performance.now()
-        winrateCorrelationData = exponentialSmoothing(playerData.map((x,i) => { return [stats[i],x.Won] }).filter(x => x[0]).sort((x,y) => x[0] < y[0] ? -1 : 1))
+        winrateCorrelationData = exponentialSmoothing(playerData.map((x,i) => { return [stats[i],x.Won] }).filter(x => x[0]).sort((x,y) => x[0] < y[0] ? -1 : 1),0)
         window.timings['Winrate ccorrelation Data (' + statName + ')'] = Math.round(window.performance.now()*100 - 100*expTime)/100
       }
     }

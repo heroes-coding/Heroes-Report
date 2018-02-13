@@ -4,11 +4,10 @@ import PlayerReplaysSelector from '../../selectors/player_replays_selector'
 import * as d3 from 'd3'
 import KDensity from '../../components/graph/kdensity'
 import Graph from '../../components/graph/graph'
-import { formatNumber, roundedPercent, minSinceLaunchToDate, formatDate, formatLength, simplePercent, MSLToDateString } from '../../helpers/smallHelpers'
+import { formatNumber, roundedPercent, simplePercent, MSLToDateString } from '../../helpers/smallHelpers'
 import { decoderNumbers } from '../../helpers/binary_defs'
 import { formatPercentile } from '../player_list/player_list'
 import { exponentialSmoothing } from '../../helpers/exponential_smoother'
-window.exponentialSmoothing = exponentialSmoothing
 const mmrNames = {q: 'Quick Match', h: 'Hero League', t: 'Team League', u: "Urnk. Draft"}
 
 const spacesLeft = 18

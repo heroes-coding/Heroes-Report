@@ -1,22 +1,15 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { getTimedData, getHOTSDictionary } from '../../actions'
-import { heroStatToKey, keyToHeroStat } from '../../helpers/unpack_hero_time_data'
+import { heroStatToKey } from '../../helpers/unpack_hero_time_data'
 import TimedDataSelector from '../../selectors/timed_data_selector'
 import * as d3 from 'd3'
 import StatListTemplate from './stat_list_template'
-import KDensity from '../../components/graph/kdensity'
 import Graph from '../../components/graph/graph'
-import { formatNumber, roundedPercent, roundedPercentPercent, MSLToDateString, simplePercent, formatStatNumber, tinyPercent, sToM, formatDate, DateToMSL, statSToM } from '../../helpers/smallHelpers'
-import { decoderNumbers } from '../../helpers/binary_defs'
-import { formatPercentile } from '../player_list/player_list'
-import { exponentialSmoothing } from '../../helpers/exponential_smoother'
+import { formatNumber, roundedPercent, roundedPercentPercent, MSLToDateString, formatStatNumber, sToM, formatDate, DateToMSL, statSToM } from '../../helpers/smallHelpers'
 import PicHolder from '../customTable/picHolder'
 import NameHolder from '../customTable/nameHolder'
 import CustomTable from '../customTable/data_table'
-window.exponentialSmoothing = exponentialSmoothing
-
-const mmrNames = {q: 'Quick Match', h: 'Hero League', t: 'Team League', u: "Urnk. Draft"}
 
 class HeroStatList extends Component {
   componentDidMount() {
