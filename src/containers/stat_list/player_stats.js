@@ -134,11 +134,11 @@ class PlayerStatList extends Component {
           return [stat, won]
         })
         WRD.sort((x,y) => x[0] < y[0] ? -1 : 1)
-        winrateCorrelationData = exponentialSmoothing(WRD,0)
+        winrateCorrelationData = exponentialSmoothing(WRD,0,statName)
         window.timings['Winrate correlation Data (' + statName + ')'] = Math.round(window.performance.now()*100 - 100*expTime)/100
       } else {
         let expTime = window.performance.now()
-        winrateCorrelationData = exponentialSmoothing(playerData.map((x,i) => { return [stats[i],x.Won] }).filter(x => x[0]).sort((x,y) => x[0] < y[0] ? -1 : 1),0)
+        winrateCorrelationData = exponentialSmoothing(playerData.map((x,i) => { return [stats[i],x.Won] }).sort((x,y) => x[0] < y[0] ? -1 : 1),0,statName)
         window.timings['Winrate ccorrelation Data (' + statName + ')'] = Math.round(window.performance.now()*100 - 100*expTime)/100
       }
     }
@@ -154,7 +154,7 @@ class PlayerStatList extends Component {
     } else {
       data = playerData.map((x,i) => { return [x.MSL,stats[i]] }).reverse()
     }
-    const timedData = exponentialSmoothing(data)
+    const timedData = exponentialSmoothing(data,1,statName)
     window.timings['Winrate Over time Data'] = Math.round(window.performance.now()*100 - 100*expTime)/100
     return (
       <div className="graphs">

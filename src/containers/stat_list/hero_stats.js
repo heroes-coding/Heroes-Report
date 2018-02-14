@@ -29,7 +29,7 @@ class HeroStatList extends Component {
       formatter = sToM
     }
     const stat = formatter(lastBuild[index][2]/100).toString()
-    const stats = allBuilds.map(x => x[index][2]/100).filter(x => x)
+    const stats = allBuilds.map(x => x[index][2]/100)
     const std = stats.length > 1 ? formatter(d3.deviation(stats)).toString() : '---'
     return {name:statName, left: stat, right: std, statName}
   }

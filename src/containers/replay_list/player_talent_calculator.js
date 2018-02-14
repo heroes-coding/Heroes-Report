@@ -88,14 +88,15 @@ class TalentCalculator extends Component {
           return (
             <div key={l} className="talentRow row" >
               {tals.map((tal,i) => {
-                const [ id, adjustedWins, adjustedTotal, wins, total ] = tal.slice(0,5)
+                const [ id, adjustedWins, adjustedTotal, wins, total, fullWins, fullTotal ] = tal
                 const key = window.HOTS.nTalents[id]
                 const picLoc = window.HOTS.talentPics[id]
                 const isPartialOnly = !adjustedWins && !adjustedTotal && total
                 const sel= this.props.selectedTalents[l].includes(id)
-                const selected = ((sel || this.props.selectedTalents[l].length===0) && total > 0 && adjustedTotal > 0) || isPartialOnly
+                const selected = ((sel || this.props.selectedTalents[l].length===0) && total > 0 && adjustedTotal > 0)
                 const highlighted = sel
                 const percent = roundedPercent(Math.round(isPartialOnly ? wins/total*1000 : adjustedWins/adjustedTotal*1000))
+                const tot = Math.round(adjustedTotal/100)/10
                 return (
                   <div
                     key={key}

@@ -4,16 +4,23 @@
 
 extern "C" {
   EMSCRIPTEN_KEEPALIVE
-  float* getExponentiallySmoothedData (float *buf, int nTime, int shouldSmooth) {
-    const float multiplier = 100; // makes this function possible.   Otherwise, the nubmers are too big -- doubles raise memory errors I could not resolve nor fully understand.
-    // std::cout << "nTime: " << nTime << std::endl;
+  float* getExponentiallySmoothedData (float *buf, int nTime, int shouldSmooth, int filterZeroes) {
+    const float multiplier = 100;
     int z = 0;
     std::vector<float> timedData(nTime*2);
+    int nPoints = 0;
     for (int i=0;i<nTime;i++) {
-      timedData[i*2] = buf[z++]/multiplier;
-      timedData[i*2+1] = buf[z++]/multiplier;
+      float x = buf[z++]/multiplier;
+      float y = buf[z++]/multiplier;
+      if ((filterZeroes && abs(x) < 0.00001) || (filterZeroes && shouldSmooth && abs(y) < 0.00001)) {
+        // std::cout << "Skipping " << x << std::endl;
+        continue;
+      }
+      timedData[nPoints*2] = x;
+      timedData[nPoints*2+1] = y;
+      nPoints++;
     }
-    int nPoints = nTime;
+
     float ALPHA = 0.01;
     int ALPHAcutoff = 458; // round(log(0.01)/(log(1-ALPHA)));
     std::vector<float> expDen(458);

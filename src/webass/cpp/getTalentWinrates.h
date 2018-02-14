@@ -58,14 +58,6 @@ extern "C" {
 
     // printBuildKeyDic(talentResults);
     for (int b=0;b<nPartials;b++) {
-      /*
-      std::cout << "BUILD " << b << ": ";
-      for (int q=0;q<9;q++) {
-        std::cout << "[" << buf[z+q] << "]";
-      }
-      */
-      // std::cout << std::endl;
-
 
       bool buildPassed = true;
       for (int t=0;t<7;t++) {
@@ -94,6 +86,8 @@ extern "C" {
                 // std::cout << "[" << talentResults[t][o][0] << ":" << tal << "]";
                 if (talentResults[t][o][0]==tal) {
                   // std::cout << "LEVEL " << t << "TALENT " << o << ": " << talentResults[t][o][0] << " | MATCHES: " << tal << std::endl;
+                  // talentResults[t][o][1] -= buf[z+7];
+                  // talentResults[t][o][2] -= buf[z+8];
                   talentResults[t][o][3] -= buf[z+7];
                   talentResults[t][o][4] -= buf[z+8];
                   break;

@@ -10,7 +10,7 @@ for (let i=1;i<=ALPHAcutoff;i++) {
   expDen.push(expDen[i-1]+newWeight)
 }
 
-export function exponentialSmoothingCP(timedData,shouldSmooth=0) {
+export function exponentialSmoothingCP(timedData,shouldSmooth=0,filterZeroes) {
   // console.log('exponential smoothing CP called',window.moduleLoaded)
   const nTime = timedData.length
   let buf, timedPoints, error
@@ -19,7 +19,7 @@ export function exponentialSmoothingCP(timedData,shouldSmooth=0) {
     let data = [].concat(...timedData)
     data = new Float32Array(data)
     window.Module.HEAPF32.set(data,buf >> 2)
-    const pointsPointer = window.Module._getExponentiallySmoothedData(buf, nTime,shouldSmooth)
+    const pointsPointer = window.Module._getExponentiallySmoothedData(buf, nTime,shouldSmooth,filterZeroes)
     let o = pointsPointer/4
     const nPoints = window.Module.HEAPF32[o]
     const points = window.Module.HEAPF32.slice(o+1, o+1+nPoints*2)
@@ -40,18 +40,20 @@ export function exponentialSmoothingCP(timedData,shouldSmooth=0) {
     window.Module._free(buf)
   }
   if (error) throw error
+  // console.log(timedPoints)
   return timedPoints
 }
 
-export function exponentialSmoothing(timedData, shouldSmooth=1) {
+export function exponentialSmoothing(timedData, shouldSmooth=1,statName) {
   window.timedData = timedData
+  const filterZeroes = ["Healing","Self Healing","Protection","CC Seconds","Stun Seconds", "Root Time", "Silence Time", "Time on Fire", "Out#d Deaths", "TF Hero Dam.", "TF Dam.Rec.","Vengeances"].includes(statName) ? 1 : 0
+  // console.log(statName,filterZeroes)
   window.exponentialSmoothingCP = exponentialSmoothingCP
   timedData.sort((x,y) => x[0] < y[0] ? -1 : 1)
-  // console.log(timedData)
   if (timedData.length < 4) {
     return []
   }
-  return exponentialSmoothingCP(timedData, shouldSmooth) // fixed ??
+  return exponentialSmoothingCP(timedData, shouldSmooth, filterZeroes) // fixed ??
   const nTime = timedData.length
   if (nTime>500) {
     let minTime = timedData[0][0]

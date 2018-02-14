@@ -41,7 +41,7 @@ export default function getTalentWinrates(talentData,toIgnore,ignoreCounts) {
       }
     }
     // console.log(`It took ${Math.round(window.performance.now()*100 - 100*selectTime)/100} ms to get talent winrates`)
-    window.returnees = returnees
+    window.talentData = {nTalents, nFull, nPartial, talentCounts, talents, partialBuilds, fullBuilds, returnees}
   } catch (e) {
     error = e
   } finally {

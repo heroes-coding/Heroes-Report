@@ -36,7 +36,7 @@ void printTwoDeep(std::vector< std::vector<int> > BKD) {
   }
 }
 
-int32_t * sortTalents (int32_t *buf, std::vector< std::vector<int> > partialBuilds, std::vector< std::vector<int> > fullBuilds, int nPartial, int nFull, std::vector< std::vector<int> > realTalents, int nTalents) {
+int32_t * sortTalents (int32_t *buf, std::vector< std::vector<int> > partialBuilds, std::vector< std::vector<int> > fullBuilds, int nPartial, int nFull, std::vector< std::vector<int> > realTalents, int nTalents, int isPlayer) {
 
   std::vector< std::vector< std::vector<int> > > buildKeyDic;
   std::vector< std::vector< std::vector<int> > > talentResults;
@@ -132,7 +132,7 @@ int32_t * sortTalents (int32_t *buf, std::vector< std::vector<int> > partialBuil
     // std::cout << "p:" << p << ":" << nPots << "[" << wins << "|" << count << "]";
     for (int m=0;m<nPots;m++) {
       int bKey = potMatches[m];
-      float percent = 1.0*fullBuilds[bKey][8]/total;
+      float percent = isPlayer ? 1 : 1.0*fullBuilds[bKey][8]/total;
       // std::cout << "[bKey:" << bKey << "] ";
       /*
       for (int q=0;q<11;q++) {
@@ -151,6 +151,7 @@ int32_t * sortTalents (int32_t *buf, std::vector< std::vector<int> > partialBuil
   for (int b=0;b<nFull;b++) {
     for (int l=0;l<7;l++) {
       for (int t=0;t<realTalents[l].size();t++) {
+        // std::cout << "RT: " << realTalents[l][t] <<  ", FB: " << fullBuilds[b][l];
         if (realTalents[l][t] == fullBuilds[b][l]) {
           talentResults[l][t][0] += fullBuilds[b][9];
           talentResults[l][t][1] += fullBuilds[b][10];
@@ -159,6 +160,8 @@ int32_t * sortTalents (int32_t *buf, std::vector< std::vector<int> > partialBuil
       }
     }
   }
+  
+  // std::cout << std::endl;
 
   // printBuildKeyDic(talentResults);
   // printTwoDeep(realTalents);
@@ -185,7 +188,6 @@ int32_t * sortTalents (int32_t *buf, std::vector< std::vector<int> > partialBuil
       }
     }
   }
-
   // Then full builds
   for (int b=0;b<nFull;b++) {
     /* std::cout << "[Build:" << b << "]:::";
@@ -288,6 +290,8 @@ extern "C" {
       // std::cout << std::endl;
     }
 
+    // std::cout << std::endl;
+
     std::vector< std::vector<int> > pBuilds;
     std::vector< std::vector<int> > fBuilds;
     for (int b=0;b<nPartial;b++) {
@@ -359,7 +363,7 @@ extern "C" {
       buf[0] = 0;
       return buf;
     }
-    return sortTalents(buf, pBuilds,fBuilds,nPartial,nFull, realTalents, nTalents);
+    return sortTalents(buf, pBuilds,fBuilds,nPartial,nFull, realTalents, nTalents,1);
 
   }
 
@@ -492,7 +496,7 @@ extern "C" {
       // printArray(partialBuilds[b],9);
     }
 
-    return sortTalents(buf, partialBuilds,fullBuilds,nPartial,nFull, realTalents, nTalents);
+    return sortTalents(buf, partialBuilds,fullBuilds,nPartial,nFull, realTalents, nTalents,0);
 
   }
 
