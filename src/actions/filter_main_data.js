@@ -11,7 +11,7 @@ const totalStatsCount = 53
 
 async function getMainData(prefs, rollbackState) {
   // GET MAIN DATA IS WORKING.  THE PROBLEM IS ELSEWHERE
-  window.saveLocal(prefs,'prefs')
+  window.saveLocal(prefs,'reactprefs')
   const url = `https://heroes.report/stats/o/${prefs.time}/${prefs.mode}/${prefs.mmr}/${prefs.map}.json?${getRandomString()}`
   let mainData, dData
   let reset = false

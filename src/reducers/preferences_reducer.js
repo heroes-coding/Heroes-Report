@@ -3,7 +3,7 @@ import { defaultPreferences, brawlMapIDs, allBrawlMapIDs } from '../helpers/defi
 
 let oldPreferences
 if (window.localStorage.hasOwnProperty('prefs')) {
-  oldPreferences = window.loadLocal('prefs',defaultPreferences)
+  oldPreferences = window.loadLocal('reactprefs',defaultPreferences)
 }
 
 export default function(state = oldPreferences || {...defaultPreferences}, action) {
@@ -29,7 +29,7 @@ export default function(state = oldPreferences || {...defaultPreferences}, actio
       state[action.prefType] = action.prefID
     }
 
-    window.saveLocal(state,'prefs')
+    window.saveLocal(state,'reactprefs')
     return state
   }
   if (action.type === UPDATE_MAIN_DATA) {
