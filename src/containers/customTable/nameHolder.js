@@ -14,6 +14,7 @@ export default (props) => {
       <span
         className='heroName'
         style={{color:color}}
+        onClick={() => { if (updateFunction) updateFunction(id,name,color) }}
       >
         {name}
       </span>

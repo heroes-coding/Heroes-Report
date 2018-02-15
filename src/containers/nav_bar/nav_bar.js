@@ -25,8 +25,9 @@ class Nav extends React.Component {
       this.props.getHeroTalents(newHero,this.props.prefs)
       this.props.getTimedData(this.props.prefs,newHero)
     }
-    this.props.history.push(`/heroes/${newHero}`)
     this.setState({curHero: newHero})
+    newHero = window.HOTS.nHeroes[newHero]
+    this.props.history.push(`/heroes/${newHero}`)
   }
   playerSearch(player) {
     this.props.dispatchPlayerSearch(player)

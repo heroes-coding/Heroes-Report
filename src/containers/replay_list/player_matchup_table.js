@@ -207,7 +207,7 @@ class PlayerMatchupTable extends Component {
           { value:matchesA === 0 ? '-' : winsA/matchesA, id: 5 }
         ]
       }
-    }).filter(x => x.stats[0].value !== "-" || x.stats[2].value !== "-" || x.stats[4].value !== "-")
+    })//.filter(x => x.stats[0].value !== "-" || x.stats[2].value !== "-" || x.stats[4].value !== "-")
     const { orderID, desc } = this.state
     rows.sort((x,y) => {
       let xVal, yVal

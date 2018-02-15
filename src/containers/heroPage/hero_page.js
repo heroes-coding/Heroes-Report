@@ -7,10 +7,21 @@ import TalentCalculator from './talentCalculator'
 import { HeroStatList, MatchupTable } from '../stat_list/hero_stats'
 
 class HeroHolder extends Component {
-  componentDidMount() {
-  }
   render() {
     let heroID = this.props.match.params.id
+    if (!window.HOTS) {
+      return (
+        <div className="overall">
+          <div className="filtersHolder">
+            <DataFiltersBar menu={2} />
+          </div>
+        </div>
+      )
+    } else {
+      if (isNaN(heroID)) {
+        heroID = window.HOTS.heroDic[heroID]
+      }
+    }
     return (
       <div className="overall">
         <div className="filtersHolder">
@@ -29,7 +40,7 @@ class HeroHolder extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  return {ownProps}
+  return {ownProps, HOTS:state.HOTS}
 }
 
 export default connect(mapStateToProps)(HeroHolder)

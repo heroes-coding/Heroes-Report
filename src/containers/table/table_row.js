@@ -42,6 +42,7 @@ class TableRow extends Component {
     if (this.props.history.location.pathname.includes('heroes')) {
       this.props.getHeroTalents(newHero,this.props.prefs)
     }
+    newHero = window.HOTS.nHeroes[newHero]
     this.props.history.push(`/heroes/${newHero}`)
   }
 
