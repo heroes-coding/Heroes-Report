@@ -9,6 +9,11 @@ class SearchBar extends Component {
   clearSearch() {
     this.setState({term: ''})
   }
+  componentWillUnmount() {
+    if (this.clearTimeout) {
+      clearTimeout(this.clearTimeout)
+    }
+  }
   render() {
     return (
       <input

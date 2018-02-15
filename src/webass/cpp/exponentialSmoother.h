@@ -2,6 +2,7 @@
 #include <vector>
 #include <cmath>
 
+
 extern "C" {
   EMSCRIPTEN_KEEPALIVE
   float* getExponentiallySmoothedData (float *buf, int nTime, int shouldSmooth, int filterZeroes) {

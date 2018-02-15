@@ -28,7 +28,7 @@ function heapFromBytes(buffer) {
     // console.log('binary player unpacker called',window.moduleLoaded)
     let buf, error, replays
     try {
-      buf = window.Module._malloc((offset + nReplays*12)*4,4)
+      buf = window.Module._malloc((offset + nReplays*12)*8,4) // Almost double the required memory, but Mr. Ouga set off a memory error that was corrected by doing this.
       window.Module.HEAPU32.set(intsArray,buf >> 2)
       window.ints = intsArray
       let startTime = window.performance.now()
