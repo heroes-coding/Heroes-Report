@@ -238,6 +238,11 @@ class Replay extends Component {
       popupPic,
     })
   }
+  componentWillUnmount() {
+    if (this.popupTimeout) {
+      clearTimeout(this.popupTimeout)
+    }
+  }
   messagePopup() {
     this.popupTimeout = setTimeout(this.closePopup, 500)
   }

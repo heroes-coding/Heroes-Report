@@ -68,12 +68,14 @@ let talentIcon = (talentIcon,key,row,openPopup,messagePopup,talent,hero,div) => 
   )
 }
 
-let tinyHero = (hero,key,openPopup,row,messagePopup,div) => {
+let tinyHero = (hero,key,openPopup,row,messagePopup,div, nHeroes) => {
+  // sometimes data will be corrupt
+  let imgSrc = hero >= nHeroes ? 'https://heroes.report/singleTalents/empty.png' : `https://heroes.report/squareHeroes/${hero}.jpg`
   return (
     <img
       key={key}
       className={`tinyHero ${hero}`}
-      src={`https://heroes.report/squareHeroes/${hero}.jpg`}
+      src={imgSrc}
       alt={hero}
     ></img>
   )
@@ -151,10 +153,10 @@ let left = (props,div, getReplay) => {
         </span>
         <div className="teamsHolder">
           <div className="tinyHeroHolder" style={{background: "#022c02"}}>
-            {[0,1,2,3,4].map((x) => tinyHero(props.allies[x],`${props.MSL}-${x}`,props.openPopup,props.row,props.messagePopup,div))}
+            {[0,1,2,3,4].map((x) => tinyHero(props.allies[x],`${props.MSL}-${x}`,props.openPopup,props.row,props.messagePopup,div,props.nHeroes))}
           </div>
           <div className="tinyHeroHolder" style={{background: "#350101"}}>
-            {[0,1,2,3,4].map((x) => tinyHero(props.enemies[x],`${props.MSL}-${x}`,props.openPopup,props.row,props.messagePopup,div))}
+            {[0,1,2,3,4].map((x) => tinyHero(props.enemies[x],`${props.MSL}-${x}`,props.openPopup,props.row,props.messagePopup,div,props.nHeroes))}
           </div>
         </div>
       </div>

@@ -179,6 +179,10 @@ class PlayerMatchupTable extends Component {
       for (let p=0;p<5;p++) {
         const ally = allies[p]
         const enemy = enemies[p]
+        if (ally > nHeroes - 1 || enemy > nHeroes -1) {
+          // console.log('replay data corrupt', ally, enemy,MSLToDateString(MSL))
+          continue
+        }
         if (p===0) {
           matchupData[ally][4] += Won
           matchupData[ally][5]++

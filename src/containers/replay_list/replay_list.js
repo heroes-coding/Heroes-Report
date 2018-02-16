@@ -90,6 +90,11 @@ class ReplayList extends Component {
       popupPic,
     })
   }
+  componentWillUnmount() {
+    if (this.popupTimeout) {
+      clearTimeout(this.popupTimeout)
+    }
+  }
   messagePopup() {
     this.popupTimeout = setTimeout(this.closePopup, 500)
   }
@@ -131,9 +136,11 @@ class ReplayList extends Component {
     } else {
       talPics = Array(7).fill(null)
     }
+
     return (
       <div key={index} className="replay_item_container">
         <ListItem
+          nHeroes={this.nHeroes}
           changeOpenReplay={this.changeOpenReplay}
           curMSL={this.state.curMSL}
           handle={handle}
@@ -181,6 +188,7 @@ class ReplayList extends Component {
     }
     const { sortBy, sortDesc } = this.state
     const sortStats = this.props.prefs.sortStats
+    this.nHeroes = window.HOTS.fullHeroNames.length
     if (this.visualChange) {
       this.visualChange = null
     } else {

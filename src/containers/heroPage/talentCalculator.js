@@ -40,6 +40,11 @@ class TalentCalculator extends Component {
       popupPic
     })
   }
+  componentWillUnmount() {
+    if (this.popupTimeout) {
+      clearTimeout(this.popupTimeout)
+    }
+  }
   messagePopup() {
     this.popupTimeout = setTimeout(this.closePopup, 100)
   }

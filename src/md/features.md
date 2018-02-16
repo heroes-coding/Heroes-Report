@@ -43,7 +43,9 @@ The Wheel of Death and Wheel of Murder present data that would otherwise take 24
 Contrary to other sites' presentation of the data, there is nothing in the replay files that show who is credited with a kill - the event has the players who participated in a takedown listed in their 'slot' in the replay files' order.  I am pretty sure HOTSLogs and other sites assume the first listed player is the killer, but the players are always listed in their slot order.
 
 ## <a name="graphs">The Stat Graphs</a>
-The stat graphs from player aggregate statistics use exponential smoothing of the data, which results in a lagging indicator.
+The stat graphs from the hero page are already aggregated observations for each build shown.  
+
+Those for the player page calculate exponential smoothing in C++ for the over time graphs, so the timed graphs have a lag.  The winrate by a given stat graphs average out and combine neighbors to a reasonable amount of points for a much better looking graph (if you use too many points, the noise increases substantially, to the point of uselessness when looking at a player with thousands of replays in their history).  And the k density distribution graphs also bin the data by a similar amount of points for a better looking distribution.
 
 ## <a name="front">The Front End</a>
 

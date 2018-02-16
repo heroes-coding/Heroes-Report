@@ -4,10 +4,11 @@ window.binaryStuff = { replayVals, replayDecoder, indexes, replayDecoderLengths,
 
 function heapFromBytes(buffer) {
   let promise = new Promise(async function(resolve, reject) {
-
     const dataview = new DataView(buffer)
     window.dataview = dataview
-    let nReplays = Math.floor(dataview.byteLength/48)
+    let realInts = new Uint32Array(buffer)
+    // realInts = realInts.slice(0,5000*12)
+    let nReplays = realInts.length/12
     while (!window.HOTS) {
       // need to get access to some stuff from the dictionary to proceed
       await asleep(10)
@@ -15,7 +16,6 @@ function heapFromBytes(buffer) {
     const nHeroes = window.HOTS.fullHeroNames.length
     const offset = specialLocations.length+nHeroes
 
-    let realInts = new Uint32Array(buffer)
     let initialArray = specialLocations.concat(Object.values(window.HOTS.roleN))
     let intsArray = new Uint32Array(offset +nReplays*12)
     window.intsArray = intsArray
@@ -28,7 +28,7 @@ function heapFromBytes(buffer) {
     // console.log('binary player unpacker called',window.moduleLoaded)
     let buf, error, replays
     try {
-      buf = window.Module._malloc((offset + nReplays*12)*8,4) // Almost double the required memory, but Mr. Ouga set off a memory error that was corrected by doing this.
+      buf = window.Module._malloc((offset + nReplays*12)*16,4) // Another expansion of memory for Mr. Ouga
       window.Module.HEAPU32.set(intsArray,buf >> 2)
       window.ints = intsArray
       let startTime = window.performance.now()

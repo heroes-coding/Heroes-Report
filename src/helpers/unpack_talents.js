@@ -1,6 +1,14 @@
 import asleep from './asleep'
 import { getRandomString } from './smallHelpers'
+let talentsUnpacker
+function makeTalentUnpacker() {
+  if (!talentsUnpacker) {
+    talentsUnpacker = new window.Worker('/webworkers/unpack_talents_ww.js')
+  }
+}
+setTimeout(makeTalentUnpacker,500)
 
+/*
 function heapFromBytes(response, hero) {
   let promise = new Promise(async function(resolve, reject) {
     const dataTime = new Date(response[0])
@@ -57,9 +65,9 @@ function heapFromBytes(response, hero) {
   })
   return promise
 }
+*/
 
 function getTalentsWithJavascript(response,hero) {
-  let unpackTime = window.performance.now()
   const dataTime = new Date(response[0])
   const talentList = response.slice(1,8)
   const realTalents = talentList.map(x => x.filter(y => y))
@@ -101,7 +109,8 @@ function getTalentsWithJavascript(response,hero) {
       nFull += 1
       fullBuilds.push(buildKeys)
     } else {
-      partialBuilds.push(buildKeys.slice(0,9))
+      // this if check is to make sure there is a level one talent
+      if (buildKeys[0]) partialBuilds.push(buildKeys.slice(0,9))
     }
   }
   const nPartial = partialBuilds.length
@@ -109,6 +118,8 @@ function getTalentsWithJavascript(response,hero) {
   const partialCounts = []
 
   for (let p=0;p<nPartial;p++) {
+    let startTal = partialBuilds[p][0]
+    if (!startTal) continue // level one talent not even selected!
     let { index: indexKey, builds: potentialMatches } = buildKeyDic[0][partialBuilds[p][0]]
 
     for (let l=0;l<7;l++) {
@@ -153,10 +164,26 @@ function getTalentsWithJavascript(response,hero) {
 
   partialBuilds = new Int32Array([].concat(...partialBuilds))
   fullBuilds = new Int32Array([].concat(...fullBuilds))
-  window.timings['Talent decoding Javascript for ' + hero] = Math.round(window.performance.now()*100 - 100*unpackTime)/100
   return {nTalents, nFull, nPartial, talentCounts, talents, fullBuilds, partialBuilds, dataTime, hero}
 
   // {nTalents,nFull,nPartial,talentCounts,talents,fullBuilds,partialBuilds,dataTime, hero}
+}
+
+
+function messageTalentUnpacker(response,hero) {
+  let promise = new Promise(function(resolve, reject) {
+    if (!talentsUnpacker) {
+      talentsUnpacker = new window.Worker('/webworkers/unpack_talents_ww.js')
+    }
+    let unpackTime = window.performance.now()
+    talentsUnpacker.addEventListener('message', function handler(e) {
+      talentsUnpacker.removeEventListener('message',handler)
+      window.timings['Talent decoding Javascript Webworker for ' + window.HOTS.nHeroes[hero]] = Math.round(window.performance.now()*100 - 100*unpackTime)/100
+      resolve(e.data)
+    }, false)
+    talentsUnpacker.postMessage({response, hero})
+  })
+  return promise
 }
 
 export default async function getPackedTalents(hero, prefs) {
@@ -167,7 +194,11 @@ export default async function getPackedTalents(hero, prefs) {
     binaryReq.open("GET",url, true)
     binaryReq.onload = async function(oEvent) {
       let response = binaryReq.response
+      let wwResults
+      let unpackTime
       if (response) {
+        wwResults = await messageTalentUnpacker(response,hero)
+        unpackTime = window.performance.now()
         response = JSON.parse(response)
         if (hero===20) {
           for (let t=1;t<8;t++) {
@@ -179,8 +210,12 @@ export default async function getPackedTalents(hero, prefs) {
         }
       }
       // let cppResult = await heapFromBytes(response,hero) // I don't know why this is broken.  Why is it broken?
+      resolve(wwResults)
+      /*
       let javascriptResult = getTalentsWithJavascript(response,hero)
+      window.timings['Talent decoding Javascript for ' + hero] = Math.round(window.performance.now()*100 - 100*unpackTime)/100
       resolve(javascriptResult)
+      */
     }
     binaryReq.send(null)
   })
