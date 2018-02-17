@@ -1,47 +1,28 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import FilterIcon from '../components/filter_icon'
-import { filterHeroes } from '../actions'
+import { filterHeroes, updateFilter } from '../actions'
 
 class IconList extends Component {
   shouldComponentUpdate(nextProps) {
-    return true
+    return this.props.iconList !== nextProps.iconList
   }
   constructor(props) {
     super(props)
-    this.state = {
-      selected: props.iconList.map(x => x.selected)
-    }
     this.updateFilterAndHeroes = this.updateFilterAndHeroes.bind(this)
   }
 
   updateFilterAndHeroes(id) {
     this.props.updateFilter(id, this.props.updateType)
-    // Updating through redux is not working.  Please let this work... ffs
-    this.setState((prevState,props) => {
-      if (id==='A') {
-        return {selected: prevState.selected.map(x => false)}
-      } else {
-        return {selected: prevState.selected.map((x,i) => i===id ? !x : x)}
-      }
-    })
-    // Somewhat hacky solution to make sure the state is updated first
-    setTimeout(() => {
-      this.props.filterHeroes(this.props.store)
-    },10)
-    setTimeout(() => {
-      this.setState((prevState,props) => {
-        return {selected:[...prevState.selected].concat(true)}
-      })
-    },3000)
   }
   renderIcon(d,index) {
+    const { id, name, selected } = d
     return (
       <FilterIcon
-        id={d.id}
-        name={d.name}
-        key={d.id}
-        selected ={this.state.selected[d.id]}
+        id={id}
+        name={name}
+        key={`${name}-${selected}`}
+        selected ={selected}
         updateFilter={this.updateFilterAndHeroes}
       />
     )
@@ -67,4 +48,4 @@ function mapStateToProps(state, ownProps) {
   return { ...ownProps, store: state }
 }
 
-export default connect(mapStateToProps, {filterHeroes})(IconList)
+export default connect(mapStateToProps, {filterHeroes, updateFilter})(IconList)

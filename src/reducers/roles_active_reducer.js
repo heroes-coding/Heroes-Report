@@ -13,12 +13,8 @@ export default function(state = initialRoleState.map(a => { return {...a} }), ac
       return initialRoleState.map(a => { return {...a} })
     }
     return state.map(a => {
-      if (a.id === action.payload) {
-        return Object.assign({}, a, {
-          selected: !a.selected
-        })
-      }
-      return a
+      if (a.id === action.payload) return {...a, selected:!a.selected}
+      return {...a}
     })
   }
   return state

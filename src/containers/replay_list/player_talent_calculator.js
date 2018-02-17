@@ -69,6 +69,7 @@ class TalentCalculator extends Component {
       return <div></div>
     }
     const { hero } = this.props
+    const baseTalents = this.props.talentData.talents
     const { filteredTalents } = this.props
     if (!filteredTalents) {
       return <div></div>
@@ -92,9 +93,9 @@ class TalentCalculator extends Component {
         {filteredTalents && window.HOTS && filteredTalents.map((tals,l) => {
           return (
             <div key={l} className="talentRow row" >
-              {tals.map((tal,i) => {
+              {tals.filter((tal,i) => baseTalents[l][i][1]).map((tal,i) => {
                 const [ id, adjustedWins, adjustedTotal, wins, total, fullWins, fullTotal ] = tal
-                const key = window.HOTS.nTalents[id]
+                const key = id
                 const picLoc = window.HOTS.talentPics[id]
                 const isPartialOnly = !adjustedWins && !adjustedTotal && total
                 const sel= this.props.selectedTalents[l].includes(id)

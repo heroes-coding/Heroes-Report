@@ -20,6 +20,28 @@ $minReplayWidth: 360px;
     margin: 0px 0px 0px 0px;
 }
 
+.partyBar {
+  width: 2px;
+  position: relative;
+  top: 2px;
+  left: 2px;
+  height: 25px;
+  background-color: none;
+}
+
+.partyBar1 {
+  background-color: $Color1;
+}
+.partyBar2 {
+  background-color: $Color3;
+}
+.partyBar3 {
+  background-color: $Color2;
+}
+.partyBar4 {
+  background-color: $Highlight;
+}
+
 .barHolder {
     width: 100%;
     margin-top: 5px;

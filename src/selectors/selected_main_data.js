@@ -3,22 +3,60 @@ import _ from 'lodash'
 
 const mainDataSelector = state => state.main
 const categoriesSelector = state => state.statCat
-const selectedHeroesSelector = state => state.selectedHeroes
+const roles = state => state.roles
+const franchises = state => state.franchises
+const HOTS = state => state.HOTS
 const mainOrderSelector = state => state.mainOrder
 
-const getMainData = (main, statCat, selectedHeroes, order) => {
+const selectedHeroesFunc = (roles,franchises,HOTS) => {
+  let selectedHeroes = 'loading'
+  if (HOTS.hasOwnProperty('heroes')) {
+    roles = roles.map(x => x.selected)
+    const hasRole = roles.some(x => x)
+    franchises = franchises.map(x => x.selected)
+    const hasFranchise = franchises.some(x => x)
+    const oldHeroes = HOTS.heroes
+    const heroKeys = Object.keys(oldHeroes)
+    const filteredHeroes = {}
+    for (let k = 0; k < heroKeys.length; k++) {
+      const key = heroKeys[k]
+      if ((hasRole && !roles[oldHeroes[key].role]) ||
+          (hasFranchise && !franchises[oldHeroes[key].franchise])) {
+        filteredHeroes[key] = oldHeroes[key]
+        filteredHeroes[key].visible = false
+        continue
+      }
+      filteredHeroes[key] = oldHeroes[key]
+      filteredHeroes[key].visible = true
+    }
+    selectedHeroes = filteredHeroes
+  }
+  return selectedHeroes
+}
+
+let selectedHeroesSelector = createSelector(
+  roles,
+  franchises,
+  HOTS,
+  selectedHeroesFunc
+)
+
+const getMainData = (main, statCat, selectedHeroes) => {
   // const startTime = window.performance.now()
   // This also receives the right data
   const statCatStats = statCat.stats
   let heroes = _.values(selectedHeroes)
+
   let nHeroes = Object.keys(main).length || 77
   // console.log(nHeroes)
   if (heroes[0] === 'l') {
-    nHeroes = (window.configCheck && window.configCheck.heroCount) || 76
-    heroes = []
-    for (let h = 0; h < nHeroes; h++) {
-      heroes.push({name: '', id: h})
+    const mrBig = {name: 'Mr. Bigglesworth', id: 666, visible:true,stats:[],prefsID:'MrBig'}
+    for (let s = 0;s<statCatStats.length;s++) {
+      const id = statCatStats[s]
+      mrBig.stats.push({id, value:999, percent:1, display:[14, 40, 27,6].includes(id) ? "☺" : "∞"})
     }
+    heroes = [mrBig]
+    nHeroes = 1
   } else {
     nHeroes = heroes.length
   }
@@ -56,6 +94,26 @@ const getMainData = (main, statCat, selectedHeroes, order) => {
     heroes = newHeroes
     nHeroes = heroes.length
   }
+  /*
+  while (!window.hasOwnProperty('HOTS')) {
+    console.log('sleeping...')
+    await asleep(50)
+  } */
+
+  const selectedStuff = {rows: heroes, headers: statCat.headers, cat:statCat.cat, updatedMins: main.updatedMins}
+  // window.debug(`Reslecting of main data took ${Math.round(window.performance.now()*100 - startTime*100)/100} ms`)
+  return selectedStuff
+}
+
+let selectedMainData = createSelector(
+  mainDataSelector,
+  categoriesSelector,
+  selectedHeroesSelector,
+  getMainData
+)
+
+let reorderMainData = (selectedMainData, order) => {
+  const heroes = selectedMainData.rows
   if (order.id==='names') {
     heroes.sort((a,b) => a.name < b.name ? -1 : 1)
     if (!order.desc) {
@@ -67,29 +125,11 @@ const getMainData = (main, statCat, selectedHeroes, order) => {
       heroes.reverse()
     }
   }
-  /*
-  while (!window.hasOwnProperty('HOTS')) {
-    console.log('sleeping...')
-    await asleep(50)
-  } */
-
-  if (visibleCount === 0) {
-    const mrBig = {name: 'Mr. Bigglesworth', id: 666, visible:true,stats:[],prefsID:'MrBig'}
-    for (let s = 0;s<statCatStats.length;s++) {
-      const id = statCatStats[s]
-      mrBig.stats.push({id, value:999, percent:1, display:[14, 40, 27,6].includes(id) ? "☺" : "∞"})
-    }
-    heroes.push(mrBig)
-  }
-  const selectedStuff = {rows: heroes, headers: statCat.headers, cat:statCat.cat, order, updatedMins: main.updatedMins}
-  // window.debug(`Reslecting of main data took ${Math.round(window.performance.now()*100 - startTime*100)/100} ms`)
-  return selectedStuff
+  return {...selectedMainData,rows:heroes, order}
 }
 
 export default createSelector(
-  mainDataSelector,
-  categoriesSelector,
-  selectedHeroesSelector,
+  selectedMainData,
   mainOrderSelector,
-  getMainData
+  reorderMainData
 )

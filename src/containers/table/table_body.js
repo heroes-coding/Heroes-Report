@@ -18,18 +18,14 @@ export default class TableBody extends Component {
   componentDidMount() {
     this.oddifyRows()
   }
-  componentWillUpdate() {
-    // console.time('Sorting...')
-  }
   componentDidUpdate() {
     this.oddifyRows()
-    // console.timeEnd('Sorting...')
   }
   render() {
     return (
       <div className="rt-tbody">
         {this.props.rows.map((row,index) => {
-          const id = row.name === "" ? row.id.toString() : `${row.prefsID}-${this.props.cat}`
+          const id = row.prefsID ? `${row.prefsID}-${this.props.cat}` : row.id.toString()
           return (
             <TableRow
               index={index}

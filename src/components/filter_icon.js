@@ -1,6 +1,7 @@
 import React from 'react'
 
 export default (props) => {
+  const className = `iconBorder ${props.selected ? 'selectedImage' : 'unselectedImage'}`
   return (
     <div id="filterButtonHolder">
       <span className="input-group-btn">
@@ -14,7 +15,7 @@ export default (props) => {
           <img
             src={`https://heroes.report/appIcons/${props.name}.png`}
             alt={props.name}
-            className={`iconBorder ${props.selected ? 'selectedImage' : 'unselectedImage'}`}
+            className={className}
           ></img>
         </button>
       </span>

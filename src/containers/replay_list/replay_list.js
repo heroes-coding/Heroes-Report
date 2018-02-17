@@ -183,7 +183,7 @@ class ReplayList extends Component {
   }
   render() {
     const { page, replaysPerPage, nReplays, pageNames, playerData } = this.props
-    if (!playerData || !this.props.talentDic.version) {
+    if (!playerData || !this.props.talentDic.version || !window.HOTS) {
       return <div></div>
     }
     const { sortBy, sortDesc } = this.state

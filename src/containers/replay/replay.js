@@ -6,11 +6,13 @@ import { formatNumber, roundedPercent, roundedPercentPercent, MSLToDateString, s
 import axios from 'axios'
 import { withRouter } from 'react-router-dom'
 import { formatPercentile } from '../player_list/player_list'
+import asleep from '../../helpers/asleep'
 import Popup from '../../components/popup'
 import awardProcessor from '../../helpers/awardProcessor'
 import Wheel from './wheels'
 import * as d3 from 'd3'
 const modeLetters = {3: 'h', 1:'q', 4:'t', 2:'u'}
+const colors10 = d3.scaleOrdinal(d3.schemeCategory10)
 
 const header = () => {
   return (
@@ -55,10 +57,12 @@ const Team = (props) => {
 }
 
 const InfoRow = (props) => {
-  const { history,hero,handle,MMR,talents, className, bnetID, index, openPopup, messagePopup, awards } = props
+  const { history,hero,handle,MMR,talents, className, bnetID, index, openPopup, messagePopup, awards, party } = props
   let thisDiv
+  let partyStyle = {backgroundColor: party ? colors10(party) : 'none'}
   return (
     <div key={handle} ref={div => { thisDiv = div }} className={className}>
+      <div className='partyBar' style={partyStyle}></div>
       <div className="replayFlexIcon">
         <img
           className="tinyFlexHero"
@@ -168,6 +172,9 @@ class Replay extends Component {
     }
     return this.state.unloaded
   }
+  componentDidMount() {
+    this.mounted = true
+  }
   async populateMMRS(bnetIDs, gameMode) {
     let res = await axios.get(`https://heroes.report/search/mmrs/${bnetIDs.join(",")}`)
     res = res.data
@@ -183,7 +190,11 @@ class Replay extends Component {
         mmrs[id] = mmr[l]
       }
     }
-    this.setState({...this.state, mmrs})
+    await asleep(5)
+    if (this.mounted) {
+      console.log('setting mmrs...',this.mounted)
+      this.setState({...this.state, mmrs})
+    }
   }
   constructor(props) {
     super(props)
@@ -239,6 +250,7 @@ class Replay extends Component {
     })
   }
   componentWillUnmount() {
+    this.mounted = false
     if (this.popupTimeout) {
       clearTimeout(this.popupTimeout)
     }
@@ -256,7 +268,6 @@ class Replay extends Component {
   render() {
     const { replayData, handle, bnetID, thisDiv } = this.props
     if (!replayData) {
-      console.log(replayData)
       return (
         <div className="replayFlexHolder row">
           <div className={`col-12 col-md-6 col-xl-6 replayCol`} align="center">
@@ -269,7 +280,8 @@ class Replay extends Component {
     }
     this.div = thisDiv
     const { mmrs } = this.state
-    const { heroes, handles, slot, team, gameMode, allies, enemies, players, colors, heroNames, globes, maxGlobes, towns, mercs, bans, levels, levelMax, stackedXP, maxTime, bnetIDs, stats, awards, wheelData, MSL, mapStats } = replayData
+    const { heroes, handles, slot, team, gameMode, allies, enemies, players, colors, heroNames, globes, maxGlobes, towns, mercs, bans, levels, levelMax, stackedXP, maxTime, bnetIDs, stats, awards, wheelData, MSL, mapStats, parties } = replayData
+    window.replayData = replayData
     if (!mmrs && !this.mmrsCalled) {
       this.populateMMRS(bnetIDs, gameMode)
       this.mmrsCalled = true
@@ -295,6 +307,7 @@ class Replay extends Component {
                 const hIndex = heroes[s][0]
                 const id = bnetIDs[i]
                 return <InfoRow
+                  party={parties[s]}
                   key={id}
                   history={this.props.history}
                   hero={hIndex}

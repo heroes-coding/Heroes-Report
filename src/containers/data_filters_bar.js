@@ -153,7 +153,7 @@ class DataFilters extends Component {
           containerClass='halfy input-group filterGroup'
           hideArrow={true}
         />}
-        {this.isMenu(0b0011) && <form className="halfy input-group filterGroup buttonSpacer blackButton"><SearchBar placeholder="Hero search" overClass="btn btn-small btn-link iconFilter" onSearchTermChange={heroSearch}/></form>}
+        {this.isMenu(0b0011) && <form className={`${this.isMenu(0b0010) ? 'halfy' : ''} input-group filterGroup buttonSpacer blackButton`}><SearchBar placeholder="Hero search" overClass="btn btn-small btn-link iconFilter" onSearchTermChange={heroSearch}/></form>}
         {this.isMenu(0b0010) && <FilterDropDown
           currentSelection=""
           resetFunction={this.updateAllies}

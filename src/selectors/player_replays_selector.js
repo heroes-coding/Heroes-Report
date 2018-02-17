@@ -15,7 +15,6 @@ const heroTerms = state => state.searchTerm
 const replaysPerPage = 15
 const { mapStatID0, mapStatID1, mapStatValues0, mapStatValues1 } = decoderNumbers
 
-
 let justFlipped = false
 let roleDic
 
@@ -23,7 +22,6 @@ const modeDic = {0:[1,2,3,4],1:[1],2:[2],3:[3],4:[4],5:[5],6:[1,2],7:[3,4]}
 
 const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises, roles, filterHeroes, timeRange, heroTerms) => {
   const playerHero = filterHeroes[2][0]
-  const startTime = window.performance.now()
   const nReplays = playerData.length
   const filteredReplays = []
   const allFranchises = Object.keys(franchises).map(x => franchises[x].selected).filter(x => x).length ? false : true
@@ -118,7 +116,6 @@ const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises,
     }
   }
   justFlipped = false
-  // console.log(`It took ${Math.round(window.performance.now()*100 - 100*startTime)/100} ms to reselect heroes`)
   return { playerData: filteredReplays, talentDic, playerInfo, pageNames, nReplays: nFiltered, mapSpecificStats, startDate, endDate }
 }
 

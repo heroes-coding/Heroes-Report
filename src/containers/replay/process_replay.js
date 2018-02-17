@@ -6,6 +6,18 @@ export default function processReplay(replay, bnetID) {
   window.replay = replay
   let { h, e, b, bnetIDs, r } = replay
   const heroes = [0,1,2,3,4,5,6,7,8,9].map(x => h[x])
+  const partyData = e.p
+  let parties = [0,0,0,0,0,0,0,0,0,0]
+  if (partyData) {
+    const firstParties = d3.max(partyData.slice(0,5))
+    for (let t=0;t<10;t++) {
+      const party = partyData[t]
+      if (party) {
+        const partyTeam = Math.floor(t/5)
+        parties[t] = party + (partyTeam ? firstParties : 0)
+      }
+    }
+  }
   const handles = heroes.map(x => `${x[3]}#${x[4]}`)
   const slot = bnetIDs.indexOf(bnetID)
   const team = Math.floor(slot/5)
@@ -76,6 +88,6 @@ export default function processReplay(replay, bnetID) {
       return pAwards
     })
   }
-  const repData = { heroes, handles, slot, team, gameMode, allies, enemies, players, colors, heroNames, globes, maxGlobes, towns, mercs, bans, levels, levelMax, stackedXP, maxTime, XPMult, bnetIDs, stats, awards, wheelData, MSL, mapStats }
+  const repData = { heroes, handles, slot, team, gameMode, allies, enemies, players, colors, heroNames, globes, maxGlobes, towns, mercs, bans, levels, levelMax, stackedXP, maxTime, XPMult, bnetIDs, stats, awards, wheelData, MSL, mapStats, parties }
   return repData
 }
