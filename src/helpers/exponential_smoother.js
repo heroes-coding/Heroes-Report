@@ -48,7 +48,7 @@ export function exponentialSmoothing(timedData, shouldSmooth=1,statName) {
   window.timedData = timedData
   const filterZeroes = ["Healing","Self Healing","Protection","CC Time","Stun Time", "Root Time", "Silence Time", "Time on Fire", "Out#d Deaths", "TF Hero Dam.", "TF Dam.Rec.","Vengeances"].includes(statName) ? 1 : 0
   if (filterZeroes) {
-    timedData = timedData.filter(x => x[1])
+    timedData = timedData.filter(x => x[shouldSmooth ? 1 : 0])
   }
   // console.log(statName,filterZeroes)
   window.exponentialSmoothingCP = exponentialSmoothingCP
