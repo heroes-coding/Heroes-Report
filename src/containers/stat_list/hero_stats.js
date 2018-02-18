@@ -7,6 +7,7 @@ import * as d3 from 'd3'
 import StatListTemplate from './stat_list_template'
 import Graph from '../../components/graph/graph'
 import { formatNumber, roundedPercent, roundedPercentPercent, MSLToDateString, formatStatNumber, sToM, formatDate, DateToMSL, statSToM } from '../../helpers/smallHelpers'
+import getWilson from '../../helpers/wilson'
 import PicHolder from '../customTable/picHolder'
 import NameHolder from '../customTable/nameHolder'
 import CustomTable from '../customTable/data_table'
@@ -75,16 +76,13 @@ class HeroStatList extends Component {
     let data
     buildData.sort((x,y) => x[1] < y[1] ? -1 : 1)
 
-
     try {
-      data = buildData.map((x,i) => { return [DateToMSL(window.builds[x[1]].dates[2]),stats[i],i] })
+      data = buildData.map((x,i) => { return [DateToMSL(window.builds[x[1]].dates[2]),stats[i],i,x[2]] })
     } catch (e) {
       console.log(e)
       return <div></div>
     }
     data = data.filter(x => x[1])
-    const dataMean = d3.mean(data.map(x => x[1]))
-    data = data.filter(x => x[1] > dataMean/10)
     const color = window.HOTS.ColorsDic[this.props.curHero]
     let labelPoints = data.map(x => {
       const [ MSL, s, index ] = x
@@ -99,10 +97,15 @@ class HeroStatList extends Component {
         0:MSL
       }
     })
+    let errorBars = null
+    if (statID===12) {
+      errorBars = data.map(x => [x[0],...getWilson(x[3]*x[1]/1000,x[3]).map(x => x*1000)])
+    }
     return (
       <div className="graphs">
         <Graph
           key={statID}
+          errorBars={errorBars}
           graphClass="heroStat winrateGraph"
           linePoints={data}
           labelPoints={labelPoints}
@@ -249,8 +252,9 @@ class MatchupTable extends Component {
       const [ startTime, endTime, midTime ] = window.builds[build].dates
       let MSL = DateToMSL(midTime)
       const buildString = `${name} over ${matchesW} matches during build ${build} (${buildName}), from ${formatDate(startTime)} until ${formatDate(endTime)}`
-      if (matchesW > 99) {
-        let wrW = winsW/matchesW
+      if (matchesW) {
+        let wrW = 1-winsW/matchesW
+        // let result = getWilson(winsW,matchesW)
         const wrWS = roundedPercent(wrW*1000)
         data1.push([MSL, wrW])
         labelPoints1.push({
@@ -262,8 +266,9 @@ class MatchupTable extends Component {
           0:MSL
         })
       }
-      if (matchesA > 99) {
-        let wrA = winsA/matchesA
+      if (matchesA) {
+        let wrA = 1-winsA/matchesA
+        // let result = getWilson(winsW,matchesW)
         const wrAS = roundedPercent(wrA*1000)
         data2.push([MSL, wrA])
         labelPoints2.push({

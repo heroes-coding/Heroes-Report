@@ -60,7 +60,7 @@ class Graph extends React.Component {
   }
   render() {
     const props = this.props
-    let { points, linePoints, graphClass, yLabel, xLabel, xRatio, yRatio, xOff, yOff, title, formatter, noArea, yFormatter, multiLines, colors, lineLabels, bars, yMax, step, xMin, xMax, yMin, containerClass, labelPoints, stackedBars } = props
+    let { points, linePoints, graphClass, yLabel, xLabel, xRatio, yRatio, xOff, yOff, title, formatter, noArea, yFormatter, multiLines, colors, lineLabels, bars, yMax, step, xMin, xMax, yMin, containerClass, labelPoints, stackedBars, errorBars } = props
     const toMap = points || bars || linePoints || [].concat(...multiLines)
     if (!toMap.length) {
       return <div></div>
@@ -180,6 +180,54 @@ class Graph extends React.Component {
               />
             )
           })}
+          {errorBars && errorBars.map((p,i) => {
+            let [ x, yMin, yMax ] = p
+            x = xScale(x)
+            return (
+              <g key={x}>
+                <line
+                  x1={x}
+                  y1={yScale(yMin)}
+                  x2={x}
+                  y2={yScale(yMax)}
+                  className="errorBar"
+                />
+                <line
+                  x1={x-5}
+                  y1={yScale(yMax)}
+                  x2={x+5}
+                  y2={yScale(yMax)}
+                  className="errorBar"
+                />
+                <line
+                  x1={x-5}
+                  y1={yScale(yMin)}
+                  x2={x+5}
+                  y2={yScale(yMin)}
+                  className="errorBar"
+                />
+              </g>
+            )
+          })}
+          {bars && bars.map((p,i) => {
+            let [ x, y, stroke ] = p
+            x = xScale(x)
+            const yCoord = yScale(y > yMax ? yMax : y)
+            const style={stroke}
+            return (
+              <g key={x}>
+                <line
+                  x1={x}
+                  y1={yMaxCoord}
+                  x2={x}
+                  y2={yCoord}
+                  style={style}
+                  className="barLine"
+                />
+                <text className="barText" x={x} y={yMaxCoord+25}>{yFormatter(y)}</text>
+              </g>
+            )
+          })}
           {labelPoints && labelPoints.map((p,i) => {
             const { name, desc, size, color } = p
             const style={fill: color, r:size, cursor: "pointer"}
@@ -201,25 +249,6 @@ class Graph extends React.Component {
                   this.messagePopup()
                 }}
               />
-            )
-          })}
-          {bars && bars.map((p,i) => {
-            let [ x, y, stroke ] = p
-            x = xScale(x)
-            const yCoord = yScale(y > yMax ? yMax : y)
-            const style={stroke}
-            return (
-              <g key={x}>
-                <line
-                  x1={x}
-                  y1={yMaxCoord}
-                  x2={x}
-                  y2={yCoord}
-                  style={style}
-                  className="barLine"
-                />
-                <text className="barText" x={x} y={yMaxCoord+25}>{yFormatter(y)}</text>
-              </g>
             )
           })}
           {stackedBars && stackedBars.map(t => {

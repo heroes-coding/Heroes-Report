@@ -10,6 +10,12 @@
     width: 100%;
 }
 
+.errorBar {
+  stroke-width:2px;
+  stroke: $Color2;
+  opacity: 0.35;
+}
+
 .legendLine {
   stroke-width: 10px;
 }

@@ -176,7 +176,20 @@ export async function getHeroTimeData(prefs,hero) {
       gData[buildType].push(toPush)
     }
     let avgWinrate = repWins/total*100
+    // NEW FILTERING
+    let nBuilds = gData.builds.length
+    let mean = total/nBuilds
+    let minimumMultiplier = 10
+    let counter = 0
+    gData.builds = gData.builds.filter((x,i) => {
+      const passed = x[2]*minimumMultiplier > mean || i > nBuilds-10
+      if (passed) {
+        gData.dict[x[1]] = ['builds',counter++]
+        return x[2]*minimumMultiplier > mean || i > nBuilds-10
+      } else return false
+    })
 
+    // NEW FILTERING END
     resolve([gData,gData.builds[gData.builds.length-1],avgWinrate,maxBuildReplays,parseInt(minBuild)])
   })
   return promise
