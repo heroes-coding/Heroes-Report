@@ -26,7 +26,10 @@ function kernelEpanechnikov(k) {
 }
 
 export default (props) => {
-  const { X, graphClass, xLabel, xRatio, yRatio, xOff, yOff, title, formatter, yFormatter } = props
+  let { X, graphClass, xLabel, xRatio, yRatio, xOff, yOff, title, formatter, yFormatter } = props
+  if (["Healing","Self Healing","Protection","CC Time","Stun Time", "Root Time", "Silence Time", "Time on Fire", "Out#d Deaths", "TF Hero Dam.", "TF Dam.Rec.","Vengeances"].includes(xLabel)) {
+    X = X.filter(x => x)
+  }
   const xMin = d3.min(X)
   const xMax = d3.max(X)
   const xRange = xMax-xMin

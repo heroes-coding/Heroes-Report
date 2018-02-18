@@ -46,14 +46,17 @@ export function exponentialSmoothingCP(timedData,shouldSmooth=0,filterZeroes) {
 
 export function exponentialSmoothing(timedData, shouldSmooth=1,statName) {
   window.timedData = timedData
-  const filterZeroes = ["Healing","Self Healing","Protection","CC Seconds","Stun Seconds", "Root Time", "Silence Time", "Time on Fire", "Out#d Deaths", "TF Hero Dam.", "TF Dam.Rec.","Vengeances"].includes(statName) ? 1 : 0
+  const filterZeroes = ["Healing","Self Healing","Protection","CC Time","Stun Time", "Root Time", "Silence Time", "Time on Fire", "Out#d Deaths", "TF Hero Dam.", "TF Dam.Rec.","Vengeances"].includes(statName) ? 1 : 0
+  if (filterZeroes) {
+    timedData = timedData.filter(x => x[1])
+  }
   // console.log(statName,filterZeroes)
   window.exponentialSmoothingCP = exponentialSmoothingCP
   timedData.sort((x,y) => x[0] < y[0] ? -1 : 1)
   if (timedData.length < 4) {
     return []
   }
-  return exponentialSmoothingCP(timedData, shouldSmooth, filterZeroes) // fixed ??
+  return exponentialSmoothingCP(timedData, shouldSmooth, 0) // fixed ??
   const nTime = timedData.length
   if (nTime>500) {
     let minTime = timedData[0][0]

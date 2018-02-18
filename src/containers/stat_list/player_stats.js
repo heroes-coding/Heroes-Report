@@ -5,7 +5,7 @@ import * as d3 from 'd3'
 import StatListTemplate from './stat_list_template'
 import KDensity from '../../components/graph/kdensity'
 import Graph from '../../components/graph/graph'
-import { formatNumber, roundedPercent, MSLToDateString, simplePercent, tinyPercent } from '../../helpers/smallHelpers'
+import { formatNumber, roundedPercent, MSLToDateString, simplePercent, tinyPercent, sToM } from '../../helpers/smallHelpers'
 import { decoderNumbers } from '../../helpers/binary_defs'
 import { formatPercentile } from '../player_list/player_list'
 import { exponentialSmoothing } from '../../helpers/exponential_smoother'
@@ -99,7 +99,6 @@ class PlayerStatList extends Component {
             yOff={90}
             noArea={true}
             formatter={MSLToDateString}
-            yFormatter={simplePercent}
           />
         </div>
       )
@@ -154,6 +153,7 @@ class PlayerStatList extends Component {
     } else {
       data = playerData.map((x,i) => { return [x.MSL,stats[i]] }).reverse()
     }
+    yFormatter = statName.includes('Length') || statName.includes('Time') ? sToM : yFormatter
     const timedData = exponentialSmoothing(data,1,statName)
     window.timings['Winrate Over time Data'] = Math.round(window.performance.now()*100 - 100*expTime)/100
     return (
@@ -172,7 +172,7 @@ class PlayerStatList extends Component {
           formatter={MSLToDateString}
           yFormatter={yFormatter}
         />
-        {showK&&winrateCorrelationData.length&&<Graph
+        {(showK&&winrateCorrelationData.length ? true : false)&&<Graph
           graphClass="winrateGraph"
           linePoints={winrateCorrelationData}
           xLabel={statName}
@@ -270,7 +270,7 @@ class PlayerStatList extends Component {
               right: 'Sigma',
               hasGraphs: true,
               stats:[
-                ...[['Crowd Control Time','CC Seconds'],['Stun Time','Stun Seconds'],['Root Time','Root Time'],['Silence Time','Silence Time']].map(s => { return stat(s[0],playerData,null,s[1]) })
+                ...[['Crowd Control Time','CC Time'],['Stun Time','Stun Time'],['Root Time','Root Time'],['Silence Time','Silence Time']].map(s => { return stat(s[0],playerData,null,s[1]) })
               ]},
             {category: 'MMR Type',
               left:'MMR',

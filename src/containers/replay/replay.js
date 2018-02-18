@@ -192,7 +192,6 @@ class Replay extends Component {
     }
     await asleep(5)
     if (this.mounted) {
-      console.log('setting mmrs...',this.mounted)
       this.setState({...this.state, mmrs})
     }
   }
@@ -307,7 +306,7 @@ class Replay extends Component {
                 const hIndex = heroes[s][0]
                 const id = bnetIDs[i]
                 return <InfoRow
-                  party={parties[s]}
+                  party={0}
                   key={id}
                   history={this.props.history}
                   hero={hIndex}
