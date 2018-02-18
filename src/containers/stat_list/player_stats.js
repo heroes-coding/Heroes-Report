@@ -99,6 +99,7 @@ class PlayerStatList extends Component {
             yOff={90}
             noArea={true}
             formatter={MSLToDateString}
+            yFormatter={simplePercent}
           />
         </div>
       )

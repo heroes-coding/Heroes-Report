@@ -56,8 +56,8 @@ class HeroStatList extends Component {
     let stats, yFormatter
     if (stat==='KDA') {
       stats = buildData.map(x => {
-        const [ K, A, D ] = x.slice(14,17)
-        return D === 0 ? 20 : (K+A)/D
+        const [ K, A, D ] = x.slice(14,17).map(x => x[2])
+        return D === 0 ? 0 : (K+A)/D
       })
       yFormatter = formatNumber
     } else if (statID < 13) {
@@ -74,6 +74,8 @@ class HeroStatList extends Component {
     }
     let data
     buildData.sort((x,y) => x[1] < y[1] ? -1 : 1)
+
+
     try {
       data = buildData.map((x,i) => { return [DateToMSL(window.builds[x[1]].dates[2]),stats[i],i] })
     } catch (e) {
@@ -81,6 +83,8 @@ class HeroStatList extends Component {
       return <div></div>
     }
     data = data.filter(x => x[1])
+    const dataMean = d3.mean(data.map(x => x[1]))
+    data = data.filter(x => x[1] > dataMean/10)
     const color = window.HOTS.ColorsDic[this.props.curHero]
     let labelPoints = data.map(x => {
       const [ MSL, s, index ] = x
