@@ -84,23 +84,23 @@ class HeroStatList extends Component {
     }
     data = data.filter(x => x[1])
     const color = window.HOTS.ColorsDic[this.props.curHero]
-    let labelPoints = data.map(x => {
+    let errorBars = null
+    if (statID===12) {
+      errorBars = data.map(x => [x[0],...getWilson(x[3]*x[1]/1000,x[3]).map(x => x*1000)])
+    }
+    let labelPoints = data.map((x,i) => {
       const [ MSL, s, index ] = x
       const val = yFormatter(s)
       const { name, id, dates } = window.builds[buildData[index][1]]
       return {
         name:`${stat} => ${val}`,
-        desc:`${this.hero} had an average ${val} ${stat} over ${buildData[index][2]} matches during build ${id} (${name}), from ${formatDate(dates[0])} until ${formatDate(dates[1])}`,
+        desc:`${this.hero} had an average ${val} ${stat} ${statID === 12 ? `(95% confidence interval: ${roundedPercent(errorBars[i][1])} - ${roundedPercent(errorBars[i][2])} )` : ''} over ${buildData[index][2]} matches during build ${id} (${name}), from ${formatDate(dates[0])} until ${formatDate(dates[1])}`,
         size:4,
         color:color,
         1:s,
         0:MSL
       }
     })
-    let errorBars = null
-    if (statID===12) {
-      errorBars = data.map(x => [x[0],...getWilson(x[3]*x[1]/1000,x[3]).map(x => x*1000)])
-    }
     return (
       <div className="graphs">
         <Graph
