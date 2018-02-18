@@ -2,7 +2,7 @@ import { UPDATE_PREFERENCES, UPDATE_MAIN_DATA } from '../actions'
 import { defaultPreferences, brawlMapIDs, allBrawlMapIDs } from '../helpers/definitions'
 
 let oldPreferences
-if (window.localStorage.hasOwnProperty('prefs')) {
+if (window.localStorage.hasOwnProperty('reactprefs')) {
   oldPreferences = window.loadLocal('reactprefs',defaultPreferences)
 }
 

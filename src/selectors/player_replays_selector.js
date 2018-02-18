@@ -82,8 +82,8 @@ const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises,
       (playerHero && rep.hero !== playerHero) ||
       (prefs.map !== 99 && rep.map !== prefs.map) ||
       (!modeDic[prefs.mode].includes(rep.mode)) ||
-      (!allFranchises && !franchises[rep.franchise].selected) ||
-      (!allRoles && !roles[rep.role].selected) ||
+      (!allFranchises && !franchises[rep.franchise].selected && !playerHero) ||
+      (!allRoles && !roles[rep.role].selected && !playerHero) ||
       missingHeroes(rep) || (heroTerms && !heroTerms.includes(rep.hero))
     ) {
       continue
