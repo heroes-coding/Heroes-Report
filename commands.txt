@@ -1,3 +1,7 @@
 git pull origin master
 yarn build
 cp -r build/. /var/www/react/
+
+git add .
+git commit -m "confidence interval in popup"
+git push origin master

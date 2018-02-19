@@ -4,6 +4,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import TalentBox from './talentBox'
 import Popup from '../../components/popup'
+import * as d3 from 'd3'
 import { getHeroTalents, getHOTSDictionary, selectTalent } from '../../actions'
 import TalentsSelector from '../../selectors/talents_selector'
 
@@ -75,6 +76,10 @@ class TalentCalculator extends Component {
         </div>
         }
         {filteredTalents && window.HOTS && filteredTalents.map((tals,l) => {
+          const rowMax = d3.max(tals.map(x => x[4]))
+          const winRates = tals.filter(x => x[4]).map(x => x[1]/x[2])
+          const minWR = d3.min(winRates)
+          const maxWR = d3.max(winRates)
           return (
             <div key={l} className="talentRow row" >
               {tals.map((tal,i) => {
@@ -107,7 +112,9 @@ class TalentCalculator extends Component {
                     <TalentBox
                       key={key}
                       width={70}
-                      height={130}
+                      height={133}
+                      winrateBar={0.1 + 0.9*(maxWR===minWR ? 1 : (adjustedWins/adjustedTotal-minWR)/(maxWR-minWR))}
+                      popularityBar={total/rowMax}
                       x={100}
                       y={10}
                       selected={selected}

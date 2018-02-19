@@ -11,6 +11,8 @@ div#talentBox {
     padding: 6px 10px;
 }
 
+
+
 .pagesDiv {
     display: flex;
     flex-direction: row !important;
@@ -59,12 +61,34 @@ text.tText {
   font-family: $NumbersFont;
   @include unselectable;
 }
-text.tIcon {
-    fill: $Color1;
+text.tIconP, text.tIconW {
     font-family: FontAwesome;
     font-size:0.8;
     @include unselectable;
 }
+
+text.tIconP {
+  fill: $Color1;
+}
+text.tIconW {
+  fill: $Highlight;
+}
+
+.popularityBar {
+  fill: $Color1;
+}
+.winrateBar {
+  fill: $Highlight;
+}
+
+.popularityBar, .winrateBar {
+  stroke:black;
+  stroke-width:1px;
+  stroke-opacity: 0.7;
+}
+
+
+
 
 .buildGraphTal {
     fill: lighten($Dark,5%);
@@ -72,9 +96,10 @@ text.tIcon {
 }
 
 svg.CalcTalentHolder {
-  width:70px;
-  height: 130px;
-  margin: 5px 0px;
+  width:71px;
+  height: 134px;
+  margin: 6px 0px;
+  overflow:visible;
   @include unselectable;
 }
 
