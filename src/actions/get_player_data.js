@@ -22,7 +22,8 @@ async function getPlayerData(bnetID) {
   const reps = await repsPromise
   const goodReps = []
   while (!window.HOTS || !window.buildDic) {
-    await asleep(10)
+    console.log('sleeping...')
+    await asleep(5000)
   }
   let nReps = reps.length
   for (let r=0;r<nReps;r++) {

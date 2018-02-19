@@ -10,15 +10,13 @@ async function getHOTSDictionary() {
   const buildsPromise = axios.get('https://heroes.report/stats/timeframes.json')
   let HOTS = window.loadLocal('HOTS')
   let version = 0
-  if (HOTS) {
-    const configCheckPromise = axios.get(`https://heroes.report/stats/config.json?${getRandomString()}`)
-    // should implement lzstring here
-    let configCheck = await configCheckPromise
-    if (configCheck.status === 200) {
-      configCheck = configCheck.data
-      window.configCheck = configCheck
-      version = parseFloat(configCheck.version)
-    }
+  const configCheckPromise = axios.get(`https://heroes.report/stats/config.json?${getRandomString()}`)
+  // should implement lzstring here
+  let configCheck = await configCheckPromise
+  if (configCheck.status === 200) {
+    configCheck = configCheck.data
+    window.configCheck = configCheck
+    version = parseFloat(configCheck.version)
   }
   if (!HOTS || HOTS.version < version) {
     HOTS = await axios.get(`https://heroes.report/stats/HOTS.json?${getRandomString()}`)

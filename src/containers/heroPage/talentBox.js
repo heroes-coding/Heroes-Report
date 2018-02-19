@@ -9,7 +9,9 @@ export default (props) => {
       style={{border:highlighted ? "1px solid #D75813" : "1px solid black"}}
     >
       <rect width={width-2} height={height-2} x={1} y={1} className="buildGraphTal" />
-      <image width={width-4}
+      <image
+        width={width-4}
+        height={width-4}
         xlinkHref={`https://heroes.report/singleTalents/${tal}.jpg`}
         x={1} y={1}
         className="buildGraphTal">
