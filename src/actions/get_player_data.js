@@ -6,24 +6,27 @@ import _ from 'lodash'
 const GET_PLAYER_DATA = 'get_player_data'
 export { GET_PLAYER_DATA, getPlayerData }
 
-async function getPlayerData(bnetID) {
-  // const saveName = `player${bnetID}`
+async function getPlayerData(fullID) {
   let playerInfo
   try {
-    playerInfo = await axios.get(`https://heroes.report/search/mmr/${bnetID}`)
+    const mmrPath = `https://heroes.report/api/mmr/${fullID}`
+    // console.log(mmrPath)
+    // const mmrPath = `https://heroes.report/search/mmr/${fullID.split("-")[1]}`
+    playerInfo = await axios.get(mmrPath)
     playerInfo = playerInfo.data
   } catch (e) {
-    playerInfo = {handle:bnetID}
+    console.log()
+    playerInfo = {handle:fullID}
     console.log(e)
   }
   // console.log(playerInfo)
-  playerInfo.bnetID = parseInt(bnetID)
-  const repsPromise = getPlayerBinary(bnetID)
+  playerInfo.fullID = fullID
+  playerInfo.bnetID = parseInt(fullID.split('-')[1])
+  const repsPromise = getPlayerBinary(fullID)
   const reps = await repsPromise
   const goodReps = []
   while (!window.HOTS || !window.buildDic) {
-    console.log('sleeping...')
-    await asleep(5000)
+    await asleep(10)
   }
   let nReps = reps.length
   for (let r=0;r<nReps;r++) {

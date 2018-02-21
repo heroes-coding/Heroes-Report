@@ -28,7 +28,7 @@ function heapFromBytes(buffer) {
     // console.log('binary player unpacker called',window.moduleLoaded)
     let buf, error, replays
     try {
-      buf = window.Module._malloc((offset + nReplays*12)*16,4) // Another expansion of memory for Mr. Ouga
+      buf = window.Module._malloc((offset + nReplays*12)*24,4)
       window.Module.HEAPU32.set(intsArray,buf >> 2)
       window.ints = intsArray
       let startTime = window.performance.now()
@@ -78,10 +78,11 @@ function heapFromBytes(buffer) {
   return promise
 }
 
-export default async function getPlayerBinary(bnetID) {
+export default async function getPlayerBinary(fullID) {
   let promise = new Promise(function(resolve, reject) {
     const binaryReq = new window.XMLHttpRequest()
-    binaryReq.open("GET", `https://heroes.report/stats/players/${bnetID}`, true)
+    // binaryReq.open("GET", `https://heroes.report/stats/players/808192`, true)
+    binaryReq.open("GET", `https://heroes.report/stats/playersCompressed/${fullID}`, true)
     binaryReq.responseType = "arraybuffer"
     binaryReq.onload = async function(oEvent) {
       const arrayBuffer = binaryReq.response

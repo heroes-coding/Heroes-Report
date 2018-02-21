@@ -57,7 +57,7 @@ const Team = (props) => {
 }
 
 const InfoRow = (props) => {
-  const { history,hero,handle,MMR,talents, className, bnetID, index, openPopup, messagePopup, awards, party } = props
+  const { region, history,hero,handle,MMR,talents, className, bnetID, index, openPopup, messagePopup, awards, party } = props
   let thisDiv
   let partyStyle = {backgroundColor: party ? colors10(party) : 'none'}
   return (
@@ -75,7 +75,7 @@ const InfoRow = (props) => {
         onClick={() => {
           console.log(index,bnetID,handle)
           if (index!==0) {
-            history.push(`/players/${bnetID}`)
+            history.push(`/players/${region}-${bnetID}`)
           }
         }}
       >{handle}</div>
@@ -175,8 +175,11 @@ class Replay extends Component {
   componentDidMount() {
     this.mounted = true
   }
-  async populateMMRS(bnetIDs, gameMode) {
-    let res = await axios.get(`https://heroes.report/search/mmrs/${bnetIDs.join(",")}`)
+  async populateMMRS(bnetIDs, gameMode, region) {
+    const mmrsPath = `https://heroes.report/api/mmrs/${region},${bnetIDs.join(",")}`
+    //console.log(mmrsPath)
+    //const mmrsPath = `https://heroes.report/search/mmrs/${bnetIDs.join(",")}`
+    let res = await axios.get(mmrsPath)
     res = res.data
     const resKeys = Object.keys(res)
     const mmrs = {}
@@ -279,10 +282,10 @@ class Replay extends Component {
     }
     this.div = thisDiv
     const { mmrs } = this.state
-    const { heroes, handles, slot, team, gameMode, allies, enemies, players, colors, heroNames, globes, maxGlobes, towns, mercs, bans, levels, levelMax, stackedXP, maxTime, bnetIDs, stats, awards, wheelData, MSL, mapStats, parties } = replayData
+    const { heroes, handles, slot, team, gameMode, allies, enemies, players, colors, heroNames, globes, maxGlobes, towns, mercs, bans, levels, levelMax, stackedXP, maxTime, bnetIDs, stats, awards, wheelData, MSL, mapStats, parties, region } = replayData
     window.replayData = replayData
     if (!mmrs && !this.mmrsCalled) {
-      this.populateMMRS(bnetIDs, gameMode)
+      this.populateMMRS(bnetIDs, gameMode, region)
       this.mmrsCalled = true
     }
     return (
@@ -308,6 +311,7 @@ class Replay extends Component {
                 return <InfoRow
                   party={0}
                   key={id}
+                  region={region}
                   history={this.props.history}
                   hero={hIndex}
                   handle={handles[s]}

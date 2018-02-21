@@ -9,6 +9,7 @@ export const defaultPreferences = {
   map: 99,
   hero: 8,
   bnetID: null,
+  fullID: null,
   sortStats: ['KDA','Experience', 'Globes']
 }
 

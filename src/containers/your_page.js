@@ -13,9 +13,9 @@ class YourPage extends Component {
     this.setNewPlayer = this.setNewPlayer.bind(this)
   }
   componentDidMount() {
-    const bnetID = this.props.prefs.bnetID
-    if (bnetID) {
-      this.props.history.push(`/players/${bnetID}`)
+    const fullID = this.props.prefs.fullID
+    if (fullID) {
+      this.props.history.push(`/players/${fullID}`)
     }
   }
   updatePlayer(player) {
@@ -24,13 +24,15 @@ class YourPage extends Component {
   async setNewPlayer() {
     if (this.state.player) {
       console.log('Should be trying to get', this.state.player)
-      let playerInfo = await axios.get(`https://heroes.report/search/player/${this.state.player.replace('#','_')}`)
+      let playerInfo = await axios.get(`https://heroes.report/api/player/${this.state.player.replace('#','_')}`)
       const bnetID = playerInfo.data.bnetID
+      const region = playerInfo.data.region
       if (!bnetID) {
         this.setState({...this.state,message: 'Could not find that handle.  Check it and try again.'})
       } else {
-        this.props.updatePreferences('bnetID',bnetID)
-        this.props.history.push(`/players/${bnetID}`)
+        const fullID = `${region}-${bnetID}`
+        this.props.updatePreferences('fullID',fullID)
+        this.props.history.push(`/players/${fullID}`)
       }
     }
   }

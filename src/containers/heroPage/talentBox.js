@@ -26,33 +26,19 @@ export default (props) => {
         fill="#000"
         style={{opacity:selected ? 0 : 0.8}}
       />
-      {selected&&<rect
+      {selected&&popularityBar&&<rect
         width={(width-8)*popularityBar}
         className="popularityBar"
         height={3}
         x={4}
         y={98}
       />}
-      {selected&&<rect
+      {selected&&winrateBar&&<rect
         width={(width-8)*winrateBar}
         className="winrateBar"
         height={3}
         x={4}
         y={126}
-      />}
-      {false&&selected&&<rect
-        width={3}
-        className="popularityBar"
-        height={(height-1)*popularityBar}
-        x={-4}
-        y={height-height*popularityBar}
-      />}
-      {false&&selected&&<rect
-        width={3}
-        className="winrateBar"
-        height={height*winrateBar}
-        x={width+1}
-        y={height-height*winrateBar-1}
       />}
     </svg>
   )

@@ -1,5 +1,7 @@
 git pull origin master
 yarn build
+rm -rf /var/www/reactbackup
+cp -r /var/www/react/ /var/www/reactbackup
 cp -r build/. /var/www/react/
 
 git add .

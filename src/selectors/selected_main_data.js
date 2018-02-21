@@ -47,21 +47,8 @@ const getMainData = (main, statCat, selectedHeroes) => {
   const statCatStats = statCat.stats
   let heroes = _.values(selectedHeroes)
 
-  let nHeroes = Object.keys(main).length || 77
-  // console.log(nHeroes)
-  if (heroes[0] === 'l') {
-    const mrBig = {name: 'Mr. Bigglesworth', id: 666, visible:true,stats:[],prefsID:'MrBig'}
-    for (let s = 0;s<statCatStats.length;s++) {
-      const id = statCatStats[s]
-      mrBig.stats.push({id, value:999, percent:1, display:[14, 40, 27,6].includes(id) ? "☺" : "∞"})
-    }
-    heroes = [mrBig]
-    nHeroes = 1
-  } else {
-    nHeroes = heroes.length
-  }
-  const gotAll = Object.keys(main).length > 0 && heroes !== 'loading' && heroes[0].id !== 666
-
+  let nHeroes = Object.keys(main).filter(x => !isNaN(x)).length || 77
+  const gotAll = nHeroes > 0 && heroes !== 'loading' && heroes[0] !== 'l' && heroes[0].id !== 666
   let visibleCount = 0
   if (gotAll) {
     const newHeroes = []
@@ -94,6 +81,18 @@ const getMainData = (main, statCat, selectedHeroes) => {
     heroes = newHeroes
     nHeroes = heroes.length
   }
+  if (!visibleCount) {
+    const mrBig = {name: 'Mr. Bigglesworth', id: 666, visible:true,stats:[],prefsID:'MrBig'}
+    for (let s = 0;s<statCatStats.length;s++) {
+      const id = statCatStats[s]
+      mrBig.stats.push({id, value:Infinity, percent:1, display:[13, 39, 26,5].includes(id) ? "☺" : "∞"})
+    }
+    heroes = [mrBig]
+    nHeroes = 1
+  } else {
+    nHeroes = heroes.length
+  }
+
   /*
   while (!window.hasOwnProperty('HOTS')) {
     console.log('sleeping...')

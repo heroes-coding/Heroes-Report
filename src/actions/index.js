@@ -172,7 +172,7 @@ export function updateReplayPage(page) {
 export function dispatchPlayerSearch(playerID) {
   let request
   if (playerID !== '' && playerID.length > 2) {
-    request = axios.get(`https://heroes.report/search/players/${playerID.replace('#','_')}`)
+    request = axios.get(`https://heroes.report/api/players/${playerID.replace('#','_')}`)
   } else if (playerID.length < 3) {
     request = {data:{status:400}}
   } else {

@@ -20,6 +20,7 @@ class PlayerPage extends Component {
   constructor(props) {
     super(props)
     this.updateHero = this.updateHero.bind(this)
+    this.getPlayer = this.getPlayer.bind(this)
     this.reset = this.reset.bind(this)
     this.state = { curHero: null }
   }
@@ -35,16 +36,32 @@ class PlayerPage extends Component {
   componentWillMount() {
     this.props.heroSearch("")
   }
+  getPlayer(id) {
+    console.log('get player called with ',id)
+    try {
+      let [region, bnetID] = id.split('-')
+      region = parseInt(region)
+      bnetID = parseInt(bnetID)
+      if (isNaN(region) || isNaN(bnetID)) {
+        throw new Error('is not a proper player id')
+      }
+      this.props.getPlayerData(id)
+      this.isPlayer = true
+    } catch (e) {
+      console.log(e)
+      this.isPlayer = false
+    }
+  }
   componentDidMount() {
     const {id} = this.props.match.params
-    this.props.getPlayerData(id)
+    this.getPlayer(id)
     this.props.updateTime('reset',null)
   }
   shouldComponentUpdate(nextProps, nextState) {
     const oldID = this.props.match.params.id
     const newID = nextProps.match.params.id
     if (oldID !== newID) {
-      this.props.getPlayerData(newID)
+      this.getPlayer(newID)
     }
     if (!this.props.timeRange && nextProps.timeRange || !this.props.timeRange || !nextProps.timeRange || this.needToUpdate) {
       this.needToUpdate = false
@@ -67,7 +84,7 @@ class PlayerPage extends Component {
         </div>
         <div className="row d-flex justify-content-end" id="playerPageHolder">
           <div className="container-fluid col-12 col-md-12 col-lg-9 order-lg-last">
-
+            {!this.isPlayer&&<div className="error">{id} is not a proper player ID (perhaps because of the change to region specific IDs).  Please use the navigation to find another player.</div>}
             <div className="replayItem timeBar">
               <ButtonLabeledSpacer
                 filterName={`Dates:  ${this.props.timeRange ? formatDate(this.props.timeRange[2]) + " - " + formatDate(this.props.timeRange[3] > today ? today : this.props.timeRange[3]) : 'All'}`} faIcon='fa-calendar'

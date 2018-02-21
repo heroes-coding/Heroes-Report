@@ -14,7 +14,6 @@ export const DateToMSL = function(date) {
 }
 
 
-
 export const updatedTimeMins = function(updatedMins) {
   if (updatedMins < 180) {
     return Math.round(updatedMins) + ' mins.'
@@ -71,15 +70,14 @@ export function MSLToDateString(d) {
 }
 
 
-
 export function simplePercent(p) {
+  p = p > 1 ? 1 : p
   return `${Math.round(p*100)}%`
 }
 
-export function tinyPercent (p) {
+export function tinyPercent(p) {
   return `${Math.round(p*10000)/100}%`
 }
-
 
 export function getCounts(array) {
   const counts = {}
@@ -191,6 +189,9 @@ export const Dark50 = function(percent) {
 }
 
 export const roundedPercent = function(data) {
+  if (data === Infinity) {
+    return "∞"
+  }
   data = Math.round(data)
   return `${data < 0 ? Math.ceil(data/10) : Math.floor(data/10)}.${data < 0 ? -1*data%10 : data%10}%`
 }
@@ -213,6 +214,9 @@ export const formatStatNumber = function(num) {
 }
 
 export const sToM = function(secs) {
+  if (secs===Infinity) {
+    return "∞"
+  }
   secs = Math.round(secs)
   const mins = Math.floor(secs/60)
   secs = secs%60

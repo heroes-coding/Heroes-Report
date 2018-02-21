@@ -67,7 +67,7 @@ class PlayerPage extends Component {
       <div id={i} key={i} className="rt-tr-group">
         <div className="rt-tr replayItem">
           <div className={`rt-td handleList -cursor-pointer`} >
-            <Link className='nav-link' to={`/players/${x[1]}`}>{x[0]}</Link>
+            <Link className='nav-link' to={`/players/${x[2]}-${x[1]}`}>{x[0]}</Link>
           </div>
           <div className='rt-td statBoxHolder matchesList'>
             {x[3]}
