@@ -28,11 +28,12 @@ class Graph extends React.Component {
     const { width, height } = bRect
     x = x*width/xRatio
     y = y*height/yRatio+85
+    y = bRect.y
+    console.log(y,bRect)
     /*
     x = x*width/xRatio-width/2
     y = y*height/yRatio+height/2
     */
-    window.div = this.div
     this.setState({
       ...this.state,
       popupOpen:true,
@@ -210,10 +211,11 @@ class Graph extends React.Component {
             )
           })}
           {bars && bars.map((p,i) => {
-            let [ x, y, stroke ] = p
+            let [ x, y, stroke, hero ] = p
             x = xScale(x)
             const yCoord = yScale(y > yMax ? yMax : y)
             const style={stroke}
+            const yVal = yFormatter(y)
             return (
               <g key={x}>
                 <line
@@ -223,8 +225,8 @@ class Graph extends React.Component {
                   y2={yCoord}
                   style={style}
                   className="barLine"
-                />
-                <text className="barText" x={x} y={yMaxCoord+25}>{yFormatter(y)}</text>
+                ><title>{`${window.HOTS.nHeroes[hero]} - ${yVal}`}</title></line>
+                <text className="barText" x={x} y={yMaxCoord+25}>{yVal}</text>
               </g>
             )
           })}

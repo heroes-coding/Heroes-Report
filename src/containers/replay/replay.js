@@ -4,6 +4,8 @@ import Graph from '../../components/graph/graph'
 import Legend from '../../components/graph/legend'
 import { formatNumber, roundedPercent, roundedPercentPercent, MSLToDateString, simplePercent, formatStatNumber, tinyPercent, sToM, formatDate, DateToMSL, statSToM } from '../../helpers/smallHelpers'
 import axios from 'axios'
+import _ from 'lodash'
+import { rehgarDic } from '../../helpers/definitions'
 import { withRouter } from 'react-router-dom'
 import { formatPercentile } from '../player_list/player_list'
 import asleep from '../../helpers/asleep'
@@ -177,8 +179,8 @@ class Replay extends Component {
   }
   async populateMMRS(bnetIDs, gameMode, region) {
     const mmrsPath = `https://heroes.report/api/mmrs/${region},${bnetIDs.join(",")}`
-    //console.log(mmrsPath)
-    //const mmrsPath = `https://heroes.report/search/mmrs/${bnetIDs.join(",")}`
+    // console.log(mmrsPath)
+    // const mmrsPath = `https://heroes.report/search/mmrs/${bnetIDs.join(",")}`
     let res = await axios.get(mmrsPath)
     res = res.data
     const resKeys = Object.keys(res)
@@ -316,7 +318,21 @@ class Replay extends Component {
                   hero={hIndex}
                   handle={handles[s]}
                   MMR={mmrs && mmrs[id] ? [mmrs[id].mmr,formatPercentile(mmrs[id].percentile)] : ['-----','-----']}
-                  talents={heroes[s].slice(30,44).map(t => !t ? null : isNaN(t) ? parseInt(window.HOTS.talentsN[t]) : t)}
+                  talents={heroes[s].slice(30,44).map(t => {
+                    if (!t) return null
+                    if (isNaN(t)) {
+                      if (!window.HOTS.talentsN) {
+                        window.HOTS.talentsN = _.invert(window.HOTS.nTalents)
+                        window.HOTS.talentsN = {...window.HOTS.talentsN, ...rehgarDic}
+                      }
+                      if (window.HOTS.talentsN.hasOwnProperty(t)) return parseInt(window.HOTS.talentsN[t])
+                      else {
+                        console.log('missing talent',t)
+                        return null
+                      }
+                    }
+                    return t
+                  })}
                   className={`replayFlexBody ${i === 0 ? 'replaySelf' : ''} ${i%2 ? 'oddBody' : 'evenBody'}`}
                   bnetID={id}
                   index={i}
@@ -497,7 +513,9 @@ class Replay extends Component {
                   {c.stats.map(stat => {
                     let [ s, name ] = stat
                     name = name || s
-                    const bars = players.map((p,i) => [i,stats[i][s],colors[p]])
+                    const bars = players.map((p,i) => {
+                      return [i,stats[i][s],colors[p],heroes[p][0]]
+                    })
                     if (!bars.filter(x => x[1]).length) {
                       return <div key={s}></div>
                     }
@@ -515,6 +533,8 @@ class Replay extends Component {
                         xOff={0}
                         yOff={25}
                         noArea={true}
+                        openPopup={this.openPopup}
+                        messagePopup={this.messagePopup}
                         formatter={formatNumber}
                         yFormatter={formatNumber}
                       />

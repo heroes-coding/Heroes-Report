@@ -88,6 +88,6 @@ export default function processReplay(replay, bnetID) {
       return pAwards
     })
   }
-  const repData = { heroes, handles, slot, team, gameMode, allies, enemies, players, colors, heroNames, globes, maxGlobes, towns, mercs, bans, levels, levelMax, stackedXP, maxTime, XPMult, bnetIDs, stats, awards, wheelData, MSL, mapStats, parties }
+  const repData = { heroes, handles, slot, team, gameMode, allies, enemies, players, colors, heroNames, globes, maxGlobes, towns, mercs, bans, levels, levelMax, stackedXP, maxTime, XPMult, bnetIDs, stats, awards, wheelData, MSL, mapStats, parties, region }
   return repData
 }
