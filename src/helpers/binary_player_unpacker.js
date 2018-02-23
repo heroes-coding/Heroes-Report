@@ -28,7 +28,7 @@ function heapFromBytes(buffer) {
     // console.log('binary player unpacker called',window.moduleLoaded)
     let buf, error, replays
     try {
-      buf = window.Module._malloc((offset + nReplays*12)*24,4)
+      buf = window.Module._malloc((offset + nReplays*12)*32,4)
       window.Module.HEAPU32.set(intsArray,buf >> 2)
       window.ints = intsArray
       let startTime = window.performance.now()

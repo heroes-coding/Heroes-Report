@@ -225,22 +225,29 @@ class Replay extends Component {
       clearTimeout(this.popupTimeout)
       this.popupTimeout = null
     }
-    if (!x) {
-      y = row*31+72
-      popupName = popupName.replace('Blue ','').replace('Red ','')
-      const rowDiv = div.getBoundingClientRect()
-      const extraWide = conDiv.width > 780 || false
-      window.pDiv = div
-      window.oDiv = this.div
-      if (isTalent && extraWide) {
-        x = rowDiv.width/2
-      } else if (!extraWide) {
-        x = (rowDiv.width - 380)/2
-      } else {
-        x = (rowDiv.width - 760)/2
-      }
+    if (isTalent==='bar') {
+      x = row
+      y = div
+      const barDiv = popupPic.getBoundingClientRect()
+      x = Math.min(x-barDiv.x+barDiv.width,window.innerWidth-250-barDiv.x+barDiv.width)
+      popupPic = null
+      y = barDiv.y-conDiv.y
     } else {
-      y = y - conDiv.y
+      if (!x) {
+        y = row*31+72
+        popupName = popupName.replace('Blue ','').replace('Red ','')
+        const rowDiv = div.getBoundingClientRect()
+        const extraWide = conDiv.width > 780 || false
+        if (isTalent && extraWide) {
+          x = rowDiv.width/2
+        } else if (!extraWide) {
+          x = (rowDiv.width - 380)/2
+        } else {
+          x = (rowDiv.width - 760)/2
+        }
+      } else {
+        y = y - conDiv.y
+      }
     }
     this.visualChange = true
     this.setState({

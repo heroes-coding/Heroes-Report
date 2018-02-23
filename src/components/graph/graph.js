@@ -18,7 +18,6 @@ class Graph extends React.Component {
     this.messagePopup = this.messagePopup.bind(this)
   }
   openPopup(x,y, popupName, popupDesc, popupPic,isTalent) {
-    // const conDiv = this.div.getBoundingClientRect()
     if (this.popupTimeout) {
       clearTimeout(this.popupTimeout)
       this.popupTimeout = null
@@ -28,11 +27,16 @@ class Graph extends React.Component {
     const { width, height } = bRect
     x = x*width/xRatio
     y = y*height/yRatio+85
-    y = bRect.y
-    console.log(y,bRect)
     /*
     x = x*width/xRatio-width/2
     y = y*height/yRatio+height/2
+    */
+    /*
+    const bRect = this.div.getBoundingClientRect()
+    const { width, height } = bRect
+    x = Math.min(x-bRect.x,window.innerWidth-250-bRect.x)
+    console.log(x,y,window.scrollY,bRect)
+    y = y-bRect.top
     */
     this.setState({
       ...this.state,
@@ -113,7 +117,7 @@ class Graph extends React.Component {
     }
     return (
       <div ref={div => { this.div = div }} className={containerClass || "graphHolder"}>
-        <Popup
+        {labelPoints&&<Popup
           name={this.state.popupName}
           desc={this.state.popupDesc}
           extendedDesc={this.state.popupExtendedDesc}
@@ -122,7 +126,7 @@ class Graph extends React.Component {
           x={this.state.popupX}
           y={this.state.popupY}
           pic={this.state.popupPic}
-        />
+        />}
         <svg
           className={graphClass}
           viewBox={`0 0 ${xRatio} ${yRatio}`}
@@ -225,7 +229,16 @@ class Graph extends React.Component {
                   y2={yCoord}
                   style={style}
                   className="barLine"
-                ><title>{`${window.HOTS.nHeroes[hero]} - ${yVal}`}</title></line>
+                  onMouseEnter={(event) => {
+                    event.preventDefault()
+                    const { pageX, pageY } = event
+                    this.props.openPopup(pageX,pageY,`${window.HOTS.nHeroes[hero]} - ${yVal}`,`(${title})`,this.div,'bar')
+                  }}
+                  onMouseLeave={(event) => {
+                    event.preventDefault()
+                    this.props.messagePopup()
+                  }}
+                />
                 <text className="barText" x={x} y={yMaxCoord+25}>{yVal}</text>
               </g>
             )
