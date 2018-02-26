@@ -4,6 +4,7 @@ body {
   background-color:$BackgroundColor ;
   font-family:$PrimaryFont;
   color: $Light;
+  @include noselecttext;
 }
 
 .highlight {

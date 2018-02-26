@@ -39,7 +39,12 @@
     margin: 0px 0px 0px -2px;
 }
 
+.searchBar {
+  @include noselecttext;
+}
+
 input.searchInput {
+    @include noselecttext;
     background: $Dark;
     height: 2.5em;
     border: none;
@@ -74,10 +79,12 @@ input.searchInput {
     border-radius: 5px 5px 0px 0;
     position: relative;
     top: 8px;
+    @include noselecttext;
 }
 
 .navbar-brand {
   margin: 0rem 1rem;
+  -webkit-app-region: drag;
 }
 
 ul {

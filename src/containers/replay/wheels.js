@@ -1,7 +1,7 @@
 import React from 'react'
 import * as d3 from 'd3'
 
-const isChrome = (!!window.chrome && !!window.chrome.webstore) || (!!window.opr && !!window.opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0
+const isChrome = window.isElectron || (!!window.chrome && !!window.chrome.webstore) || (!!window.opr && !!window.opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0
 const wheelDefs = {'width':600,'height':600}
 wheelDefs.radius = (Math.min(wheelDefs.width, wheelDefs.height) / 2) - 50
 

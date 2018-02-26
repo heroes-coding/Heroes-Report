@@ -229,9 +229,9 @@ class Replay extends Component {
       x = row
       y = div
       const barDiv = popupPic.getBoundingClientRect()
-      x = Math.min(x-barDiv.x+barDiv.width,window.innerWidth-250-barDiv.x+barDiv.width)
+      x = Math.min(x-barDiv.left+barDiv.width,window.innerWidth-250-barDiv.left+barDiv.width)
       popupPic = null
-      y = barDiv.y-conDiv.y
+      y = barDiv.top-conDiv.top
     } else {
       if (!x) {
         y = row*31+72
@@ -246,7 +246,7 @@ class Replay extends Component {
           x = (rowDiv.width - 760)/2
         }
       } else {
-        y = y - conDiv.y
+        y = y - conDiv.top
       }
     }
     this.visualChange = true

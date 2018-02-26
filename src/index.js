@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import Startup from './Startup'
 import App from './App'
 import * as d3 from 'd3'
 import { Provider } from 'react-redux'
@@ -9,7 +10,6 @@ import reducers from './reducers'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import '../node_modules/font-awesome/css/font-awesome.min.css'
 import * as styles from './style/style.css'
-
 window.styles = styles
 window.timings = {}
 

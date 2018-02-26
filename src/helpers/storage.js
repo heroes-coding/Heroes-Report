@@ -1,5 +1,5 @@
 import LZString from 'lz-string'
-const isChrome = !!window.chrome && !!window.chrome.webstore
+const isChrome = window.isElectron || !!window.chrome && !!window.chrome.webstore
 window.LZString = LZString
 
 let openItems = {}

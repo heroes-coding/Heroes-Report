@@ -44,6 +44,9 @@ class Nav extends React.Component {
     }, 500)
     return (
       <div className="d-flex">
+        {window.isElectron&&<div className="dragSpacerLeft" />}
+        {window.isElectron&&<div className="dragSpacerBottomLeft" />}
+        {window.isElectron&&<div className="dragSpacerTop" />}
         <ul className="list-inline mx-auto justify-content-center">
           <li className="nav-item list-inline-item">
             <NavLink
@@ -89,6 +92,8 @@ class Nav extends React.Component {
             <SearchBar placeholder="player#1234" onSearchTermChange={playerSearch}/>
           </li>
         </ul>
+        {window.isElectron&&<div className="dragSpacerRight" />}
+        {window.isElectron&&<div className="dragSpacerBottomRight" />}
       </div>
     )
   }

@@ -6,6 +6,8 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import DataTable from './containers/table/data_table'
 import HeroPage from './containers/heroPage/hero_page'
 import NavigationBar from './containers/nav_bar/nav_bar'
+import TrafficLights from './electron/containers/navigation/trafficLights'
+import ElectronMenu from './electron/containers/navigation/electronMenu'
 import Footer from './containers/footer/footer'
 import PlayerPage from './containers/player_page'
 import PlayerList from './containers/player_list/player_list'
@@ -15,6 +17,8 @@ import Markdown from './containers/markdown_display'
 import featuresPath from './md/features.md'
 import aboutPath from './md/about.md'
 import disclaimerPath from './md/disclaimer.md'
+let ParserAndUpdater
+if (window.isElectron) ParserAndUpdater = require('./electron/containers/parsingLogger/parserAndUpdater').default
 
 const Features = () => <Markdown path={featuresPath} />
 const About = () => <Markdown path={aboutPath} />
@@ -26,16 +30,17 @@ class App extends Component {
     this.props.getTalentDic()
   }
   render() {
+    const showHeaders = !['/parser'].includes(window.location.pathname)
     return (
-
       <BrowserRouter>
         <div>
-          <NavigationBar />
-          <div className="container-fluid" >
+          {!window.isElectron&&<NavigationBar />}
+          <div className={`container-fluid ${window.isElectron ? 'electronBody' : ''}`} >
             <div className="row">
               <div className="col-xl-1"></div>
-              <div className="col-sm-12 col-lg-12 col-xl-10" id="contentHolder">
+              <div className={`col-sm-12 col-lg-12 col-xl-${window.isElectron ? '12' : '10'}`} id="contentHolder">
                 <Switch>
+                  {window.isElectron && <Route path="/parser" component={ParserAndUpdater} />}
                   <Route path="/playerlist/:id" component={PlayerList} />
                   <Route path="/players/:id" component={PlayerPage} />
                   <Route path="/heroes/:id" component={HeroPage} />
@@ -48,8 +53,11 @@ class App extends Component {
               </div>
               <div className="col-xl-1"></div>
             </div>
+            {showHeaders&&<Footer />}
           </div>
-          <Footer />
+          {window.isElectron&&showHeaders&&<div className="electronHeader"><NavigationBar /></div>}
+          {window.isElectron&&showHeaders&&<TrafficLights window={window.remote.getCurrentWindow()} />}
+          {window.isElectron&&showHeaders&&<ElectronMenu/>}
         </div>
       </BrowserRouter>
 

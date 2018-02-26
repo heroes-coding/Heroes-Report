@@ -3,6 +3,7 @@ import _ from 'lodash'
 import asleep from '../helpers/asleep'
 import { getRandomString } from '../helpers/smallHelpers'
 import timeUnpacker from '../helpers/timeUnpacker'
+window._ = _
 
 const GET_HOTS_DATA = 'get_hots_data'
 
