@@ -22,7 +22,6 @@ export default class TableBody extends Component {
     this.oddifyRows()
   }
   render() {
-    console.log(' in table body',this.props.rows)
     return (
       <div className="rt-tbody">
         {this.props.rows.map((row,index) => {
