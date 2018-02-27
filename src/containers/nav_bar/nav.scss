@@ -10,6 +10,18 @@
   color: $Color2;
 }
 
+.nav-item a:hover {
+  text-decoration: none !important;
+}
+
+.supportDiv {
+  color: $Highlight !important;
+}
+
+.fa-heart {
+  color: red !important;
+}
+
 .allies, .enemies, .self {
     display: block;
     margin-right: 10px;
@@ -19,6 +31,8 @@
 
 .heroName {
   cursor: pointer;
+  font-size: 0.8em;
+  font-family: $NumbersFont;
 }
 
 .teamFilterHolder {
@@ -80,6 +94,12 @@ input.searchInput {
     position: relative;
     top: 8px;
     @include noselecttext;
+}
+
+.dropdown-menu.show {
+    display: block;
+    max-height: 88vh;
+    overflow-y: auto;
 }
 
 .navbar-brand {

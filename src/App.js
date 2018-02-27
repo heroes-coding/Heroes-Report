@@ -58,6 +58,7 @@ class App extends Component {
           {window.isElectron&&showHeaders&&<div className="electronHeader"><NavigationBar /></div>}
           {window.isElectron&&showHeaders&&<TrafficLights window={window.remote.getCurrentWindow()} />}
           {window.isElectron&&showHeaders&&<ElectronMenu/>}
+          {window.isElectron&&<div className="appBorder" />}
         </div>
       </BrowserRouter>
 

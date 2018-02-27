@@ -54,7 +54,6 @@
     "web-assembly": "^0.0.1"
   },
   "main": "src/electron.js",
-  "homepage": "./",
   "scripts": {
     "build-css": "node-sass-chokidar src/ -o src/",
     "watch-css": "yarn run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",

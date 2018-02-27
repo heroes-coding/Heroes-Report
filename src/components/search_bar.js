@@ -30,10 +30,10 @@ class SearchBar extends Component {
   onInputChange(term) {
     this.setState({term})
     this.props.onSearchTermChange(term)
-    if (this.clearTimeout) {
-      clearTimeout(this.clearTimeout)
+    if (!this.props.noautoclear) {
+      if (this.clearTimeout) clearTimeout(this.clearTimeout)
+      this.clearTimeout = setTimeout(this.clearSearch, 5000)
     }
-    this.clearTimeout = setTimeout(this.clearSearch, 5000)
   }
 }
 

@@ -65,6 +65,15 @@ div#playerPageHolder {
 .calendar {
   font-family: $NumbersFont;
   padding-top: 5px !important;
+  cursor: default !important;
+}
+
+.calendar .iconFilter:hover {
+  color: $Light !important;
+}
+
+.calendar .iconFilter {
+  cursor: default !important;
 }
 
 .timeBar {

@@ -11,6 +11,23 @@
     overflow: auto;
 }
 
+.WLLabel {
+  font-size: 0.5em;
+  height: 0;
+  position: absolute;
+  top: 23px;
+  color: $Color2;
+}
+
+.tableInfo {
+    width: 100%;
+    font-size: 0.7em;
+    color: $Color2;
+    text-align: right;
+    position: relative;
+    height: 0;
+    padding: 0 5px;
+}
 .iconHeader {
   width: 65px;
   max-width: 65px;

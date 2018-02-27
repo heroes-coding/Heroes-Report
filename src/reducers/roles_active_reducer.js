@@ -8,7 +8,7 @@ const initialRoleState = [
 ]
 
 export default function(state = initialRoleState.map(a => { return {...a} }), action) {
-  if (action.type === UPDATE_FILTER && action.filterType === 'ROLE') {
+  if (action.type === UPDATE_FILTER && (action.filterType === 'ROLE' || action.payload === 'A')) {
     if (action.payload === 'A') {
       return initialRoleState.map(a => { return {...a} })
     }

@@ -32,7 +32,7 @@ let mainWindow // Keep a global reference of the window object OR GC
 
 function createWindow() {
   let winState = windowStateKeeper({defaultWidth: 1200, defaultHeight: 600})
-  mainWindow = new BrowserWindow({width: winState.width, height: winState.height, x: winState.x, y: winState.y, minWidth: 825, minHeight: 400, frame: false, standardWindow: false })
+  mainWindow = new BrowserWindow({width: winState.width, height: winState.height, x: winState.x, y: winState.y, minWidth: 825, minHeight: 480, frame: false, standardWindow: false })
   winState.manage(mainWindow)
   const startUrl = process.env.ELECTRON_START_URL || url.format({
     pathname: path.join(__dirname, '/../build/index.html'),

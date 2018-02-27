@@ -9,7 +9,7 @@ export default (props) => {
           className='btn btn-small btn-link iconFilter'
           onClick={(event) => {
             event.preventDefault()
-            props.updateFilter(props.id)
+            props.updateFilter(props.id,props.name)
           }}
         >
           <img

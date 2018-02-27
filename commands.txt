@@ -7,3 +7,10 @@ cp -r build/. /var/www/react/
 git add .
 git commit -m "confidence interval in popup"
 git push origin master
+
+
+Remember, you might need to set the homepage in package.json to "./"
+
+rm -rf /var/www/react/
+cp -r /var/www/reactbackup /var/www/react/
+cp -r build/. /var/www/react/

@@ -16,6 +16,7 @@ class TableHeader extends Component {
             inactiveIcon={<i className="highlight fa fa-window-close" aria-hidden="true"></i>}
             containerClass='toggleFilter btn btn-small btn-link iconFilter iconOnButton'
           />
+          <div className="WLLabel">Win/Loss Stats</div>
         </div>
         <div
           className={`rt-th -cursor-pointer d-none d-md-block ${this.props.order.id === 'names' ? (this.props.order.desc ? '-sort-desc' : '-sort-asc') : ''}`}

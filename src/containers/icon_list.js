@@ -11,9 +11,9 @@ class IconList extends Component {
     super(props)
     this.updateFilterAndHeroes = this.updateFilterAndHeroes.bind(this)
   }
-
-  updateFilterAndHeroes(id) {
-    this.props.updateFilter(id, this.props.updateType)
+  updateFilterAndHeroes(id,name) {
+    const updateType = ['warcraft','diablo','starcraft','overwatch','retro'].includes(name) ? 'UNIVERSE' : 'ROLE'
+    this.props.updateFilter(id, updateType)
   }
   renderIcon(d,index) {
     const { id, name, selected } = d
@@ -36,8 +36,7 @@ class IconList extends Component {
             event.preventDefault()
             this.updateFilterAndHeroes('A')
           }}
-        ><i className="fa fa-undo iconOnButton" aria-hidden="true"></i>&nbsp;&nbsp;{this.props.updateType}:</button>
-        <span className="iconLabel"></span>
+        ><i className="fa fa-undo iconOnButton" aria-hidden="true"></i>{this.props.updateType}</button>
         {this.props.iconList.map((d,i) => this.renderIcon(d,i))}
       </form>
     )

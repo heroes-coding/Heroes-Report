@@ -7,6 +7,7 @@ const linkFunction= (match, location) => {
 }
 class Footer extends React.Component {
   render() {
+    const patreon = "https://www.patreon.com/heroesreport"
     return (
       <div className="d-flex footer">
         <ul className="list-inline mx-auto justify-content-center">
@@ -33,6 +34,22 @@ class Footer extends React.Component {
               activeClassName="active"
               isActive={linkFunction}
             >Disclaimer</NavLink>
+          </li>
+          <li className="nav-item list-inline-item">
+            <a
+              onClick={(event) => {
+                if (window.isElectron) {
+                  event.preventDefault()
+                  const { shell } = window.require('electron')
+                  shell.openExternal(patreon)
+                }
+              }}
+              href={patreon}>
+              <div className="supportDiv nav-link">
+                Support Heroes Report on Patreon!&nbsp;
+                <i className="fa fa-heart" aria-hidden="true"></i>
+              </div>
+            </a>
           </li>
         </ul>
       </div>

@@ -113,12 +113,12 @@ class ParsingLog extends Component {
     const { Uploaded, CanUpload, AlreadyUploaded, Parsed, list } = this.state
     const nItems = list.length
     return (
-      <div className="overall">
+      <div className="overall parsingDiv">
         <div className="electronHeader">
           <TrafficLights window={remote.getGlobal('parserPopup').parserWindow} />
           <div className="parserTitle">Parsed ({Parsed}/{nItems}) and Uploaded ({Uploaded+AlreadyUploaded}/{CanUpload} - {Uploaded} by You)</div>
         </div>
-        <div className="container-fluid col-12 col-md-10 col-lg-8 parserPopup">
+        <div className="container-fluid col-12 parserPopup">
           <div className="ReactTable -striped -highlight">
             <div className="rt-table" >
               <div className="rt-thead -header">

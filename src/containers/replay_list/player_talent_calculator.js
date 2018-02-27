@@ -92,7 +92,7 @@ class TalentCalculator extends Component {
         }
         {filteredTalents && window.HOTS && filteredTalents.map((tals,l) => {
           return (
-            <div key={l} className="talentRow row" >
+            <div key={l} className={`${window.isElectron ? 'talentRowElectron' : 'talentRow'} row`} >
               {tals.filter((tal,i) => baseTalents[l][i][1]).map((tal,i) => {
                 const [ id, adjustedWins, adjustedTotal, wins, total, fullWins, fullTotal ] = tal
                 const key = id

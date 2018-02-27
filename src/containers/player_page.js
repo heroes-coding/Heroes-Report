@@ -86,7 +86,7 @@ class PlayerPage extends Component {
             {!this.isPlayer&&<div className="error">{id} is not a proper player ID (perhaps because of the change to region specific IDs implemented on 2/21).  Please use the navigation to find another player.</div>}
             <div className="replayItem timeBar">
               <ButtonLabeledSpacer
-                filterName={`Dates:  ${this.props.timeRange ? formatDate(this.props.timeRange[2]) + " - " + formatDate(this.props.timeRange[3] > today ? today : this.props.timeRange[3]) : 'All'}`} faIcon='fa-calendar'
+                filterName={`Timeline:  ${this.props.timeRange ? formatDate(this.props.timeRange[2]) + "-" + formatDate(this.props.timeRange[3] > today ? today : this.props.timeRange[3]) : 'Full Available Dates'}`} faIcon='fa-long-arrow-right'
                 overclass='blackButton calendar'
               />
               <TimeLine

@@ -68,6 +68,7 @@ img.roundedPort {
 form.input-group.filterGroup.buttonSpacer {
     background: $Highlight;
     justify-content: center !important;
+    cursor: pointer;
 }
 form.input-group.filterGroup.buttonSpacer:hover {
   background-color:black;
@@ -75,10 +76,11 @@ form.input-group.filterGroup.buttonSpacer:hover {
   text-decoration: none;
 }
 
-i.fa.fa-download:hover {
+
+i.fa.fa-bolt:refresh {
   color: $Dark !important;
 }
-i.fa.fa-download {
+i.fa.fa-refresh {
     color: white;
 }
 
@@ -134,7 +136,7 @@ i.fa.fa-download {
   justify-content:flex-end;
 }
 .heroFilters, .dataFilters {
-  margin:0px;
+  margin: 0px -5px 0px -5px;
 }
 
 

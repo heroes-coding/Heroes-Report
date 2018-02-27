@@ -29,7 +29,7 @@ class DataTable extends Component {
   render() {
     let rows = this.props.data.rows
     const searchHeroes = this.props.heroSearchTerm
-    if (searchHeroes) {
+    if (searchHeroes && rows[0].id !== 666) {
       rows = rows.filter(x => searchHeroes.includes(x.id))
     }
     const updatedTime = updatedTimeMins(this.props.data.updatedMins)
@@ -49,6 +49,7 @@ class DataTable extends Component {
                 order={this.props.data.order}
                 reorder={this.reorder}
               />
+              <div className="tableInfo">Last updated {updatedTime} ago</div>
             </div>
             <TableBody
               rows={rows}

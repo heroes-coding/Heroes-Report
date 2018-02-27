@@ -50,7 +50,7 @@ class YourPage extends Component {
               <div className='statBarHolder statBarTitle'>
                 {this.state.message}
               </div>
-              <SearchBar placeholder="YourPlayerHandle#1234" onSearchTermChange={this.updatePlayer} style={styles.search}/>
+              <SearchBar placeholder="YourPlayerHandle#1234" onSearchTermChange={this.updatePlayer} noautoclear={true} style={styles.search}/>
               <BrightButton
                 link={'/you'}
                 name={'Get and save my stats!'}

@@ -81,6 +81,7 @@ const getMainData = (main, statCat, selectedHeroes) => {
     heroes = newHeroes
     nHeroes = heroes.length
   }
+  console.log(visibleCount,'visible count')
   if (!visibleCount) {
     const mrBig = {name: 'Mr. Bigglesworth', id: 666, visible:true,stats:[],prefsID:'MrBig'}
     for (let s = 0;s<statCatStats.length;s++) {
@@ -92,7 +93,6 @@ const getMainData = (main, statCat, selectedHeroes) => {
   } else {
     nHeroes = heroes.length
   }
-
   /*
   while (!window.hasOwnProperty('HOTS')) {
     console.log('sleeping...')

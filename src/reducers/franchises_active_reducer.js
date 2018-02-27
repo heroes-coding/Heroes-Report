@@ -8,7 +8,7 @@ const initialFranchiseState = [
 ]
 
 export default function(state = initialFranchiseState.map(a => { return {...a} }), action) {
-  if (action.type === UPDATE_FILTER && action.filterType === 'UNIVERSE') {
+  if (action.type === UPDATE_FILTER && (action.filterType === 'UNIVERSE' || action.payload === 'A')) {
     if (action.payload === 'A') {
       state = initialFranchiseState.map(a => { return {...a} })
       return state

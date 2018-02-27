@@ -81,7 +81,7 @@ class TalentCalculator extends Component {
           const minWR = d3.min(winRates)
           const maxWR = d3.max(winRates)
           return (
-            <div key={l} className="talentRow row" >
+            <div key={l} className={`${window.isElectron ? 'talentRowElectron' : 'talentRow'} row`}>
               {tals.map((tal,i) => {
                 const [ id, adjustedWins, adjustedTotal, wins, total ] = tal.slice(0,5)
                 const key = window.HOTS.nTalents[id]

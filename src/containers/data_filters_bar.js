@@ -77,7 +77,6 @@ class DataFilters extends Component {
       this.heroSearch(term)
     }, 500)
     const [allies, enemies, self] = this.props.filterHeroes
-    const { updatedTime } = this.props
     return (
       <div className="row dataFilters">
         {this.isMenu(0b0101) && <FilterDropDown
@@ -126,10 +125,8 @@ class DataFilters extends Component {
           currentID={modeDic[this.props.prefs.mode].id}
         />
         {/* below I use getHeroTalents if menu is not 1 */}
-        {this.isMenu(0b0101) && <ButtonLabeledSpacer filterName='Update:' faIcon='fa-download' onPress={() => { this.isMenu(0b0001) ? this.props.getMainData(this.props.prefs, this.props.rollbackState) : this.getHeroes(this.props.prefs.hero,this.props.prefs) }} />}
+        {this.isMenu(0b0101) && <ButtonLabeledSpacer filterName='Update' faIcon='fa-refresh' onPress={() => { this.isMenu(0b0001) ? this.props.getMainData(this.props.prefs, this.props.rollbackState) : this.getHeroes(this.props.prefs.hero,this.props.prefs) }} />}
         {this.isMenu(0b0001) && <UpdateStatCat />}
-        {this.isMenu(0b0011) && <IconList className='float-left' iconList={this.props.roles} updateType='ROLE' updateFilter={this.props.updateFilter} />}
-        {this.isMenu(0b0011) && <IconList className='float-right' iconList={this.props.franchises} updateType='UNIVERSE' updateFilter={this.props.updateFilter} />}
         {this.isMenu(0b0010) && <FilterDropDown
           currentSelection=""
           resetFunction={this.updateSelf}
@@ -153,7 +150,7 @@ class DataFilters extends Component {
           containerClass='halfy input-group filterGroup'
           hideArrow={true}
         />}
-        {this.isMenu(0b0011) && <form className={`${this.isMenu(0b0010) ? 'halfy' : ''} input-group filterGroup buttonSpacer blackButton`}><SearchBar placeholder="Hero search" overClass="btn btn-small btn-link iconFilter" onSearchTermChange={heroSearch}/></form>}
+        {this.isMenu(0b0011) && <form className={`${this.isMenu(0b0010) ? 'halfy' : ''} input-group filterGroup buttonSpacer blackButton`}><SearchBar placeholder="Hero search" overClass="btn btn-small btn-link iconFilter" onSearchTermChange={heroSearch} noautoclear={true} /></form>}
         {this.isMenu(0b0010) && <FilterDropDown
           currentSelection=""
           resetFunction={this.updateAllies}
@@ -200,11 +197,11 @@ class DataFilters extends Component {
           containerClass='halfy input-group filterGroup'
           hideArrow={true}
         />}
+        {this.isMenu(0b0011) && <IconList className='float-left' iconList={this.props.roles.concat(this.props.franchises)} updateFilter={this.props.updateFilter} />}
         {this.isMenu(0b1000) && <TimeLine
           minMSL={this.props.startDate}
           maxMSL={this.props.endDate}
         />}
-        {updatedTime&&<ButtonLabeledSpacer filterName={`Stats updated ${updatedTime} ago`} faIcon='fa-bolt' overclass='blackButton' />}
       </div>
     )
   }

@@ -20,7 +20,7 @@ const updateParsingMenu = (files) => { if(parserPopup.parserWindow) parserPopup.
 
 function showParsingMenu(mainWindow) {
   let winState = windowStateKeeper({defaultWidth: 300, defaultHeight: 600, file: 'parserWindowState.json'})
-  parserPopup.parserWindow = new BrowserWindow({minWidth: 580, minHeight: 300, width: winState.width, height: winState.height, x: winState.x, y: winState.y, show:false, frame: false})
+  parserPopup.parserWindow = new BrowserWindow({minWidth: 495, minHeight: 300, width: winState.width, height: winState.height, x: winState.x, y: winState.y, show:false, frame: false})
   winState.manage(parserPopup.parserWindow)
   parserPopup.parserWindow.once('ready-to-show', () => {
     parserPopup.parserWindow.webContents.send('parsing',parserPopup.saveInfo.files)

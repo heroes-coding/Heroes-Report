@@ -105,9 +105,16 @@ svg.CalcTalentHolder {
 
 .talentRow {
   @extend .replayItem;
-  justify-content: space-around;
+  justify-content: space-evenly;
   margin-bottom: 2px;
   padding-top: 5px;
+}
+
+.talentRowElectron {
+  @extend .replayItem;
+  justify-content: space-around;
+  margin-bottom: 2px;
+  padding: 5px 15% 0px 15%;
 }
 
 .talentCalcHeader {
