@@ -17,20 +17,35 @@ import Markdown from './containers/markdown_display'
 import featuresPath from './md/features.md'
 import aboutPath from './md/about.md'
 import disclaimerPath from './md/disclaimer.md'
-let ParserAndUpdater
+let ParserAndUpdater, OptionsMenu, ipcRenderer
 if (window.isElectron) ParserAndUpdater = require('./electron/containers/parsingLogger/parserAndUpdater').default
+if (window.isElectron) OptionsMenu = require('./electron/containers/optionsMenu/options').default
+if (window.isElectron) ipcRenderer = window.require('electron').ipcRenderer
 
 const Features = () => <Markdown path={featuresPath} />
 const About = () => <Markdown path={aboutPath} />
 const Disclaimer = () => <Markdown path={disclaimerPath} />
 
 class App extends Component {
+  constructor(props) {
+    super(props)
+    if (window.isElectron) {
+      window.yourReplays = []
+      ipcRenderer.on('replays:dispatch',(e,replays) => {
+        window.yourReplays = window.yourReplays.concat(replays)
+        window.yourReplays.sort((x,y) => x.MSL<y.MSL ? 1 : -1)
+      })
+      ipcRenderer.on('playerInfo:dispatch',(e,{bnetID, handle, region}) => {
+        window.fullID = `${region}-${bnetID}`
+      })
+    }
+  }
   componentDidMount() {
     this.props.getHOTSDictionary()
     this.props.getTalentDic()
   }
   render() {
-    const showHeaders = !['/parser'].includes(window.location.pathname)
+    const showHeaders = !['/parser','/options'].includes(window.location.pathname)
     return (
       <BrowserRouter>
         <div>
@@ -41,6 +56,7 @@ class App extends Component {
               <div className={`col-sm-12 col-lg-12 col-xl-${window.isElectron ? '12' : '10'}`} id="contentHolder">
                 <Switch>
                   {window.isElectron && <Route path="/parser" component={ParserAndUpdater} />}
+                  {window.isElectron && <Route path="/options" component={OptionsMenu} />}
                   <Route path="/playerlist/:id" component={PlayerList} />
                   <Route path="/players/:id" component={PlayerPage} />
                   <Route path="/heroes/:id" component={HeroPage} />

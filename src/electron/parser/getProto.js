@@ -4,7 +4,6 @@ const path = require('path')
 const LZString = require('lz-string')
 const { app } = require('electron')
 const protoPath = path.join(app.getPath('userData'),'protos')
-console.log(protoPath)
 if (!fs.existsSync(protoPath)) fs.mkdirSync(protoPath)
 let protocolPromises = {}
 

@@ -7,9 +7,11 @@ class ElectronMenu extends Component {
     return (
       <div className="menuBox">
         <i className="fa fa-cloud-upload parserBox"
-          onClick={() => ipcRenderer.send('parser','toggle')} />
+          onClick={() => { ipcRenderer.send('parser:toggle','toggle') }}
+        />
         <i className="fa fa-cog maximizeBox"
-          onClick={() => console.log('options?')} />
+          onClick={() => { ipcRenderer.send('options:toggle','toggle') }}
+        />
       </div>
     )
   }

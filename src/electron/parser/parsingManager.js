@@ -1,3 +1,4 @@
+let HOTS
 const fs = require('fs')
 const axios = require('axios')
 const { fork } = require('child_process')
@@ -5,17 +6,21 @@ const path = require('path')
 const electron = require('electron')
 const getProto = require('./getProto')
 electron.ipcMain.setMaxListeners(32)
+const { HOTSPromise } = require('../startup.js')
 const { app } = electron
 const { asleep } = require('../helpers/asleep')
+const { checkAPIHash, checkAPIHashes, enqueueReplayForUpload } = require('../helpers/HOTSApi.js')
+const { fullToPartial } = require('../helpers/fullToPartial.js')
 const dataPath = app.getPath('userData')
 const os = require('os')
 const nCPU = os.cpus().length-1
 let cpuAvailable = Array(nCPU).fill(true)
-let workers
-process.setMaxListeners(0)
-process.on('warning', function(w){
-  console.log(' => Suman interactive warning => ', w.stack || w);
-})
+const { options } = require('../containers/optionsMenu/optionsManager.js')
+const { mapNicks, modeNicks } = require('../helpers/definitions.js')
+const { formatTime, formatDate, minSinceLaunchToDate } = require('../helpers/simpleFunctions.js')
+
+let workers = []
+process.on('warning', function(w) { console.log(' => FULL STACK E => ', w.stack || w) })
 
 const returnFiles = function(dirPath, replayPaths) {
   const files = fs.readdirSync(dirPath)
@@ -30,32 +35,60 @@ const returnFiles = function(dirPath, replayPaths) {
   }
 }
 
+process.on('addSingleReplay', function({rPath, bnetID, renameFiles}) {
+  const newInfo = {apiHash: null, uploaded: null, hash: null, result: null, index: ++saveInfo.Count}
+  saveInfo.files[rPath] = newInfo
+  replayQueue.push({rPath, bnetID, renameFiles})
+  if (!isParsing) parsingLoop()
+})
+
+process.on('newReplayPath', function(newAccount) {
+  console.log(newAccount)
+  if (newAccount && newAccount.replayPath) parseNewReplays(newAccount)
+})
+
 const replaySavePath = path.join(dataPath,'replays')
+const replaySummaryPath = path.join(dataPath,'replaySummaries')
 if (!fs.existsSync(replaySavePath)) fs.mkdirSync(replaySavePath)
+if (!fs.existsSync(replaySummaryPath)) fs.mkdirSync(replaySummaryPath)
 const parsedPath = path.join(dataPath,'parsed.json')
 
-const { parserPopup, updateParsingMenu } =require('../containers/parsingLogger/parseAndUpdateManager.js')
+const { parserPopup, updateParsingMenu, saveSaveInfo } =require('../containers/parsingLogger/parseAndUpdateManager.js')
 const { parserWindow, saveInfo } = parserPopup
 
-// const apiUploadsPath = path.join(dataPath,'api.json')
-// let apiToCheck = Object.keys(apiUploads).filter(x => !apiUploads[x])
-// console.log(apiToCheck.join("\n"))
-/*
-axios.post('http://hotsapi.net/api/v1/replays/fingerprints', )
-  .then(function (response) {
-    console.log(response);
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
-*/
+const saveReplay = async function(replay, filePath, bnetID, renameFiles) {
+  const repSavePath = path.join(replaySavePath,`${replay.hash}.json`)
+  const repSummaryPath = path.join(replaySummaryPath,`${replay.hash}.json`)
+  const condensed = fullToPartial(replay,bnetID,HOTS)
+  if (true) {
+    // replace saveInfo info, as well as send message to parser
+    const { hero, map, mode, Won, MSL } = condensed
+    const date = minSinceLaunchToDate(MSL)
+    const oldInfo = saveInfo.files[filePath]
+    const newName = `${formatDate(date)} ${formatTime(date)} ${modeNicks[mode]} ${isNaN(map) ? map : mapNicks[map]} ${isNaN(hero) ? hero : HOTS.nHeroes[hero]} ${Won ? 'Victory' : 'Defeat'}`
+    console.log(newName)
+  }
 
-const saveReplay = function(replay, filePath) {
-  const repSavePath = path.join(dataPath,'replays',`${replay.hash}.json`)
-  saveInfo.files[filePath].api_hash = replay.api_hash
+  saveInfo.files[filePath].apiHash = replay.apiHash
   saveInfo.files[filePath].hash = replay.hash
   saveInfo.files[filePath].result = 9
+  let uploaded
+  try {
+    uploaded = await checkAPIHash(replay.apiHash)
+  } catch (e) {
+    console.log(e)
+    saveInfo.files[filePath].uploaded = 5
+    enqueueReplayForUpload(filePath)
+  }
+  if (uploaded) saveInfo.files[filePath].uploaded = 2 // uploaded by someone else
+  else {
+    saveInfo.files[filePath].uploaded = 3 // pending
+    enqueueReplayForUpload(filePath)
+  }
+  updateParsingMenu({[filePath]:saveInfo.files[filePath]})
   if (fs.existsSync(repSavePath)) return
+  process.emit('dispatchReplay', condensed)
+  fs.writeFileSync(repSummaryPath,JSON.stringify(condensed), 'utf8', (err) => { if (err) console.log(err) })
   fs.writeFileSync(repSavePath,JSON.stringify(replay), 'utf8', (err) => { if (err) console.log(err) })
 }
 
@@ -74,96 +107,90 @@ const forkMessage = async(msg) => {
     }
     return worker.send({protoNumber, proto})
   }
-  const { replay, workerIndex, filePath } = msg
-  if (isNaN(replay)) saveReplay(replay, filePath)
+  const { replay, workerIndex, filePath, bnetID, renameFiles } = msg
+  if (isNaN(replay)) saveReplay(replay, filePath, bnetID, renameFiles)
   else {
     saveInfo.files[filePath].result = replay
+    saveInfo.files[filePath].uploaded = 0
+    updateParsingMenu({[filePath]:saveInfo.files[filePath]})
   }
-  updateParsingMenu({[filePath]:saveInfo.files[filePath]})
   cpuAvailable[workerIndex] = true
-  parsed++
+  openParseCount--
 }
 
-const parseNewReplays = async function(account, HOTS) {
+const replayQueue = []
+let isParsing = false
+let openParseCount = 0
+const parsingLoop = async function() {
+  console.log('parsingLoop called')
+  isParsing = true
+  const maxCPU = options.prefs.simParsers.value
+  cpuAvailable = Array(maxCPU).fill(true)
+  let nWorkers = Math.min(replayQueue.length,maxCPU)
+  for (let w=0;w<nWorkers;w++) {
+    let forked = fork(require.resolve('./parserFork'))
+    forked.send({HOTS})
+    forked.on('message', forkMessage)
+    workers.push(forked)
+  }
+  openParseCount = 0 // see above global
+  while (replayQueue.length) {
+    let workerOpen = false
+    for (let w=0;w<nWorkers;w++) {
+      if (cpuAvailable[w]) {
+        const { rPath, bnetID, renameFiles } = replayQueue.shift()
+        const worker = workers[w]
+        openParseCount++
+        worker.send({replayPath:rPath, workerIndex:w, bnetID, renameFiles})
+        cpuAvailable[w] = false
+        workerOpen = true
+        break
+      }
+    }
+    if (!workerOpen) await asleep(250)
+  }
+  isParsing = false
+  while (openParseCount) await asleep(250)
+  workers = [workers[0]] // just keep the first worker
+  saveSaveInfo()
+}
+
+const parseNewReplays = async function(account,isStartup) {
   let promise = new Promise(async function(resolve, reject) {
-    const { replayPath, bnetID } = account
+    if (!HOTS) HOTS = await HOTSPromise
+    const { replayPath, bnetID, renameFiles } = account
     const replayPaths = []
     returnFiles(replayPath,replayPaths)
-    const filteredReplayPaths = []
+    // const filteredReplayPaths = []
     const toSend = {}
     for (let p=0;p<replayPaths.length;p++) {
       const rPath = replayPaths[p]
-      if (!saveInfo.files.hasOwnProperty(rPath)) {
-        const newInfo = {api_hash: null, uploaded: null, hash: null, result: null, index: ++saveInfo.Count}
+      if (!saveInfo.files.hasOwnProperty(rPath) || saveInfo.files[rPath].result === null) {
+        const newInfo = {apiHash: null, uploaded: null, hash: null, result: null, index: ++saveInfo.Count}
         saveInfo.files[rPath] = newInfo
-        filteredReplayPaths.push(rPath)
+        replayQueue.push({rPath, bnetID, renameFiles})
+        // filteredReplayPaths.push(rPath)
         toSend[rPath] = newInfo
-      }
-    }
-    const nReplays = filteredReplayPaths.length
-    if (nReplays) updateParsingMenu(toSend)
-    console.log('in parse new replays',account,'should be parsing ',nReplays)
-    workers = []
-    cpuAvailable = Array(nCPU).fill(true)
-    let nWorkers = Math.min(nReplays,nCPU)
-    for (let w=0;w<nWorkers;w++) {
-      let forked = fork(require.resolve('./parserFork'))
-      forked.send({HOTS})
-      forked.on('message', forkMessage)
-      workers.push(forked)
-    }
-    let r = 0
-    parsed = 0 // see above global
-    while (r < nReplays) {
-      let workerOpen = false
-      for (let w=0;w<nWorkers;w++) {
-        if (cpuAvailable[w]) {
-          console.log(r)
-          const worker = workers[w]
-          worker.send({replayPath: filteredReplayPaths[r], workerIndex:w})
-          cpuAvailable[w] = false
-          workerOpen = true
-          r++
-          break
+      } else {
+        const oldInfo = saveInfo.files[rPath]
+        if (isStartup) toSend[rPath] = oldInfo
+        if (oldInfo.result===null) replayQueue.push({rPath, bnetID, renameFiles})
+        // pending - 3 or errored - 5
+        if ([3,4,5,null].includes(oldInfo.uploaded) && oldInfo.apiHash) {
+          checkAPIHash(oldInfo.apiHash).then(uploaded => {
+            if (uploaded) {
+              saveInfo.files[rPath].uploaded = 2
+              updateParsingMenu({[rPath]:saveInfo.files[rPath]})
+            } else {
+              saveInfo.files[rPath].uploaded = 3 // pending
+              enqueueReplayForUpload(rPath)
+            }
+          })
         }
       }
-      if (!workerOpen) await asleep(250)
     }
-    while (parsed < nReplays) await asleep(250)
-    workers = []
-    console.log('Finished parsing, should be saving!')
-    console.log('final save info',parsedPath)
-    const toCheck = {}
-    const api_keys = []
-    const files = Object.keys(saveInfo.files)
-    const nFiles = files.length
-    const toUpdate = {}
-    for (let f=0;f<nFiles;f++) {
-      const fPath = files[f]
-      const { api_hash, uploaded } = saveInfo.files[fPath]
-      if (uploaded === null && api_hash !==null) {
-        toCheck[api_hash] = fPath
-        saveInfo.files[fPath].uploaded = 0
-        api_keys.push(api_hash)
-        toUpdate[fPath] = saveInfo.files[fPath]
-      } else if (!uploaded && api_hash !==null) {
-        toCheck[api_hash] = fPath
-        api_keys.push(api_hash)
-      }
-    }
-    let response
-    try {
-      response = await axios.post('http://hotsapi.net/api/v1/replays/fingerprints', api_keys.join("\n"), {headers: {'Content-Type': 'text/plain'}})
-    } catch (e) {
-      console.log(e)
-    }
-    toUpload = []
-    if (response) {
-      const { exists, absent } = response.data
-      console.log(response.data)
-    }
-    updateParsingMenu(toUpdate)
-    fs.writeFileSync(parsedPath,JSON.stringify(saveInfo), 'utf8', {flag: 'w'}, (err) => { if (err) console.log(err) })
+    if (Object.keys(toSend).length) updateParsingMenu(toSend)
+    if (!isParsing && replayQueue.length) parsingLoop()
     return resolve(true)
   })
   return promise

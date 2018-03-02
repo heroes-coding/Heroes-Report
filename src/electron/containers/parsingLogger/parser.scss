@@ -8,6 +8,53 @@
   font-size: 1.2em;
   z-index: 30;
 }
+
+.accountList {
+  padding-top:25px;
+}
+
+.replayPath {
+  flex: 2.5 !important;
+  text-align: center;
+  font-size:0.8em;
+  white-space: normal !important;
+  line-height: 1em;
+  text-align: left;
+}
+
+.parsedPath {
+  flex: 1 !important;
+  text-align: center;
+  font-size:1em;
+}
+
+
+.parserInfo {
+  display:flex;
+  justify-content: space-around;
+}
+
+.addPath {
+  flex: 1 !important;
+  text-align: center;
+  cursor: pointer !important;
+}
+.addPath:hover {
+  background: lighten($Dark,25%) !important;
+}
+.fa-plus {
+  color: $Highlight;
+}
+
+
+.parserInfo .rt-th {
+  flex: 0 auto;
+}
+
+.rt-td.replayFileList.parserItem.-cursor-pointer {
+  margin: 0px;
+  line-height: 25px !important;
+}
 .menuBox {
   left: 60px;
   top: 6px;
@@ -125,6 +172,9 @@
 .parsingDiv {
   font-size: 0.8em;
 }
+.optionsDiv {
+}
+
 
 .appBorder {
   position: fixed;
@@ -153,7 +203,7 @@
 
 
 
-.parserTitle {
+.parserTitle, .optionsTitle {
   -webkit-user-select: none;
   -webkit-app-region: drag;
   color: $Light;
@@ -162,4 +212,8 @@
   margin: 0 100px 0 0px;
   padding: 13px 0px 2px 0px;
   font-size: 1.1em;
+}
+
+.optionsTitle {
+  margin: 0 25px 0 0px !important;
 }

@@ -4,7 +4,26 @@ import axios from 'axios'
 import { rehgarDic } from '../helpers/definitions'
 import _ from 'lodash'
 const GET_PLAYER_DATA = 'get_player_data'
-export { GET_PLAYER_DATA, getPlayerData }
+export { GET_PLAYER_DATA, getPlayerData, getYourData }
+
+async function getYourData() {
+  let playerInfo
+  if (!window.yourPlayerInfo) {
+    try {
+      const mmrPath = `https://heroes.report/api/mmr/${window.fullID}`
+      playerInfo = await axios.get(mmrPath)
+      playerInfo = playerInfo.data
+    } catch (e) {
+      playerInfo = {handle:window.fullID}
+    }
+  } else playerInfo = window.yourPlayerInfo
+  console.log(window.yourReplays,playerInfo)
+  return {
+    type: GET_PLAYER_DATA,
+    playerData: window.yourReplays,
+    playerInfo
+  }
+}
 
 async function getPlayerData(fullID) {
   let playerInfo
@@ -57,6 +76,7 @@ async function getPlayerData(fullID) {
       continue
     }
     goodReps.push(rep)
+    window.playerData = goodReps
   }
   return {
     type: GET_PLAYER_DATA,

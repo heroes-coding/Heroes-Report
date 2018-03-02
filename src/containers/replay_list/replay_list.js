@@ -206,20 +206,6 @@ class ReplayList extends Component {
         })
       }
     }
-    /*
-    if (!this.hasOwnProperty('lastSort') || this.lastSort.sortBy !== sortBy || this.lastSort.sortDesc !== sortDesc) {
-      const order = sortDesc ? -1 : 1
-      if (sortBy === "Date") {
-        playerData.sort((x,y) => x.MSL > y.MSL ? order: -order)
-      } else if (sortBy === "KDA") {
-        playerData.sort((x,y) => x.KDA > y.KDA ? order : -order)
-      } else {
-        const stat = decoderNumbers[sortBy]
-        playerData.sort((x,y) => x.stats[stat] > y.stats[stat] ? order : -order)
-      }
-      this.lastSort = { sortBy, sortDesc }
-    }
-    */
     const ranges = sortStats.map((x,i) => {
       const statVals = this.props.playerData.map(y => x === 'KDA' ? y.KDA : y.stats[decoderNumbers[x]])
       let max = d3.max(statVals)

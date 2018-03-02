@@ -75,7 +75,7 @@ class Nav extends React.Component {
           </a>
           <li className="nav-item list-inline-item">
             <NavLink
-              to="/you"
+              to={`${window.isElectron ? '/players/you' : '/you'}`}
               exact className="nav-link"
               activeClassName="active"
               isActive={linkFunction}

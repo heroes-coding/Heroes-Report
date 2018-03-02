@@ -137,5 +137,6 @@ const decoderNumbers = {}
 Object.keys(decoderDictionary).filter(x => x >= nPredefined).map(x => { decoderNumbers[decoderDictionary[x]]=parseInt(x)-nPredefined })
 
 // This has to match the order of unpacking in the binary unpacker (emscriptten decodeReplays)
+window.decoderNumbers = decoderNumbers
 const specialLocations = [].concat(replayDecoderLengths,replayDecoder,[slotIndex, winners],firsts,heroIndexes,talentIndexes)
 export { replayVals, replayDecoder, indexes, replayDecoderLengths, slotIndex, heroIndexes, decoderDictionary, talentIndexes, firsts, decoderIndex, nPredefined, winners, specialLocations, decoderNumbers, talentSlots, menuStats, statMults }

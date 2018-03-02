@@ -6,7 +6,7 @@ import PlayerMatchupTable from './replay_list/player_matchup_table'
 import PlayerTalentCalculator from './replay_list/player_talent_calculator'
 import PlayerStats from './stat_list/player_stats'
 import StatList from './stat_list/stat_list'
-import { getPlayerData, updateTime, addHeroFilter, heroSearch } from '../actions'
+import { getPlayerData, getYourData, updateTime, addHeroFilter, heroSearch } from '../actions'
 import TimeLine from './replay_list/timeline'
 import PlayerReplaysSelector from '../selectors/player_replays_selector'
 import ButtonLabeledSpacer from '../components/button_labeled_spacer'
@@ -53,7 +53,10 @@ class PlayerPage extends Component {
   }
   componentDidMount() {
     const {id} = this.props.match.params
-    this.getPlayer(id)
+    if (id==='you' && window.fullID) {
+      this.props.getYourData()
+      this.isPlayer = true
+    } else this.getPlayer(id)
     this.props.updateTime('reset',null)
   }
   shouldComponentUpdate(nextProps, nextState) {
@@ -135,4 +138,4 @@ function mapStateToProps(state, ownProps) {
   return {...PlayerReplaysSelector(state), HOTS:state.HOTS, timeRange:state.timeRange, ...ownProps}
 }
 
-export default connect(mapStateToProps,{getPlayerData, updateTime, addHeroFilter, heroSearch })(PlayerPage)
+export default connect(mapStateToProps,{getPlayerData, getYourData, updateTime, addHeroFilter, heroSearch })(PlayerPage)

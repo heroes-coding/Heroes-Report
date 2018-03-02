@@ -55,7 +55,6 @@ function parseFile(replayPath,HOTS) {
       // proto = await getProto(build)
       if (proto===undefined) return resolve(4)
       for (let i=0; i<10; i++) bnetIDs.push(details['m_playerList'][i]['m_toon']['m_id'])
-
       let atts = Protocol.decodeReplayAttributesEvents(archive.readFile('replay.attributes.events'))
       let initData
 
@@ -64,7 +63,7 @@ function parseFile(replayPath,HOTS) {
         try { // For some builds initData doesn't work in javascript.  This is a problem.
           let initData = Protocol.decodeReplayInitdata(archive.readFile('replay.initData'),proto.typeInfos,proto.iID)
           const randomValue = initData.m_syncLobbyState.m_gameDescription.m_randomValue
-          apiHash = md5(`${bnetIDs.sort((x,y) => x > y).join("")}${randomValue}`)
+          apiHash = md5(`${bnetIDs.slice(0,10).sort((x,y) => x > y).join("")}${randomValue}`)
           apiHash = md5HashConverter(apiHash)
           gameMode = HOTS.modesDic[initData['m_syncLobbyState']['m_gameDescription']['m_gameOptions']['m_ammId']]
         } catch (err) {
@@ -78,7 +77,7 @@ function parseFile(replayPath,HOTS) {
           gameMode = 'Quick Match'
         }
       }
-      thisReplay.api_hash = apiHash
+      thisReplay.apiHash = apiHash
       gameMode = HOTS.modesN[gameMode]
       let region = details['m_playerList'][0]['m_toon']['m_region']
 
@@ -363,8 +362,7 @@ function parseFile(replayPath,HOTS) {
         full[p].voteN = null
         full[p].votee = null
         full[p].nGlobes = 0
-        for (let t=1;t<8;t++)
-          full[p].TierIDs[t-1] = scoreResults["Tier" + t + "Talent"][p][0]["m_value"]
+        for (let t=1;t<8;t++) full[p].TierIDs[t-1] = scoreResults["Tier" + t + "Talent"][p][0]["m_value"]
         full[p].silenced = initData ? initData['m_syncLobbyState']['m_lobbyState']['m_slots'][p]['m_hasSilencePenalty'] : false
         let tierTalents = [null,null,null,null,null,null,null]
         if (build>=43571) {
@@ -591,9 +589,9 @@ process.on('message', async(msg) => {
   if (msg.hasOwnProperty('HOTS')) HOTS = msg.HOTS
   else if (msg.hasOwnProperty('proto')) protos[msg.protoNumber] = msg.proto
   else {
-    const { replayPath, workerIndex } = msg
+    const { replayPath, workerIndex, bnetID, renameFiles } = msg
     thisWorkerIndex = workerIndex
     const replay = await parseFile(replayPath,HOTS)
-    process.send({ replay, workerIndex, filePath: replayPath })
+    process.send({ replay, workerIndex, filePath: replayPath, bnetID, renameFiles })
   }
 })
