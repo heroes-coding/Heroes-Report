@@ -17,9 +17,9 @@ ipcMain.on('option:update',(e,args) => {
   if (key === 'uploads' && value) resetAPI()
 })
 
-const uploadOne = async function(fileToUpload) {
+const uploadOne = async function(fileToUpload,fileID) {
   try {
-    let newAPIID = await postReplay(fileToUpload)
+    let newAPIID = await postReplay(fileToUpload,fileID)
     // console.log('new API ID: ',newAPIID)
   } catch (e) {
     console.log("ERROR CAUGHT?", e, "ERROR CAUGHT?")
@@ -30,15 +30,15 @@ const uploadLoop = async function() {
   uploading = true
   while (uploadQueue.length) {
     while (currentUploads > options.prefs.simUploads.value) await asleep(100)
-    const fileToUpload = uploadQueue.shift()
-    uploadOne(fileToUpload)
+    const { fileName, fileID } = uploadQueue.shift()
+    uploadOne(fileName,fileID)
     if (!APIOkay()) break
   }
   uploading = false
 }
 
-const enqueueReplayForUpload = function(fileName) {
-  uploadQueue.push(fileName)
+const enqueueReplayForUpload = function(fileName,fileID) {
+  uploadQueue.push({fileName,fileID})
   if (!options.prefs.uploads.value) {
     APIStatus.APIFailed = true
     return
@@ -61,13 +61,13 @@ const APIOkay = function() {
   return false
 }
 
-function updateFileStatus(filePath,status) {
-  parserPopup.saveInfo.files[filePath].uploaded = status
-  updateParsingMenu({[filePath]:parserPopup.saveInfo.files[filePath]})
+function updateFileStatus(fileID,status) {
+  parserPopup.saveInfo.files[fileID].uploaded = status
+  updateParsingMenu({[fileID]:parserPopup.saveInfo.files[fileID]})
 }
 
-const postReplay = function(filePath) {
-  updateFileStatus(filePath,4)
+const postReplay = function(filePath,fileID) {
+  updateFileStatus(fileID,4)
   // Takes in a file path, posts to HOTSApi, and either rejects with error or resolves with ID
   let promise = new Promise(async function(resolve, reject) {
     if (!APIOkay()) return reject(new Error('API Down'))
@@ -77,23 +77,23 @@ const postReplay = function(filePath) {
       currentUploads--
       if (!resp || !resp.headers) {
         APIStatus.failedAttempts += 1
-        updateFileStatus(filePath,5)
+        updateFileStatus(fileID,5)
         return reject(new Error('No response'))
       }
       xRateLimitRemaining = resp.headers['x-ratelimit-remaining']
       if (err) {
         APIStatus.failedAttempts += 1
-        updateFileStatus(filePath,5)
+        updateFileStatus(fileID,5)
         return reject(err)
       } else if (resp.statusCode !== 200) {
         APIStatus.failedAttempts += 1
-        updateFileStatus(filePath,5)
+        updateFileStatus(fileID,5)
         return reject(new Error(resp.statusCode))
       } else {
         const { id, status, success } = JSON.parse(body)
-        if (status==='Duplicate') updateFileStatus(filePath,2)
-        else if (success===true) updateFileStatus(filePath,1)
-        else updateFileStatus(filePath,5)
+        if (status==='Duplicate') updateFileStatus(fileID,2)
+        else if (success===true) updateFileStatus(fileID,1)
+        else updateFileStatus(fileID,5)
         return resolve(id)
       }
     })
@@ -121,6 +121,21 @@ function checkAPIHash(hash) {
   })
   return promise
 }
+
+process.on("massUpload", async uploadInfoQueue => {
+  const toCheck = Object.keys(uploadInfoQueue)
+  if (toCheck.length===0) return
+  try {
+    let results = await checkAPIHashes(toCheck)
+    process.emit("uploadCheckResult",{uploadInfoQueue,results})
+    for (let e=0;e<results.absent.length;e++) {
+      const {filePath, fileID} = uploadInfoQueue[results.absent[e]]
+      enqueueReplayForUpload(filePath,fileID)
+    }
+  } catch (e) {
+    console.log(e)
+  }
+})
 
 function checkAPIHashes(hashList) {
   let promise = new Promise(async function(resolve, reject) {

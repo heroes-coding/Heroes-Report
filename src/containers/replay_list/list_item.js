@@ -9,8 +9,9 @@ import PercentBar from '../../components/percent_bar'
 import Replay from '../replay/replay'
 import ProcessReplay from '../replay/process_replay'
 import asleep from '../../helpers/asleep'
+let ipcRenderer
+if (window.isElectron) ipcRenderer = window.require('electron').ipcRenderer
 const barColors = ['#8C5F8C','#51A1A7','#6383C4']
-
 const modes = {
   1: "QM",
   2: "UD",
@@ -191,6 +192,14 @@ class replay extends Component {
     })
   }
   async getReplay(props) {
+    if (this.props.isYou) {
+      ipcRenderer.send('request:replay',this.props.MSL)
+      ipcRenderer.once('send:replay',(e,replay) => {
+        const replayData = ProcessReplay(replay,parseInt(window.fullID.split("-")[1]))
+        this.setState({...this.state, replay, replayData})
+      })
+      while (!this.state.replay) await asleep(50)
+    }
     if (!this.state.replay) {
       const { MSL, heroes, winners, Length, mode, build, map } = props
       window.rep = props

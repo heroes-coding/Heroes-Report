@@ -140,6 +140,7 @@ class ReplayList extends Component {
     return (
       <div key={index} className="replay_item_container">
         <ListItem
+          isYou = {this.props.isYou}
           nHeroes={this.nHeroes}
           changeOpenReplay={this.changeOpenReplay}
           curMSL={this.state.curMSL}

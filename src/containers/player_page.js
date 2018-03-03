@@ -54,9 +54,13 @@ class PlayerPage extends Component {
   componentDidMount() {
     const {id} = this.props.match.params
     if (id==='you' && window.fullID) {
+      this.isYou = true
       this.props.getYourData()
       this.isPlayer = true
-    } else this.getPlayer(id)
+    } else {
+      this.getPlayer(id)
+      this.isYou = false
+    }
     this.props.updateTime('reset',null)
   }
   shouldComponentUpdate(nextProps, nextState) {
@@ -120,7 +124,7 @@ class PlayerPage extends Component {
                   active={curHero ? true : false}
                 />
               </ul>
-              {!curHero && <ReplayList playerID={id} />}
+              {!curHero && <ReplayList playerID={id} isYou={this.isYou}/>}
               {curHero && <PlayerTalentCalculator hero={curHero} />}
             </div>
             <PlayerMatchupTable />

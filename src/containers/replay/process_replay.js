@@ -18,6 +18,17 @@ export default function processReplay(replay, bnetID) {
       }
     }
   }
+  if (e.po.length) {
+    const ho = e.po.map(h => heroes[h][0])
+    const firstPick = Math.floor(e.po[0]/5)
+    replay.firstPick = firstPick
+    replay.draftOrder = [b[firstPick][0],b[1-firstPick][0]].concat(e.po.slice(0,5).map(h => heroes[h][0]),[b[firstPick][1],b[1-firstPick][1]],e.po.slice(5,10).map(h => heroes[h][0]))
+    replay.draftOrder = replay.draftOrder.map(h => isNaN(h) ? null : h)
+    replay.drafts = [
+      [b[firstPick][0],ho[0],ho[3],ho[4],b[firstPick][1],ho[7],ho[8]].map(h => isNaN(h) ? null : h),
+      [b[1-firstPick][0],ho[1],ho[2],b[1-firstPick][1],ho[5],ho[6],ho[9]].map(h => isNaN(h) ? null : h)
+    ]
+  }
   const handles = heroes.map(x => `${x[3]}#${x[4]}`)
   const slot = bnetIDs.indexOf(bnetID)
   const team = Math.floor(slot/5)

@@ -589,9 +589,9 @@ process.on('message', async(msg) => {
   if (msg.hasOwnProperty('HOTS')) HOTS = msg.HOTS
   else if (msg.hasOwnProperty('proto')) protos[msg.protoNumber] = msg.proto
   else {
-    const { replayPath, workerIndex, bnetID, renameFiles } = msg
+    const { replayPath, workerIndex, bnetID, renameFiles, fileID } = msg
     thisWorkerIndex = workerIndex
     const replay = await parseFile(replayPath,HOTS)
-    process.send({ replay, workerIndex, filePath: replayPath, bnetID, renameFiles })
+    process.send({ replay, workerIndex, filePath: replayPath, bnetID, renameFiles, fileID })
   }
 })

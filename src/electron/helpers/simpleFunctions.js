@@ -3,7 +3,7 @@ function formatDate(value) {
   month = month < 10 ? `0${month}` : month
   let day = value.getDate()
   day = day < 10 ? `0${day}` : day
-  return `${month}/${day}/${value.getYear()-100}`
+  return `${value.getYear()-100}-${month}-${day}`
 }
 
 function formatTime(value) {
@@ -13,7 +13,7 @@ function formatTime(value) {
   hours = hours === 0 ? 12 : hours
   let minutes = value.getMinutes()
   minutes = minutes > 9 ? minutes : `0${minutes}`
-  return `${hours}:${minutes}${dayNight}`
+  return `${hours}˸${minutes} ${dayNight}`
 }
 
 const fakeLaunchDate = (new Date(2015, 5, 1, 20, 0, 0, 0)).getTime()

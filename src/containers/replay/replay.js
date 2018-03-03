@@ -32,6 +32,44 @@ const header = () => {
   )
 }
 
+const draftNames = [
+  ['1st Ban', '1st Pick', '4th Pick', '5th Pick', '4th Ban', '8th Pick', '9th Pick'],
+  ['2nd Ban', '2nd Pick', '3rd Pick', '3rd Ban', '6th Pick', '7th Pick', '10th Pick']
+]
+const picks = [1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0]
+
+const teamDraftRow = (draft, teamName, teamNumber) => {
+  return (
+    <div className="draftRow">
+      <div className={`${teamName}Pick draftBoxTeam`}>{teamName} Draft ({teamNumber ? '2nd' : '1st'})</div>
+      {draft.map((h,i) => {
+        const dName = draftNames[teamNumber][i]
+        return (
+          <div key={i} className={`draftBox ${dName.includes('Ban') ? 'banBox' :''}`}>
+            <img
+              className="draftHero"
+              src={`https://heroes.report/squareHeroes/${h || "black"}.jpg`}
+              alt={`Draft Pick ${i}`}
+            ></img>
+            <div className="draftBoxName">{dName}</div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+const teamDraft = (drafts, yourTeam, firstPick) => {
+  const team0 = yourTeam === firstPick ? 'Allied' : 'Enemy'
+  const team1 = yourTeam === firstPick ? 'Enemy' : 'Allied'
+  return (
+    <div className="draftHolder">
+      {teamDraftRow(drafts[0],team0,0)}
+      {teamDraftRow(drafts[1],team1,1)}
+    </div>
+  )
+}
+
 const Team = (props) => {
   const { Allies, MMR, D, Towns, Mercs, Globes, gameMode, bans } = props
   return (
@@ -292,6 +330,7 @@ class Replay extends Component {
     this.div = thisDiv
     const { mmrs } = this.state
     const { heroes, handles, slot, team, gameMode, allies, enemies, players, colors, heroNames, globes, maxGlobes, towns, mercs, bans, levels, levelMax, stackedXP, maxTime, bnetIDs, stats, awards, wheelData, MSL, mapStats, parties, region } = replayData
+    const { draftOrder, drafts, firstPick } = this.props.replay
     window.replayData = replayData
     if (!mmrs && !this.mmrsCalled) {
       this.populateMMRS(bnetIDs, gameMode, region)
@@ -301,6 +340,7 @@ class Replay extends Component {
       <div className="replayFlexHolder row">
         <div className={`col-12 col-md-6 col-xl-6 replayCol`} align="center">
           <div className="inner_list_item_right replayFlex">
+            {drafts&&teamDraft(drafts,team, firstPick)}
             <div className="replayReport">
               {header()}
               <Popup

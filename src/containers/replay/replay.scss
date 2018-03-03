@@ -2,6 +2,8 @@
 @import "../heroPage/talentBox.scss";
 $minReplayWidth: 360px;
 
+
+
 .replayFlex {
   margin: 10px 0px 10px -20px;
   // max-width: $minReplayWidth+30;
@@ -105,6 +107,13 @@ img.tinyFlexHero {
     margin: -32px 0 0 1px;
     filter: brightness(1.5);
 }
+.AlliedPick {
+  color: #00ff00;
+}
+.EnemyPick {
+  color: #ff0000;
+}
+
 
 .strikethrough {
   float: left;
@@ -140,6 +149,48 @@ img.tinyFlexHero {
   align-content: space-between;
   text-align:left;
 }
+
+.draftRow {
+  display: flex;
+  flex: 1 0;
+  flex-direction: row;
+  align-content: space-between;
+  text-align:middle;
+  font-size: 0.9em;
+  line-height: 1.2;
+  font-family: $NumbersFont;
+  background: $Dark;
+  padding: 2px;
+}
+
+
+
+.draftBox, .draftBoxTeam {
+    display: flex;
+    flex: 1 0;
+    width: 100%;
+    flex-direction: column;
+    border: 1px solid darken($Dark,2%)
+}
+
+.draftBoxTeam {
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 0px 5px;
+}
+
+.banBox:after {
+    position: relative;
+    top: -34px;
+    margin: -30px;
+    font-size: 4em;
+    opacity: 0.4;
+    font-family: FontAwesome;
+    color: #ff0000 ;
+    content: "\f00d";
+}
+
 
 .legendFlexBody {
   display: flex;

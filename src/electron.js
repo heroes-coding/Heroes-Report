@@ -28,6 +28,13 @@ ipcMain.on('options:toggle',(e,args) => {
     optionsPopup.window.show()
   }
 })
+ipcMain.on('request:replay',(e,MSL) => {
+  fs.readFile(path.join(path.join(dataPath,'replays',`${MSL}.json`)), (e,replay) => {
+    if (e) return console.log(e)
+    mainWindow.webContents.send('send:replay',JSON.parse(replay))
+  })
+})
+
 process.on('dispatchReplay', replay => {
   mainWindow.webContents.send('replays:dispatch',[replay])
 })
@@ -71,8 +78,6 @@ function createWindow() {
   }
 
   mainWindow.webContents.on('did-finish-load', async() => {
-    // mainWindow.webContents.send('private','Message from Main Process to MainWindow')
-    // {accountPath: accounts[buttonIndex-1], renameFiles}
     if (fs.existsSync(replaysFolder)) {
       const replayPaths = fs.readdirSync(replaysFolder)
       const nReps = replayPaths.length
@@ -97,10 +102,11 @@ function createWindow() {
           persistent: true
         })
         watcher.on('ready', () => watcher.on('add', path => {
-          console.log(`File ${path} has been added`)
-          setTimeout(() => {
-            process.emit('addSingleReplay', {rPath:path, bnetID, renameFiles})
-          },500) // after half a second, send file info to parser.  should be enough time
+          if (!parserPopup.saveInfo.fileNames.hasOwnProperty(path)) {
+            setTimeout(() => {
+              process.emit('addSingleReplay', {rPath:path, bnetID, renameFiles})
+            },500) // after half a second, send file info to parser.  should be enough time
+          }
         }))
         parseNewReplays(account,true)
       })

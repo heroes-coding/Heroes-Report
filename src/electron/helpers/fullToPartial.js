@@ -5,6 +5,9 @@ const fullToPartial = function(replay, bnetID, HOTS) {
   const first20 = firstTo20 && (firstTo20[0]===0 || firstTo20[0]) ? firstTo20[0] : 2
   const firstF = firstFort && (firstFort[0]===0 || firstFort[0]) ? firstFort[0] : 2
   const slot = replay.bnetIDs.indexOf(bnetID)
+  if (slot === -1) {
+    return null
+  }
   const team = Math.floor(slot/5)
   rep.FirstTo10 = first10 === 2 ? 2 : first10 === team ? 1 : 0
   rep.FirstTo20 = first20 === 2 ? 2 : first20 === team ? 1 : 0
@@ -48,6 +51,7 @@ const fullToPartial = function(replay, bnetID, HOTS) {
       rep.enemyRoleCounts[HOTS.roleN[rep.heroes[h]]] += 1
       rep.handles[5+rep.enemies.length] = `${hInfo[3]}#${hInfo[4]}`
       rep.handles[1].push(`${hInfo[3]}#${hInfo[4]}`)
+      rep.enemies.push(rep.heroes[h])
     }
   }
   const y = replay.h[slot]

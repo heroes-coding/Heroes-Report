@@ -56,8 +56,8 @@ class ParsingLog extends Component {
 
       const list = []
       fileKeys.map(x => {
-        const { index, result, uploaded } = files[x]
-        const fParts = x.split("\\")
+        const { index, result, uploaded, filePath } = files[x]
+        const fParts = filePath.split("\\")
         const file = fParts[fParts.length-1]
         list.push({index, result, uploaded, file})
       })
@@ -104,6 +104,9 @@ class ParsingLog extends Component {
     if (result === 9) {
       parsedStatus = 'Parsed'
       parsedClass = 'parsed'
+    } else if (result === 8) {
+      parsedStatus = 'Other Account'
+      parsedClass = 'vsai'
     } else if (result===null) {
       parsedStatus = 'Parsing...'
       parsedClass = 'parsing'
@@ -118,7 +121,7 @@ class ParsingLog extends Component {
       <div key={`${index}${result}${uploaded}`} className="rt-tr-group">
         <div className="rt-tr replayItem">
           <div className={`rt-td replayFileList -cursor-pointer`} >
-            {file}
+            {file.replace('˸',':').replace('-','/').replace('-','/').replace('.StormReplay','')}
           </div>
           <div className='rt-td statBoxHolder parsedList'>
             <span className={parsedClass} >{parsedStatus}</span>

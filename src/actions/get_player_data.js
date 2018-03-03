@@ -17,7 +17,6 @@ async function getYourData() {
       playerInfo = {handle:window.fullID}
     }
   } else playerInfo = window.yourPlayerInfo
-  console.log(window.yourReplays,playerInfo)
   return {
     type: GET_PLAYER_DATA,
     playerData: window.yourReplays,
