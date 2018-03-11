@@ -7,20 +7,29 @@ const GET_PLAYER_DATA = 'get_player_data'
 export { GET_PLAYER_DATA, getPlayerData, getYourData }
 
 async function getYourData() {
-  let playerInfo
+  let playerInfo = []
   if (!window.yourPlayerInfo) {
-    try {
-      const mmrPath = `https://heroes.report/api/mmr/${window.fullID}`
-      playerInfo = await axios.get(mmrPath)
-      playerInfo = playerInfo.data
-    } catch (e) {
-      playerInfo = {handle:window.fullID}
+    for (let f=0;f<window.fullIDs.length;f++) {
+      let fullID = window.fullIDs[f]
+      let pInfo
+      try {
+        const mmrPath = `https://heroes.report/api/mmr/${fullID}`
+        pInfo = await axios.get(mmrPath)
+        pInfo = pInfo.data
+      } catch (e) {
+        pInfo = {handle:fullID}
+      }
+      pInfo.fullID = fullID
+      pInfo.bnetID = parseInt(fullID.split('-')[1])
+      playerInfo.push(pInfo)
     }
+    window.yourPlayerInfo = playerInfo
   } else playerInfo = window.yourPlayerInfo
   return {
     type: GET_PLAYER_DATA,
     playerData: window.yourReplays,
-    playerInfo
+    playerInfo,
+    playerMatchups: window.playerMatchups
   }
 }
 

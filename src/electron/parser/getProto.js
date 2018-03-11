@@ -11,6 +11,7 @@ function getProto(protoNumber) {
   if (protocolPromises[protoNumber]) return protocolPromises[protoNumber]
   let promise = new Promise(async function(resolve, reject) {
     const thisProtoPath = path.join(protoPath,`${protoNumber}.json`)
+    console.log(thisProtoPath)
     if (fs.existsSync(thisProtoPath)) return resolve(JSON.parse(fs.readFileSync(thisProtoPath)))
     let proto
     try {

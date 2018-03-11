@@ -18,14 +18,14 @@ const HS = (hash,index) => hash.slice(index*2,(index+1)*2)
 const md5HashConverter = (h) => `${HS(h,3)}${HS(h,2)}${HS(h,1)}${HS(h,0)}-${HS(h,5)}${HS(h,4)}-${HS(h,7)}${HS(h,6)}-${HS(h,8)}${HS(h,9)}-${HS(h,10)}${HS(h,11)}${HS(h,12)}${HS(h,13)}${HS(h,14)}${HS(h,15)}`
 
 const nickMaps = {'BraxisOutpost': 15, 'ControlPoints': 1, 'Shrines': 2, 'Crypts': 0, 'BattlefieldOfEternity': 5, 'Warhead Junction': 6, 'BlackheartsBay': 10, 'CursedHollow': 3, 'LostCavern': 11, 'HanamuraPayloadPush': 16, 'TowersOfDoom': 8, 'HauntedWoods': 7, 'Hanamura': 14, 'BraxisHoldout': 4, 'DragonShire': 9, 'HauntedMines': 12, 'SilverCity': 13, 'Volskaya': 17, 'IndustrialDistrict':18}
-const protoProto = require('/api/protocols/proto55929.json')
+const protoProto = require('./proto.json')
 
 let getTalentN = function(talentName,heroN,talentN,HOTS) {
   if (HOTS.talentN.hasOwnProperty(talentName)) return HOTS.talentN[talentName]
   return talentName
 }
 
-function parseFile(replayPath,HOTS) {
+function parseFile(replayPath,HOTS, getProto=null) {
   let promise = new Promise(async function(resolve, reject) {
     try {
       const file = fs.readFileSync(replayPath)
@@ -49,9 +49,14 @@ function parseFile(replayPath,HOTS) {
       let bnetIDs = []
       let heroNames = []
       let heroes = []
-      process.send({ protoNumber:build, workerIndex: thisWorkerIndex })
-      while (!protos[build]) await asleep(50)
-      proto = protos[build]
+
+      if (getProto) {
+        proto = await getProto(build)
+      } else {
+        process.send({ protoNumber:build, workerIndex: thisWorkerIndex })
+        while (!protos[build]) await asleep(50)
+        proto = protos[build]
+      }
       // proto = await getProto(build)
       if (proto===undefined) return resolve(4)
       for (let i=0; i<10; i++) bnetIDs.push(details['m_playerList'][i]['m_toon']['m_id'])
@@ -61,7 +66,7 @@ function parseFile(replayPath,HOTS) {
       let apiHash, gameMode
       if (build >= 43905) {
         try { // For some builds initData doesn't work in javascript.  This is a problem.
-          let initData = Protocol.decodeReplayInitdata(archive.readFile('replay.initData'),proto.typeInfos,proto.iID)
+          initData = Protocol.decodeReplayInitdata(archive.readFile('replay.initData'),proto.typeInfos,proto.iID)
           const randomValue = initData.m_syncLobbyState.m_gameDescription.m_randomValue
           apiHash = md5(`${bnetIDs.slice(0,10).sort((x,y) => x > y).join("")}${randomValue}`)
           apiHash = md5HashConverter(apiHash)
@@ -80,6 +85,7 @@ function parseFile(replayPath,HOTS) {
       thisReplay.apiHash = apiHash
       gameMode = HOTS.modesN[gameMode]
       let region = details['m_playerList'][0]['m_toon']['m_region']
+      if (region===98) return resolve(98)
 
       if (HOTS.mapDic.hasOwnProperty(mapName)) mapName = HOTS.mapDic[mapName]
       else if (HOTS.mapDic.hasOwnProperty(mapName.toLowerCase())) mapName = HOTS.mapDic[mapName.toLowerCase()]
@@ -120,8 +126,7 @@ function parseFile(replayPath,HOTS) {
       } else {
         let lobby = lobbyFile.toString()
         let fIndex=0
-        const teams = [[],[]]
-        const teamsDic = {0:{},1:{}}
+        const teams = []
         for (let b=0;b<10;b++) {
           while (true) {
             let bnetIDIndex = lobby.slice(fIndex).indexOf(heroNames[b])
@@ -130,18 +135,9 @@ function parseFile(replayPath,HOTS) {
               console.log('Could not find Battle Tag for ' + heroNames[b])
               break // breaks out of inner while loop
             }
-            const team = lobby.slice(fIndex+bnetIDIndex-10,fIndex+bnetIDIndex-2)
+            const team = lobby.slice(fIndex+bnetIDIndex-9,fIndex+bnetIDIndex-1)
+            teams.push(team)
             if (!uniqueTeams.includes(team)) uniqueTeams.push(team)
-            let t = Math.floor(b/5)
-            if (b%5===0 || !teams[t].includes(team)) {
-              teams[t].push(team)
-            } else {
-              if (!teamsDic[t].hasOwnProperty(team)) {
-                teamsDic[t][team] = [teams[t].indexOf(team)+t*5,b]
-              } else {
-                teamsDic[t][team].push(b)
-              }
-            }
             fIndex = bnetIDIndex + fIndex + heroNames[b].length+1
             let place = fIndex
             try {
@@ -152,15 +148,25 @@ function parseFile(replayPath,HOTS) {
             }
           }
         }
+        const teamCounts = {}
+        for (let t=0;t<10;t++) {
+          const team = teams[t]
+          if (!teamCounts.hasOwnProperty(team)) teamCounts[team] = 0
+          teamCounts[team]++
+        }
         for (let t=0;t<2;t++) {
-          const teamKeys = Object.keys(teamsDic[t])
-          for (let k=0;k<teamKeys.length;k++) {
-            const tKey = teamKeys[k]
-            const teamKeyPlayers = teamsDic[t][tKey]
-            for (let p=0;p<teamKeyPlayers.length;p++) {
-              const slot = teamKeyPlayers[p]
-              teamNumbers[slot] = k+1
-            }
+          const usedTeams = []
+          for (let p=0;p<5;p++) {
+            const team = teams[t*5+p]
+            const usedIndex = usedTeams.indexOf(team)
+            const count = teamCounts[team]
+            if (usedIndex === -1 && count > 1) {
+              usedTeams.push(team)
+              const teamNumber = usedTeams.length
+              teamNumbers[t*5+p] = teamNumber
+            } else if (count > 1) {
+              teamNumbers[t*5+p] = usedIndex+1
+            } else teamNumbers[t*5+p] = 0
           }
         }
       }
@@ -168,7 +174,7 @@ function parseFile(replayPath,HOTS) {
         thisReplay['h'] = {}
         for (let p=0;p<10;p++) thisReplay['h'][p] = [heroes[p],p,Math.floor(p/5)===winners,heroNames[p],battleTags[p]]
         thisReplay['r'] = [minSinceLaunch, build, region, gameLength, mapName, gameMode, null, null,null,winners]
-        thisReplay['e'] = {'c':chats,'p':teamNumbers}
+        thisReplay['e'] = {'c':chats,'tn':teamNumbers}
         thisReplay.hash = hashCode
         return resolve(thisReplay)
       }
@@ -557,7 +563,7 @@ function parseFile(replayPath,HOTS) {
       thisReplay['e']['w'] = deadCannons
       thisReplay['e']['d'] = deaths
       thisReplay['e']['g'] = regenGlobes
-      thisReplay['e']['p'] = teamNumbers
+      thisReplay['e']['tn'] = teamNumbers
       thisReplay['e']['po'] = pickOrder
 
       let firstFort = [null,null,null]
@@ -576,6 +582,14 @@ function parseFile(replayPath,HOTS) {
       }
       thisReplay['r'] = [minSinceLaunch, build, region, gameLength, mapName, gameMode, firstTo10, firstTo20, firstFort,winners]
       thisReplay.hash = hashCode
+      if (getProto) {
+        thisReplay.header = header
+        thisReplay.details = details
+        thisReplay.atts = atts
+        thisReplay.init = initData
+        thisReplay.messages = messages
+        thisReplay.lobby = lobbyFile
+      }
       return resolve(thisReplay)
     } catch (err) {
       if (err.name!=="CorruptedError") console.log(err)
@@ -589,9 +603,11 @@ process.on('message', async(msg) => {
   if (msg.hasOwnProperty('HOTS')) HOTS = msg.HOTS
   else if (msg.hasOwnProperty('proto')) protos[msg.protoNumber] = msg.proto
   else {
-    const { replayPath, workerIndex, bnetID, renameFiles, fileID } = msg
+    const { replayPath, workerIndex, renameFiles, fileID } = msg
     thisWorkerIndex = workerIndex
     const replay = await parseFile(replayPath,HOTS)
-    process.send({ replay, workerIndex, filePath: replayPath, bnetID, renameFiles, fileID })
+    process.send({ replay, workerIndex, filePath: replayPath, renameFiles, fileID })
   }
 })
+
+module.exports = { parseFile }

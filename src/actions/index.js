@@ -15,8 +15,11 @@ export const UPDATE_REPLAY_PAGE = 'update_replay_page'
 export const ADD_HERO_FILTER = 'add_hero_filter'
 export const SELECT_TALENT = 'select_talent'
 export const HERO_SEARCH = 'hero_search'
+export const SELECT_COPLAYER = 'select_coplayer'
 export const UPDATE_TIME = 'update_time'
+export const SEARCH_FOR_COPLAYER = 'search_for_coplayer'
 export const UPDATE_TALENT_HERO = 'update_talent_hero'
+export const SELECT_YOUR_ACCOUNT = 'select_your_account'
 export const TEST_URL = 'https://heroes.report/stats/o/52351/3/10/99.json'
 export * from './filter_heroes'
 export * from './filter_dictionary'
@@ -30,6 +33,31 @@ export function updateMainSorting(id) {
   return {
     type: UPDATE_MAIN_SORTING,
     id
+  }
+}
+
+export function selectCoplayer(coplayerData) {
+  return {
+    type: SELECT_COPLAYER,
+    coplayerData
+  }
+}
+
+export function selectYourAccount(account) {
+  return {
+    type: SELECT_YOUR_ACCOUNT,
+    account
+  }
+}
+
+export function coplayerSearch(term) {
+  let results = [{handle: 'All Players', bnetID: 'All'}]
+  if ((!term || term==='All') && window.matchupResults) results = results.concat(window.matchupResults.slice(0,15))
+  else if (window.matchupResults) results = results.concat(window.playerFuse.search(term).slice(0,15))
+  results = results.map(i => { return {name: i.handle, id: i.bnetID, data: i} })
+  return {
+    type: SEARCH_FOR_COPLAYER,
+    playerSearchResults: results
   }
 }
 

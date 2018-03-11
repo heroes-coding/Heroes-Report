@@ -134,6 +134,17 @@ span#winrate {
     margin: 10px 0px;
 }
 
+.statListDropdown {
+  font-size: 0.8em;
+  margin: 5px 0px;
+}
+
+.statBarMiniTitle {
+  font-family: $PrimaryFont;
+  margin: 20px 0px 0px 0px;
+  text-decoration: underline;
+}
+
 .statBarHolder {
     /* margin: auto; */
     text-align: center;

@@ -6,9 +6,9 @@ import IconList from '../containers/icon_list'
 import { modeChoices, modeDic, mmrChoices, mmrDic } from '../helpers/definitions'
 import { formatDate } from '../helpers/smallHelpers'
 import SearchBar from '../components/search_bar'
-import { renderTime, renderNothing, renderTinyMap, renderPeeps, renderTinyHero, renderTeam } from '../components/filterComponents'
+import { renderTime, renderNothing, renderTinyMap, renderPeeps, renderTinyHero, renderTeam, renderPlayerData } from '../components/filterComponents'
 import { connect } from 'react-redux'
-import { updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime, heroSearch } from '../actions'
+import { updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime, heroSearch, coplayerSearch, selectCoplayer } from '../actions'
 import UpdateStatCat from './update_stat_cat'
 import TimeLine from './replay_list/timeline'
 import PlayerReplaysSelector from '../selectors/player_replays_selector'
@@ -28,6 +28,14 @@ class DataFilters extends Component {
     this.isMenu = this.isMenu.bind(this)
     this.getHeroes = this.getHeroes.bind(this)
     this.heroSearch = this.heroSearch.bind(this)
+    this.playerSearch = this.playerSearch.bind(this)
+    this.updateSelectedPlayer = this.updateSelectedPlayer.bind(this)
+  }
+  updateSelectedPlayer(data) {
+    if (data === 'A' || data.bnetID==='All') {
+      this.props.selectCoplayer(null)
+      if (data === 'A') setTimeout(() => { window.$('#playerSearch').val("") }, 200)
+    } else this.props.selectCoplayer(data)
   }
   getHeroes() {
     this.props.getHeroTalents(this.props.prefs.hero,this.props.prefs)
@@ -60,6 +68,12 @@ class DataFilters extends Component {
     // So the first screen (0) is the rightmost bit, etc.  Ignore eslint suggestion.
     return bits & (1<<this.props.menu) ? true : false
   }
+  playerSearch(term) {
+    if (!term) {
+      this.props.coplayerSearch('All')
+      this.updateSelectedPlayer({bnetID: 'All'})
+    } else this.props.coplayerSearch(term)
+  }
   heroSearch(term) {
     this.props.heroSearch(term)
     /*
@@ -75,6 +89,17 @@ class DataFilters extends Component {
   render() {
     const heroSearch = _.debounce((term) => {
       this.heroSearch(term)
+    }, 500)
+    const playerSearch = _.debounce((term) => {
+      this.playerSearch(term)
+      if (term) {
+        setTimeout(() => {
+          if (window.$('#playerSearchDropdown').attr('aria-expanded') === 'false') {
+            window.document.getElementById("playerSearchDropdown").click()
+            window.document.getElementById('playerSearch').focus()
+          }
+        }, 200)
+      }
     }, 500)
     const [allies, enemies, self] = this.props.filterHeroes
     return (
@@ -125,7 +150,7 @@ class DataFilters extends Component {
           currentID={modeDic[this.props.prefs.mode].id}
         />
         {/* below I use getHeroTalents if menu is not 1 */}
-        {this.isMenu(0b0101) && <ButtonLabeledSpacer filterName='Update' faIcon='fa-refresh' onPress={() => { this.isMenu(0b0001) ? this.props.getMainData(this.props.prefs, this.props.rollbackState) : this.getHeroes(this.props.prefs.hero,this.props.prefs) }} />}
+        {this.isMenu(0b0101) && <ButtonLabeledSpacer info="Filter replay data with your selected filters" filterName='Update' faIcon='fa-refresh' onPress={() => { this.isMenu(0b0001) ? this.props.getMainData(this.props.prefs, this.props.rollbackState) : this.getHeroes(this.props.prefs.hero,this.props.prefs) }} />}
         {this.isMenu(0b0001) && <UpdateStatCat />}
         {this.isMenu(0b0010) && <FilterDropDown
           currentSelection=""
@@ -197,19 +222,35 @@ class DataFilters extends Component {
           containerClass='halfy input-group filterGroup'
           hideArrow={true}
         />}
-        {this.isMenu(0b0011) && <IconList className='float-left' iconList={this.props.roles.concat(this.props.franchises)} updateFilter={this.props.updateFilter} />}
+        {this.isMenu(0b0011) && <IconList info={"Choose roles and/or universes of heroes to filter by"} className='float-left' iconList={this.props.roles.concat(this.props.franchises)} updateFilter={this.props.updateFilter} />}
         {this.isMenu(0b1000) && <TimeLine
           minMSL={this.props.startDate}
           maxMSL={this.props.endDate}
         />}
+        {this.isMenu(0b0010) && window.location.pathname === "/players/you" && <div>
+          <FilterDropDown
+            info={"Find a player you played against or with.  All other filters are ignored for this search for simplicity.  By default this displays the players you have had the most matches with, search for other players to the right."}
+            resetFunction={this.updateSelectedPlayer}
+            currentSelection='Coplayers'
+            name=''
+            id='playerSearchDropdown'
+            dropdowns={this.props.playerCoplayerResults}
+            updateFunction={this.updateSelectedPlayer}
+            leftComponentRenderer={renderNothing}
+            rightComponentRenderer={renderPlayerData}
+            renderDropdownName={true}
+            currentID=' '
+          />
+          <SearchBar placeholder="Coplayer Search" id="playerSearch" overClass="btn btn-small btn-link iconFilter" onSearchTermChange={playerSearch} noautoclear={true} />
+        </div>}
       </div>
     )
   }
 }
 
 function mapStateToProps(state) {
-  const { HOTS, prefs, status, roles, franchises, filterHeroes, timeRange } = state
-  return { ...PlayerReplaysSelector(state), HOTS, prefs, status, roles, franchises, filterHeroes, timeRange }
+  const { HOTS, prefs, status, roles, franchises, filterHeroes, timeRange, playerCoplayerResults } = state
+  return { ...PlayerReplaysSelector(state), HOTS, prefs, status, roles, franchises, filterHeroes, timeRange, playerCoplayerResults }
 }
 
-export default connect(mapStateToProps, { updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime, heroSearch })(DataFilters)
+export default connect(mapStateToProps, { updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime, heroSearch, coplayerSearch, selectCoplayer })(DataFilters)

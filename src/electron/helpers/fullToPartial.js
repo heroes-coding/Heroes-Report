@@ -1,4 +1,4 @@
-const fullToPartial = function(replay, bnetID, HOTS) {
+const fullToPartial = function(replay, bnetID, handle, HOTS) {
   const rep = {}
   const [minSinceLaunch, build, region, gameLength, mapName, gameMode, firstTo10, firstTo20, firstFort,winners] = replay.r
   const first10= firstTo10 && (firstTo10[0]===0 || firstTo10[0]) ? firstTo10[0] : 2
@@ -9,6 +9,8 @@ const fullToPartial = function(replay, bnetID, HOTS) {
     return null
   }
   const team = Math.floor(slot/5)
+  rep.bnetID = bnetID
+  rep.handle = handle
   rep.FirstTo10 = first10 === 2 ? 2 : first10 === team ? 1 : 0
   rep.FirstTo20 = first20 === 2 ? 2 : first20 === team ? 1 : 0
   rep.FirstFort = firstF === 2 ? 2 : firstF === team ? 1 : 0
@@ -31,26 +33,23 @@ const fullToPartial = function(replay, bnetID, HOTS) {
   rep.enemies = []
   rep.allyRoleCounts = {0:0,1:0,2:0,3:0}
   rep.enemyRoleCounts = {0:0,1:0,2:0,3:0}
-  rep.handles = [[null],[]]
   rep.order = []
   if (replay.e.po.length) {
     const firstPickers = replay.e.po[0]
   }
+  rep.allyIDs = []
+  rep.enemyIDs = []
   for (let h=0;h<10;h++) {
     const thisTeam = Math.floor(h/5)
     const hInfo = replay.h[h]
     if (thisTeam === team) {
       rep.allyRoleCounts[HOTS.roleN[rep.heroes[h]]] += 1
-      if (h === slot) {
-        rep.handles[0][0] = `${hInfo[3]}#${hInfo[4]}`
-        continue
-      }
-      rep.handles[0].push(`${hInfo[3]}#${hInfo[4]}`)
+      if (h === slot) continue
+      rep.allyIDs.push([replay.bnetIDs[h],`${hInfo[3]}#${hInfo[4]}`])
       rep.allies.push(rep.heroes[h])
     } else {
       rep.enemyRoleCounts[HOTS.roleN[rep.heroes[h]]] += 1
-      rep.handles[5+rep.enemies.length] = `${hInfo[3]}#${hInfo[4]}`
-      rep.handles[1].push(`${hInfo[3]}#${hInfo[4]}`)
+      rep.enemyIDs.push([replay.bnetIDs[h],`${hInfo[3]}#${hInfo[4]}`])
       rep.enemies.push(rep.heroes[h])
     }
   }

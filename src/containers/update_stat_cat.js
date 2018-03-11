@@ -11,6 +11,7 @@ class UpdateStatCat extends Component {
       <FilterDropDown
         currentSelection={this.props.statCat.cat}
         name='Stat Type: '
+        info={"Choose a type of stat to view.  This will open an entirely new table"}
         id='statType'
         dropdowns={statCatChoices}
         updateFunction={this.props.updateStatCat}

@@ -3,6 +3,29 @@
 $minReplayWidth: 360px;
 
 
+.chatLog {
+  background: darken($Dark,20%);
+  padding: 10px;
+  margin: 10px 0px;
+  max-height: 300px;
+  overflow-y: scroll;
+}
+.chatTitle {
+  font-size: 1.3em;
+  margin-bottom: 5px;
+}
+.chatLine {
+  font-size: 1.1em;
+  text-align: left;
+  margin: 15px 5px;
+}
+.handleSpan {
+  color: $Light;
+}
+.timeSpan {
+  color: $Color2;
+}
+
 
 .replayFlex {
   margin: 10px 0px 10px -20px;

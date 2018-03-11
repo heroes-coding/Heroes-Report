@@ -94,29 +94,45 @@ let firsts = (first,text) => {
 }
 
 let left = (props,div, getReplay) => {
+  const { hero, coplayer, slot, id, team, coplayerIsAlly, heroes, hasCoplayer } = props
+  if (coplayer) console.log(coplayer)
   return (
     <div className={`col-12 col-sm-6 col-xl-6 noPadding listPart`} align="center" onClick={() => getReplay(props)}>
       <div className="inner_list_item_left">
+        {hasCoplayer && <div className="coplayerHolder">
+          <img
+            className="tinyReplayHero"
+            src={`https://heroes.report/squareHeroes/${heroes[coplayer]}.jpg`}
+            alt={slot}
+          ></img>
+          <Arc
+            color={coplayerIsAlly ? '#00ff00' : "#ff0000"}
+            fillOpacity={1}
+            dim={28}
+            translate="(10,13)"
+            extraClass="coplayerArc"
+          />
+        </div>}
         <img
           onMouseEnter={(event) => {
-            const name = window.HOTS.nHeroes[props.hero]
+            const name = window.HOTS.nHeroes[hero]
             const desc = ''
             event.preventDefault()
-            props.openPopup(props.row,div,name,desc,`https://heroes.report/squareHeroes/${props.hero}.jpg`)
+            props.openPopup(props.row,div,name,desc,`https://heroes.report/squareHeroes/${hero}.jpg`)
           }}
           onMouseLeave={(event) => {
             event.preventDefault()
             props.messagePopup()
           }}
           className="tinyReplayHero"
-          src={`https://heroes.report/squareHeroes/${props.hero}.jpg`}
-          alt={props.slot}
+          src={`https://heroes.report/squareHeroes/${hero}.jpg`}
+          alt={slot}
         ></img>
         <Arc
           color={"#0000ff"}
-          id={props.id}
+          id={id}
           dim={28}
-          translate="(7,13)"
+          translate="(10,13)"
           extraClass="reportArc"
         />
         <img
@@ -195,7 +211,7 @@ class replay extends Component {
     if (this.props.isYou) {
       ipcRenderer.send('request:replay',this.props.MSL)
       ipcRenderer.once('send:replay',(e,replay) => {
-        const replayData = ProcessReplay(replay,parseInt(window.fullID.split("-")[1]))
+        const replayData = ProcessReplay(replay,replay.bnetID)
         this.setState({...this.state, replay, replayData})
       })
       while (!this.state.replay) await asleep(50)

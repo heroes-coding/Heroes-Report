@@ -18,6 +18,7 @@ export default (props) => {
         <span className="iconOnButton">
           <i className={`fa ${props.faIcon}`} aria-hidden="true"></i>
         </span>
+        {props.info && <i title={props.info} className="fa fa-info-circle infoButton" aria-hidden="true"></i>}
       </button>
     </form>
   )

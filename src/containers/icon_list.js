@@ -38,6 +38,7 @@ class IconList extends Component {
           }}
         ><i className="fa fa-undo iconOnButton" aria-hidden="true"></i>{this.props.updateType}</button>
         {this.props.iconList.map((d,i) => this.renderIcon(d,i))}
+        {this.props.info && <i title={this.props.info} className="fa fa-info-circle infoButton" aria-hidden="true"></i>}
       </form>
     )
   }

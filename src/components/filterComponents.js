@@ -1,5 +1,5 @@
 import React from 'react'
-import { commify } from '../helpers/smallHelpers'
+import { commify, simplePercent } from '../helpers/smallHelpers'
 import { mmrDic } from '../helpers/definitions'
 
 export function renderPeep(selected,x) {
@@ -20,6 +20,30 @@ export function renderPeeps(id) {
     <span className="starHolder">
       {[0,1,2,3,4].map(x => renderPeep(mmrDic[id].stars.includes(x),x))}
     </span>
+  )
+}
+
+export function renderPlayerData(data) {
+  if (data.bnetID === 'All') {
+    return (
+      <div className="otherPlayerData">
+        <div className="OPData OPHeader">{'With'}</div>
+        <div className="OPData OPHeader">{'Win% W.'}</div>
+        <div className="OPData OPHeader">{'VS'}</div>
+        <div className="OPData OPHeader">{'Win% VS'}</div>
+      </div>
+    )
+  }
+  let { nWith, nVS, nWinWith, nWinVS } = data
+  let winPercentWith = nWith ? simplePercent(nWinWith/nWith) : '-'
+  let winPercentVS = nVS ? simplePercent(nWinVS/nVS) : '-'
+  return (
+    <div className="otherPlayerData">
+      <div className="OPData">{nWith || '-'}</div>
+      <div className="OPData">{winPercentWith}</div>
+      <div className="OPData">{nVS || '-'}</div>
+      <div className="OPData">{winPercentVS}</div>
+    </div>
   )
 }
 

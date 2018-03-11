@@ -17,7 +17,11 @@ let options = {
     simParsers: {name:'Max simultaneous parsers', value: nCPU, index: 2},
     previews:{name:'Show match previews', value: true, index: 3}
   },
-  accounts: []
+  accounts: [],
+  replayPaths: [],
+  bnetIDs: [],
+  handles: [],
+  regions: [],
 }
 
 ipcMain.on('option:update',(e,args) => {
@@ -43,18 +47,25 @@ if (fs.existsSync(optionsPath)) {
 
 const saveOptions = () => fs.writeFileSync(optionsPath,JSON.stringify(options), 'utf8', (err) => { if (err) console.log(err) })
 
+process.on('newaccount:manualadd',({bnetID, region, handle}) => {
+  updateAccounts({bnetID, region, handle})
+})
+
+const updateAccounts = function({bnetID, region, handle}) {
+  options.bnetIDs.push(bnetID)
+  options.handles.push(handle)
+  options.regions.push(region)
+  process.emit('newaccount:send',null)
+  saveOptions()
+}
+
 const addNewAccount = async() => {
   let promise = new Promise(async function(resolve, reject) {
     let newAccount = await showAccountSelection(options.accounts)
-    if (options.accounts.filter(x => {
-      if (x.replayPath === newAccount.replayPath) return true
-    }).length === 0) {
-      options.accounts.push(newAccount)
-      saveOptions()
-      process.emit('newReplayPath', newAccount)
-      return resolve(newAccount)
-    }
-    resolve('exists')
+    const {replayPath, bnetID, region, handle, renameFiles} = newAccount
+    options.accounts.push({replayPath,renameFiles})
+    updateAccounts({bnetID, region, handle})
+    return resolve(newAccount)
   })
   return promise
 }

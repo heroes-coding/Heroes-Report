@@ -8,6 +8,7 @@ import TalentDicReducer from './talent_dictionary_reducer'
 import MainSortReducer from './main_sort_reducer'
 import StatusReducer from './status_reducer'
 import PlayerDataReducer from './player_data_reducer'
+import SelectedAccount from './selected_account_reducer'
 import PlayerInfoReducer from './player_info_reducer'
 import StatCatReducer from './stat_cat_reducer'
 import PlayerSearchList from './player_search_reducer'
@@ -20,22 +21,27 @@ import GetTimedData from './timed_data_reducer'
 import GetTimeRange from './time_range_reducer'
 import UpdateTalentHero from './talent_hero_reducer'
 import SearchReducer from './search_reducer'
+import PlayerCoplayerReducer from './player_coplayer_reducer'
+import SelectedCoplayerReducer from './selected_coplayer_reducer'
 
 const rootReducer = combineReducers({
   HOTS: HOTSDictionaryReducer,
   searchTerm: SearchReducer,
   roles: RolesActiveReducer,
+  selectedCoplayer: SelectedCoplayerReducer,
   franchises: FranchisesActiveReducer,
   prefs: PreferencesReducer,
   main: MainDataReducer,
   status: StatusReducer,
   statCat: StatCatReducer,
   timeRange: GetTimeRange,
+  yourSelectedAccount: SelectedAccount,
   filteredTalents: GetFilteredTalents,
   selectedTalents: SelectTalent,
   mainOrder: MainSortReducer,
   playerData: PlayerDataReducer,
   playerInfo: PlayerInfoReducer,
+  playerCoplayerResults: PlayerCoplayerReducer,
   talentData: AddHeroTalents,
   talentDic: TalentDicReducer,
   talentHero: UpdateTalentHero,

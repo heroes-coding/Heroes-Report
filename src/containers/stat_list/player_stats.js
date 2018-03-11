@@ -9,6 +9,9 @@ import { formatNumber, roundedPercent, MSLToDateString, simplePercent, tinyPerce
 import { decoderNumbers } from '../../helpers/binary_defs'
 import { formatPercentile } from '../player_list/player_list'
 import { exponentialSmoothing } from '../../helpers/exponential_smoother'
+import { renderNothing } from '../../components/filterComponents'
+import { selectYourAccount } from '../../actions'
+import FilterDropDown from '../filter_drop_down'
 const mmrNames = {q: 'Quick Match', h: 'Hero League', t: 'Team League', u: "Urnk. Draft"}
 
 class PlayerStatList extends Component {
@@ -19,6 +22,10 @@ class PlayerStatList extends Component {
     this.changeGraph = this.changeGraph.bind(this)
     this.stat = this.stat.bind(this)
     this.mapStat = this.mapStat.bind(this)
+    this.updateAccount = this.updateAccount.bind(this)
+  }
+  updateAccount(newAccount) {
+    this.props.selectYourAccount(newAccount)
   }
   mapStat(stat,name) {
     let expTime = window.performance.now()
@@ -173,7 +180,7 @@ class PlayerStatList extends Component {
           formatter={MSLToDateString}
           yFormatter={yFormatter}
         />
-        {(showK&&winrateCorrelationData.length ? true : false)&&<Graph
+        {showK&&winrateCorrelationData.length&&<Graph
           graphClass="winrateGraph"
           linePoints={winrateCorrelationData}
           xLabel={statName}
@@ -208,13 +215,57 @@ class PlayerStatList extends Component {
     if (playerData.length === 0) {
       return <div></div>
     }
-    const { h, q, u, t, handle } = this.props.playerInfo
+    let playerInfos, handle
+    const yourSelectedAccount = this.props.yourSelectedAccount
     const outcomes = playerData.map(x => x.Won)
-    const mmrData = [h&&mmr(mmrNames.h,h),q&&mmr(mmrNames.q,q),t&&mmr(mmrNames.t,t),u&&mmr(mmrNames.u,u)].filter(x => x)
+    const mmrBoxes = []
+    if (!this.props.isYou) {
+      handle = this.props.playerInfo.handle
+      playerInfos = [this.props.playerInfo]
+    } else if (!this.props.playerInfo.hasOwnProperty('handle')) {
+      handle = this.props.playerInfo.filter(p => !yourSelectedAccount || yourSelectedAccount.handle === p.handle).map(p => p.handle).join(" | ")
+      playerInfos = this.props.playerInfo
+    }
+    if (playerInfos) {
+      playerInfos.map(playerInfo => {
+        const { h, q, u, t, handle } = playerInfo
+        const mmrData = [h&&mmr(mmrNames.h,h),q&&mmr(mmrNames.q,q),t&&mmr(mmrNames.t,t),u&&mmr(mmrNames.u,u)].filter(x => x)
+        if (!yourSelectedAccount || yourSelectedAccount.handle === handle) {
+          mmrBoxes.push({
+            title: playerInfos.length > 1 ? `MMRs for ${handle}` : null,
+            category: 'MMR Type',
+            left:'MMR',
+            right: 'Perc.',
+            hasGraphs: false,
+            stats: mmrData
+          })
+        }
+      })
+    }
+    let selections
+    const multiYou = this.props.isYou && playerInfos && playerInfos.length > 1
+    if (multiYou) {
+      selections = [{name: 'All accounts', id: 'All accounts', data: 'All'}]
+      for (let p=0;p<playerInfos.length;p++) {
+        const { bnetID, handle } = playerInfos[p]
+        selections.push({name: handle, id: bnetID, data:{bnetID, handle}})
+      }
+    }
     return (
       <div className='stat_item_container row'>
         <StatListTemplate
           clickFunction={this.changeGraph}
+          dropdown={multiYou && <FilterDropDown
+            currentSelection={yourSelectedAccount ? yourSelectedAccount.handle : 'All Accounts'}
+            name="Account:"
+            id='gameMode'
+            dropdowns={selections}
+            updateFunction={this.updateAccount}
+            leftComponentRenderer={renderNothing}
+            rightComponentRenderer={renderNothing}
+            renderDropdownName={true}
+            currentID={0}
+          />}
           title={handle}
           subTitle={`Won ${roundedPercent(Math.round(d3.mean(outcomes)*1000))} (${d3.sum(outcomes)}/${outcomes.length}  matches)`}
           graphs={this.getGraphs()}
@@ -273,12 +324,7 @@ class PlayerStatList extends Component {
               stats:[
                 ...[['Crowd Control Time','CC Time'],['Stun Time','Stun Time'],['Root Time','Root Time'],['Silence Time','Silence Time']].map(s => { return stat(s[0],playerData,null,s[1]) })
               ]},
-            {category: 'MMR Type',
-              left:'MMR',
-              right: 'Perc.',
-              hasGraphs: false,
-              stats: mmrData
-            },
+            ...mmrBoxes,
           ]}
         />
       </div>
@@ -287,7 +333,7 @@ class PlayerStatList extends Component {
 }
 
 function mapStateToProps(state, ownProps) {
-  return PlayerReplaysSelector(state)
+  return {...PlayerReplaysSelector(state), yourSelectedAccount: state.yourSelectedAccount}
 }
 
-export default connect(mapStateToProps)(PlayerStatList)
+export default connect(mapStateToProps, {selectYourAccount})(PlayerStatList)

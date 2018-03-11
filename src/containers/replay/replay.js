@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Graph from '../../components/graph/graph'
 import Legend from '../../components/graph/legend'
+import ChatLog from './chat_log'
 import { formatNumber, roundedPercent, roundedPercentPercent, MSLToDateString, simplePercent, formatStatNumber, tinyPercent, sToM, formatDate, DateToMSL, statSToM } from '../../helpers/smallHelpers'
 import axios from 'axios'
 import _ from 'lodash'
@@ -329,7 +330,8 @@ class Replay extends Component {
     }
     this.div = thisDiv
     const { mmrs } = this.state
-    const { heroes, handles, slot, team, gameMode, allies, enemies, players, colors, heroNames, globes, maxGlobes, towns, mercs, bans, levels, levelMax, stackedXP, maxTime, bnetIDs, stats, awards, wheelData, MSL, mapStats, parties, region } = replayData
+    const { heroes, handles, slot, team, gameMode, allies, enemies, players, colors, heroNames, globes, maxGlobes, towns, mercs, bans, levels, levelMax, stackedXP, maxTime, bnetIDs, stats, awards, wheelData, MSL, mapStats, parties, region, chat } = replayData
+    window.repData = replayData
     const { draftOrder, drafts, firstPick } = this.props.replay
     window.replayData = replayData
     if (!mmrs && !this.mmrsCalled) {
@@ -358,7 +360,7 @@ class Replay extends Component {
                 const hIndex = heroes[s][0]
                 const id = bnetIDs[i]
                 return <InfoRow
-                  party={0}
+                  party={parties[s]}
                   key={id}
                   region={region}
                   history={this.props.history}
@@ -531,6 +533,7 @@ class Replay extends Component {
         </div>
         <div className={`col-12 col-md-6 col-xl-6 replayCol`} align="center">
           <div className="inner_list_item_left replayFlex reportStatHolder">
+            {chat.length && <ChatLog chat={chat} colors={colors} handles={handles} heroNames={heroNames} />}
             <div className="barLegend">
               <div className="legendTitle">Bar Graphs Legend</div>
               <div className="legendFlexBody">

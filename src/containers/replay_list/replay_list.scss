@@ -123,11 +123,20 @@ span.color0 {
 
 svg.reportArc {
     position: relative;
-    left: 0px;
+    left: -3px;
     overflow: visible;
     margin: -20px -28px;
     top: -8px;
     @include unselectable;
+}
+
+svg.coplayerArc {
+    @extend svg.reportArc;
+    left: -5px;
+}
+
+svg.coplayerArc path.percentPathHolder {
+  fill-opacity: 1;
 }
 
 span.victoryBox {
@@ -167,7 +176,15 @@ img.tinyTalent {
     position: relative;
 }
 
-
+.coplayerHolder {
+  -webkit-clip-path: circle(16px at 50% 50%);
+  clip-path: circle(16px at 50% 50%);
+  position: relative;
+  left: -90px;
+  margin: -8px -10px;
+  top: 14px;
+  opacity: 1;
+}
 
 .tinyHeroHolder {
   position: relative;

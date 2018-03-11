@@ -7,7 +7,7 @@ const electron = require('electron')
 const getProto = require('./getProto')
 electron.ipcMain.setMaxListeners(32)
 const { HOTSPromise } = require('../startup.js')
-const { app } = electron
+const { app, dialog } = electron
 const { asleep } = require('../helpers/asleep')
 const { checkAPIHash, checkAPIHashes, enqueueReplayForUpload } = require('../helpers/HOTSApi.js')
 const { fullToPartial } = require('../helpers/fullToPartial.js')
@@ -18,6 +18,13 @@ let cpuAvailable = Array(nCPU).fill(true)
 const { options } = require('../containers/optionsMenu/optionsManager.js')
 const { mapNicks, modeNicks } = require('../helpers/definitions.js')
 const { formatTime, formatDate, minSinceLaunchToDate } = require('../helpers/simpleFunctions.js')
+const { parseFile } = require('./parserFork.js')
+
+electron.ipcMain.on('parseSingleReplay', async(e,{replayPath}) => {
+  console.log('request for parseSingleReplay called',replayPath)
+  const replay = await parseFile(replayPath,HOTS,getProto)
+  process.emit('dispatchSingleReplay',replay)
+})
 
 let workers = []
 process.on('warning', function(w) { console.log(' => FULL STACK E => ', w.stack || w) })
@@ -54,6 +61,7 @@ process.on('clearUploadInfoQueue', nothing => {
 })
 
 process.on('addSingleReplay', function({rPath, bnetID, renameFiles}) {
+  console.log('add single replay called')
   const fileID = ++saveInfo.Count
   const newInfo = {filePath:rPath, apiHash: null, uploaded: null, hash: null, result: null, index:fileID}
   saveInfo.files[fileID.toString()] = newInfo
@@ -70,16 +78,49 @@ const replaySavePath = path.join(dataPath,'replays')
 const replaySummaryPath = path.join(dataPath,'replaySummaries')
 if (!fs.existsSync(replaySavePath)) fs.mkdirSync(replaySavePath)
 if (!fs.existsSync(replaySummaryPath)) fs.mkdirSync(replaySummaryPath)
-const parsedPath = path.join(dataPath,'parsed.json')
-
 const { parserPopup, updateParsingMenu, saveSaveInfo } =require('../containers/parsingLogger/parseAndUpdateManager.js')
-const { parserWindow, saveInfo } = parserPopup
+const { saveInfo } = parserPopup
 
+const promptForNewAccount = function(replay) {
+  console.log('prompt for new account entered')
+  const buttons = ['This is not my replay']
+  for (let h=0;h<10;h++) {
+    buttons.push(`${replay.h[h][3]}#${replay.h[h][4]}`)
+  }
+  const result = dialog.showMessageBox({buttons, title:"Please select your player handle", message:"Couldn't find your id in a replay.  Please select your handle from the below options.  This message will appear for any replay where you haven't selected a user handle, so if you have replays from other accounts in one of your replay folders you may want to move them."})
+  const confirmation = dialog.showMessageBox({buttons:['No','Yes'], title:"Please confirm", message:`Are you sure this is the right selection: ${buttons[result]}? ${result ? '(If you make a mistake, this account will be added to your list of accounts and I have not added an option to remove it)': ''}`})
+  console.log(result,confirmation)
+  if (!confirmation) return promptForNewAccount(replay)
+  else if (!result) return
+  const bnetID = replay.bnetIDs[result-1]
+  const region = replay.r[2]
+  const handle = buttons[result]
+  process.emit('newaccount:manualadd',{bnetID, region, handle})
+  return {bnetID, handle}
+}
 
 let uploadInfoQueue = {}
 let uploadedSingly = 0
-const saveReplay = async function(replay, filePath, bnetID, renameFiles, fileID) {
-  const condensed = fullToPartial(replay,bnetID,HOTS)
+const saveReplay = async function(replay, filePath, renameFiles, fileID) {
+  let bnetID, handle
+  for (let b=0;b<10;b++) {
+    const thisID = replay.bnetIDs[b]
+    if (options.bnetIDs.includes(thisID)) {
+      bnetID = thisID
+      handle = `${replay.h[b][3]}#${replay.h[b][4]}`
+    }
+  }
+  if (!bnetID) {
+    let newInfo = promptForNewAccount(replay)
+    if (!newInfo) return
+    else {
+      bnetID = newInfo.bnetID
+      handle = newInfo.handle
+    }
+  }
+  replay.bnetID = bnetID
+  replay.handle = handle
+  const condensed = fullToPartial(replay,bnetID,handle,HOTS)
   if (!condensed) {
     saveInfo.files[fileID].result = 8
     updateParsingMenu({[fileID]:saveInfo.files[fileID]})
@@ -94,12 +135,13 @@ const saveReplay = async function(replay, filePath, bnetID, renameFiles, fileID)
     const oldFilePath = filePath
     const dirName = oldFilePath.match(/(.*)[\/\\]/)[1]||''
     filePath = path.join(dirName,`${formatDate(date)} ${formatTime(date)} ${modeNicks[mode]} ${isNaN(map) ? map : mapNicks[map]} ${isNaN(hero) ? hero : HOTS.nHeroes[hero]} ${Won ? 'Victory' : 'Defeat'}.StormReplay`)
-    saveInfo.files[fileID].filePath = filePath
-    saveInfo.fileNames[filePath] = fileID
+    console.log('renaming files...')
     if (oldFilePath !== filePath) {
       fs.renameSync(oldFilePath,filePath)
     }
-  } else if (!saveInfo.fileNames.hasOwnProperty(filePath)) saveInfo.fileNames[filePath] = fileID
+  }
+  saveInfo.files[fileID].filePath = filePath
+  saveInfo.fileNames[filePath] = fileID
   saveInfo.files[fileID].apiHash = replay.apiHash
   saveInfo.files[fileID].hash = replay.hash
   saveInfo.files[fileID].result = 9
@@ -142,8 +184,8 @@ const forkMessage = async(msg) => {
     }
     return worker.send({protoNumber, proto})
   }
-  const { replay, workerIndex, filePath, bnetID, renameFiles, fileID } = msg
-  if (isNaN(replay)) saveReplay(replay, filePath, bnetID, renameFiles, fileID)
+  const { replay, workerIndex, filePath, renameFiles, fileID } = msg
+  if (isNaN(replay)) saveReplay(replay, filePath, renameFiles, fileID)
   else {
     saveInfo.files[fileID].result = replay
     saveInfo.files[fileID].uploaded = 0
@@ -157,6 +199,8 @@ const replayQueue = []
 let isParsing = false
 let openParseCount = 0
 const parsingLoop = async function() {
+  if (isParsing) return
+  console.log('parsing loop entered',isParsing)
   isParsing = true
   const maxCPU = options.prefs.simParsers.value
   cpuAvailable = Array(maxCPU).fill(true)
@@ -182,21 +226,25 @@ const parsingLoop = async function() {
       }
     }
     if (!workerOpen) await asleep(250)
+    if (!replayQueue.length) await asleep(250)
   }
   isParsing = false
+  console.log('is parsing set to false')
+  while (openParseCount) {
+    await asleep(250)
+  }
   saveSaveInfo()
-  while (openParseCount) await asleep(250)
+  process.emit("replays:refresh",null)
   process.emit("massUpload",uploadInfoQueue)
   workers = [workers[0]] // just keep the first worker
-  saveSaveInfo()
   process.emit('clearUploadInfoQueue','ohyeah')
 }
 
 const parseNewReplays = async function(account,isStartup) {
   let promise = new Promise(async function(resolve, reject) {
     if (!HOTS) HOTS = await HOTSPromise
-    const { replayPath, bnetID, renameFiles } = account
     const replayPaths = []
+    const {replayPath, renameFiles} = account
     returnFiles(replayPath,replayPaths)
     // const filteredReplayPaths = []
     const toSend = {}
@@ -206,14 +254,14 @@ const parseNewReplays = async function(account,isStartup) {
         const fileID = ++saveInfo.Count
         const newInfo = {filePath: rPath, apiHash: null, uploaded: null, hash: null, result: null, index: fileID}
         saveInfo.files[fileID.toString()] = newInfo
-        replayQueue.push({rPath, bnetID, renameFiles, fileID})
+        replayQueue.push({rPath, renameFiles, fileID})
         // filteredReplayPaths.push(rPath)
         toSend[fileID] = newInfo
       } else {
         const oldInfo = saveInfo.files[saveInfo.fileNames[rPath]]
         const fileID = oldInfo.index
         if (isStartup) toSend[fileID] = oldInfo
-        if (oldInfo.result === null) replayQueue.push({rPath, bnetID, renameFiles, fileID})
+        if (oldInfo.result === null) replayQueue.push({rPath, renameFiles, fileID})
         // pending - 3 or errored - 5
         if ([3,4,5,null].includes(oldInfo.uploaded) && oldInfo.apiHash) {
           const { apiHash, filePath } = oldInfo

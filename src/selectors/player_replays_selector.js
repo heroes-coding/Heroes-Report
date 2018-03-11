@@ -7,6 +7,8 @@ const playerInfo = state => state.playerInfo
 const talentDictionary = state => state.talentDic
 const prefs = state => state.prefs
 const franchises = state => state.franchises
+const yourSelectedAccount = state => state.yourSelectedAccount
+const selectedCoplayer = state => state.selectedCoplayer
 const roles = state => state.roles
 const replayPage = state => state.replayPage
 const filterHeroes = state => state.filterHeroes
@@ -21,7 +23,12 @@ let roleDic
 
 const modeDic = {0:[1,2,3,4],1:[1],2:[2],3:[3],4:[4],5:[5],6:[1,2],7:[3,4]}
 
-const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises, roles, filterHeroes, timeRange, heroTerms, HOTS) => {
+
+const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises, roles, filterHeroes, timeRange, heroTerms, HOTS, yourSelectedAccount, selectedCoplayer) => {
+  // easier to handle player location here than through all of the UI components.  I know it's hacky.
+  const isYou = "/players/you"
+  yourSelectedAccount = isYou ? yourSelectedAccount : null
+  selectedCoplayer = isYou ? selectedCoplayer : null
   const playerHero = filterHeroes[2][0]
   const nReplays = playerData.length
   const filteredReplays = []
@@ -78,14 +85,22 @@ const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises,
     const rep = playerData[r]
     const MSL = rep.MSL
     startDate = MSL < startDate ? MSL : startDate
-    if (
-      (timeRange && (MSL < timeRange[0] || MSL > timeRange[1])) ||
+    if (selectedCoplayer) {
+      // If player search is selected, ignore all other filters.  Otherwise makes things too complicated
+      if (rep.bnetIDs.includes(selectedCoplayer.bnetID)) {
+        rep.coplayer = rep.bnetIDs.indexOf(selectedCoplayer.bnetID)
+
+        rep.coplayerIsAlly = Math.floor(rep.bnetIDs.indexOf(rep.bnetID)/5) === Math.floor(rep.coplayer/5)
+        filteredReplays.push(rep)
+      }
+    } else if (((timeRange && (MSL < timeRange[0] || MSL > timeRange[1])) ||
       (playerHero && rep.hero !== playerHero) ||
       (prefs.map !== 99 && rep.map !== prefs.map) ||
       (!modeDic[prefs.mode].includes(rep.mode)) ||
       (!allFranchises && !franchises[rep.franchise].selected && !playerHero) ||
       (!allRoles && !roles[rep.role].selected && !playerHero) ||
-      missingHeroes(rep) || (heroTerms && !heroTerms.includes(rep.hero))
+      missingHeroes(rep) || (heroTerms && !heroTerms.includes(rep.hero)) ||
+      (yourSelectedAccount && yourSelectedAccount.bnetID !== rep.bnetID))
     ) {
       continue
     } else {
@@ -117,7 +132,7 @@ const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises,
     }
   }
   justFlipped = false
-  return { playerData: filteredReplays, talentDic, playerInfo, pageNames, nReplays: nFiltered, mapSpecificStats, startDate, endDate }
+  return { selectedCoplayer, playerData: filteredReplays, talentDic, playerInfo, pageNames, nReplays: nFiltered, mapSpecificStats, startDate, endDate }
 }
 
 const basePlayerDataSelector = createSelector(
@@ -131,6 +146,8 @@ const basePlayerDataSelector = createSelector(
   timeRange,
   heroTerms,
   HOTS,
+  yourSelectedAccount,
+  selectedCoplayer,
   getPlayerBaseData,
 )
 

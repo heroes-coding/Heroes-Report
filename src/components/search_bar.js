@@ -17,6 +17,7 @@ class SearchBar extends Component {
   render() {
     return (
       <input
+        id={this.props.id}
         placeholder={ this.props.placeholder }
         className={this.props.overClass || "searchInput"}
         value = { this.state.term }

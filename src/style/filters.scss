@@ -106,6 +106,33 @@ i.fa.fa-refresh {
     font-size: 0.85em;
 }
 
+.otherPlayerData {
+  display: flex;
+  flex-direction: row;
+  margin-left: auto;
+  min-width: 200px;
+  max-width: 200px;
+  padding-left: 25px;
+}
+
+.otherPlayerSummary {
+  font-size: 0.8em;
+  font-family: $NumbersFont;
+  color: $Color1;
+  padding: 8px;
+}
+
+
+.OPHeader {
+  text-decoration: underline;
+}
+
+.OPData {
+  font-size: 0.8em;
+  flex: 1;
+  text-align: center;
+}
+
 .toggleFilter {
     display: inline-block;
     margin: -7px 0px 0px -1px !important;
@@ -117,6 +144,10 @@ i.fa.fa-refresh {
 .iconFilter:hover {
     color: lighten($Highlight, 20%) ;
     text-decoration: none;
+}
+
+.infoButton {
+    padding: 8px 2px 8px 5px;
 }
 
 .iconOnButton {
@@ -162,6 +193,7 @@ img.tinyMap {
   border: 2px solid #2A2931;
 }
 .dropdown-item {
+  display: inline-flex !important;
   color: white !important;
 }
 button.dropdown-item:hover {

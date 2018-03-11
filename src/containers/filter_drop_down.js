@@ -11,9 +11,9 @@ function renderDropdown(d, updateFunction, leftComponentRenderer, rightComponent
         updateFunction(d.data ? d.data : d.id)
       }}
     >
-      {leftComponentRenderer(d.id)}
+      {leftComponentRenderer(d.data ? d.data : d.id)}
       {renderName ? d.name : ''}
-      {rightComponentRenderer(d.id)}
+      {rightComponentRenderer(d.data ? d.data : d.id)}
     </button>
   )
 }
@@ -26,7 +26,6 @@ function renderButtonLabel(props) {
     <span className={props.textClass}>
       {props.leftComponentRenderer(props.currentID)}
       {props.name}{props.currentSelection}&nbsp;&nbsp;
-      {props.rightComponentRenderer(props.currentID)}
     </span>
   )
 }
@@ -53,8 +52,10 @@ export default (props) => {
         {!props.hideArrow&&<span className="iconOnButton"><i className="fa fa-chevron-circle-down" aria-hidden="true"></i></span>}
       </button>
       <div className="dropdown-menu" aria-labelledby={props.id}>
+        {props.dropdownHeader && props.dropdownHeader}
         {props.dropdowns.map(d => renderDropdown(d, props.updateFunction, props.leftComponentRenderer, props.rightComponentRenderer, props.renderDropdownName))}
       </div>
+      {props.info && <i title={props.info} className="fa fa-info-circle infoButton" aria-hidden="true"></i>}
     </form>
   )
 }

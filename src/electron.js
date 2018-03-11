@@ -11,8 +11,14 @@ const dataPath = app.getPath('userData')
 const replaysFolder = path.join(dataPath,'replaySummaries')
 const { showParsingMenu, parserPopup, saveSaveInfo } = require('./electron/containers/parsingLogger/parseAndUpdateManager.js')
 const { options, optionsPopup, loadOptionsMenu, addNewAccount } = require('./electron/containers/optionsMenu/optionsManager.js')
+const { returnIDs } = require('./electron/parser/bareLobby.js')
+console.log(returnIDs)
 require('electron-context-menu')()
 require('electron-reload')(__dirname, { electron: require('${__dirname}/../../node_modules/electron') })
+
+process.on('dispatchSingleReplay', replay => {
+  mainWindow.webContents.send('dispatchSingleReplay',replay)
+})
 
 ipcMain.on('parser:toggle',(e,args) => {
   if (parserPopup.parserWindow.isVisible()) parserPopup.parserWindow.hide()
@@ -38,6 +44,13 @@ ipcMain.on('request:replay',(e,MSL) => {
 process.on('dispatchReplay', replay => {
   mainWindow.webContents.send('replays:dispatch',[replay])
 })
+process.on('newaccount:send', nothing => {
+  mainWindow.webContents.send('playerInfo:dispatch',{bnetIDs:options.bnetIDs, handles:options.handles, regions: options.regions})
+})
+process.on('replays:refresh', nothing => {
+  console.log('replays:refresh called')
+  setTimeout(() => { mainWindow.webContents.send('replays:finishedSending',null) },250)
+})
 
 let tray
 function createTray() {
@@ -52,6 +65,42 @@ function createTray() {
 let mainMenu = Menu.buildFromTemplate(require('./electron/menuTemplate'))
 let mainWindow // Keep a global reference of the window object OR GC
 // console.log(process.getProcessMemoryInfo())
+
+
+const monitorForLobby = function() {
+  const tempPath = path.join(app.getPath('temp'),'Heroes of the Storm')
+  const watcher = chokidar.watch(tempPath, {
+    ignored: /(^|[\/\\])\../,
+    persistent: true
+  })
+  watcher.on('ready', () => watcher.on('add', path => {
+    console.log(path)
+    if (path.includes('replay.server.battlelobby')) {
+      setTimeout(() => {
+        console.log(path,' added!')
+        let file = fs.readFileSync(path)
+        console.log(file)
+        console.log(returnIDs(file.toString()))
+      }, 250)
+    }
+  }))
+}
+
+const monitorAccount = function(account) {
+  const { replayPath, renameFiles } = account
+  const watcher = chokidar.watch(replayPath, {
+    ignored: /(^|[\/\\])\../,
+    persistent: true
+  })
+  watcher.on('ready', () => watcher.on('add', path => {
+    if (!parserPopup.saveInfo.fileNames.hasOwnProperty(path)) {
+      setTimeout(() => {
+        process.emit('addSingleReplay', {rPath:path, renameFiles})
+      },500) // after half a second, send file info to parser.  should be enough time
+    }
+  }))
+  parseNewReplays(account,true)
+}
 
 function createWindow() {
   let winState = windowStateKeeper({defaultWidth: 1200, defaultHeight: 600})
@@ -81,37 +130,33 @@ function createWindow() {
     if (fs.existsSync(replaysFolder)) {
       const replayPaths = fs.readdirSync(replaysFolder)
       const nReps = replayPaths.length
+      let sent = 0
       for (let r=0;r<nReps;r++) {
         const repPath = path.join(replaysFolder,replayPaths[r])
         fs.readFile(repPath, (e,replay) => {
           if (e) return console.log(e)
           try {
             mainWindow.webContents.send('replays:dispatch',[JSON.parse(replay)])
+            sent++
+            if (sent === nReps-1) setTimeout(() => { mainWindow.webContents.send('replays:finishedSending',null) },250)
           } catch (e) {
+            sent++
             console.log(e)
           }
         })
       }
     }
+    mainWindow.webContents.send('playerInfo:dispatch',{bnetIDs:options.bnetIDs, handles:options.handles, regions: options.regions})
     if (options.accounts.length) {
       options.accounts.forEach(account => {
-        const { replayPath, bnetID, region, handle, renameFiles } = account
-        mainWindow.webContents.send('playerInfo:dispatch',{bnetID, region, handle})
-        const watcher = chokidar.watch(replayPath, {
-          ignored: /(^|[\/\\])\../,
-          persistent: true
-        })
-        watcher.on('ready', () => watcher.on('add', path => {
-          if (!parserPopup.saveInfo.fileNames.hasOwnProperty(path)) {
-            setTimeout(() => {
-              process.emit('addSingleReplay', {rPath:path, bnetID, renameFiles})
-            },500) // after half a second, send file info to parser.  should be enough time
-          }
-        }))
-        parseNewReplays(account,true)
+        monitorAccount(account)
       })
       // call parser and do normal startup stuff
-    } else await addNewAccount()
+    } else {
+      let account = await addNewAccount()
+      monitorAccount(account)
+    }
+    monitorForLobby()
   })
   createTray()
   Menu.setApplicationMenu(mainMenu)

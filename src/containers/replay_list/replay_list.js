@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import * as d3 from 'd3'
 import { connect } from 'react-redux'
-import { minSinceLaunchToDate } from '../../helpers/smallHelpers'
+import { minSinceLaunchToDate, simplePercent } from '../../helpers/smallHelpers'
 import ListItem from './list_item'
 import PlayerReplaysSelector from '../../selectors/player_replays_selector'
 import { updatePreferences, updateReplayPage } from '../../actions'
@@ -13,6 +13,16 @@ import Popup from '../../components/popup'
 let currentPage
 
 // import { hashString } from '../../helpers/hasher'
+const CoplayerHeader = (props) => {
+  const { handle, nMatches, nVS, nWinVS, nWinWith, nWith } = props.coplayer
+  let winPercentWith = nWith ? simplePercent(nWinWith/nWith) : '-'
+  let winPercentVS = nVS ? simplePercent(nWinVS/nVS) : '-'
+  return (
+    <div className="otherPlayerSummary">
+      {handle} matches - {nMatches} total. {nWith || '-'} With ({winPercentWith} win rate) | {nVS || '-'} VS ({winPercentVS} win rate)
+    </div>
+  )
+}
 
 class ReplayList extends Component {
   constructor(props) {
@@ -111,7 +121,7 @@ class ReplayList extends Component {
     }
     this.props.updateReplayPage(page)
   }
-  renderItem(index, key, row, handle, bnetID, ranges) {
+  renderItem(index, key, row, handle, bnetID, ranges, coplayer) {
     const rep = this.props.playerData[index]
     const replayValues = {}
     rep.stats.map((x,i) => {
@@ -140,6 +150,9 @@ class ReplayList extends Component {
     return (
       <div key={index} className="replay_item_container">
         <ListItem
+          hasCoplayer = {this.props.selectedCoplayer ? true : false}
+          coplayer={this.props.selectedCoplayer ? rep.coplayer : null}
+          coplayerIsAlly={rep.coplayerIsAlly}
           isYou = {this.props.isYou}
           nHeroes={this.nHeroes}
           changeOpenReplay={this.changeOpenReplay}
@@ -214,10 +227,12 @@ class ReplayList extends Component {
       return [d3.min(statVals),max]
     })
     const { handle, bnetID } = this.props.playerInfo
+    const isYou = this.props.isYou
     return (
       <div>
         <div ref={div => { this.div = div }} className="replayListFilters">
           <div className="replayItem row justify-content-center">
+            {isYou && this.props.selectedCoplayer&&<CoplayerHeader coplayer={this.props.selectedCoplayer} />}
             <FilterDropDown
               currentSelection={`Sort by: ${this.state.sortBy}`}
               buttonLabel=''
@@ -280,7 +295,7 @@ class ReplayList extends Component {
           y={this.state.popupY}
           pic={this.state.popupPic}
         />
-        {this.props.playerData.slice(page*replaysPerPage,(page+1)*replaysPerPage).map((x,i) => this.renderItem(page*replaysPerPage+i,x.MSL,i,handle,bnetID,ranges))}
+        {this.props.playerData.slice(page*replaysPerPage,(page+1)*replaysPerPage).map((x,i) => this.renderItem(page*replaysPerPage+i,x.MSL,i,isYou ? x.handle : handle,isYou ? x.bnetID : bnetID,ranges,this.props.selectedCoplayer))}
         <FilterDropDown
           currentSelection={`${1+page*replaysPerPage} - ${Math.min((page+1)*replaysPerPage,nReplays)} out of ${nReplays} filtered replays`}
           buttonLabel=''

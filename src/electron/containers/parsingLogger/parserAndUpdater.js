@@ -4,7 +4,7 @@ import FilterDropDown from '../../../containers/filter_drop_down'
 import TrafficLights from '../navigation/trafficLights'
 const electron = window.require('electron')
 const { ipcRenderer, remote } = electron
-const parseResults = {0: 'Corrupt', 1: 'BadBans', 2: 'Versus AI', 3: 'Incomplete', 4: 'Unsupported', 9: 'Parsed'}
+const parseResults = {0: 'Corrupt', 1: 'BadBans', 2: 'Versus AI', 3: 'Incomplete', 4: 'Unsupported', 9: 'Parsed', 98: 'PTR'}
 
 class ParsingLog extends Component {
   flipPage(curPage) {
@@ -112,6 +112,9 @@ class ParsingLog extends Component {
       parsedClass = 'parsing'
     } else if (result===2) {
       parsedStatus = 'VS AI'
+      parsedClass = 'vsai'
+    } else if (result===98) {
+      parsedStatus = 'PTR'
       parsedClass = 'vsai'
     } else {
       parsedStatus = parseResults[result]

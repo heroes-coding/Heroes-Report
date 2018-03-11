@@ -117,8 +117,8 @@ path.heroArcPath {
 }
 
 path.percentPathHolder {
-    fill: #666 !important;
-    stroke: #000 !important;
+    fill: #666;
+    stroke: #000;
     stroke-opacity: 0.5;
     fill-opacity: 1;
 }
@@ -139,13 +139,6 @@ path.percentPathHolder {
 
 line.percentPath {
     stroke-width: 3px;
-}
-
-path.percentPathHolder {
-    fill: #999 !important;
-    stroke: #000 !important;
-    stroke-opacity: 0.5;
-    fill-opacity: 0.3;
 }
 
 .statBoxLine {

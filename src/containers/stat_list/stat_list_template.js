@@ -10,12 +10,13 @@ let getSpace = function(spaces) {
 }
 
 export default (props) => {
-  const { title, subTitle, data, graphs, clickFunction } = props
+  const { title, subTitle, data, graphs, clickFunction, dropdown } = props
   return (
     <div className='statItem col-12 col-sm-6 col-lg-12'>
       <div className='handleHolder statBarHolder statBarTitle'>
         {title}
         {title&&<br />}
+        <div className='statListDropdown'>{dropdown}</div>
         {subTitle&&<span id="winrate"><i
           className="fa fa-line-chart"
           aria-hidden="true"
@@ -24,12 +25,13 @@ export default (props) => {
       </div>
       {graphs}
       {data.map((c,ci) => {
-        const { category, left, right, hasGraphs, stats } = c
+        const { category, left, right, hasGraphs, stats, title } = c
         if (!stats.length) {
           return <div key={ci}></div>
         }
         return (
           <div key={ci} >
+            {title&&<div className='statBarHolder statBarMiniTitle'>{title}</div>}
             <div className='statBarHolder statBarTitle'>
               {hasGraphs ? getSpace(1) : getSpace(2)}
               <span className="underline">{category}</span>

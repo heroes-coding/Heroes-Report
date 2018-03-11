@@ -62,7 +62,7 @@
 .closeBox:hover {
   color: red;
 }
-.parserBox:hover, .optionsBox:hover, .maximizeBox:hover, .minimizeBox:hover {
+.parserBox:hover, .optionsBox:hover, .previewBox:hover, .maximizeBox:hover, .minimizeBox:hover {
   color: $Highlight;
 }
 
@@ -70,6 +70,10 @@
 .trafficLightBox {
   right: 0px;
   top: 7px;
+}
+.previewBox {
+  position: absolute;
+  right: -17px;
 }
 .parserBox {
     position: absolute;
@@ -194,8 +198,8 @@
     cursor: pointer;
 }
 .dragSpacerLeft {
-  margin-left: 50px;
-  padding-left: 40px;
+  margin-left: 77px;
+  padding-left: 13px;
 }
 .dragSpacerRight {
     margin-right: 90px;

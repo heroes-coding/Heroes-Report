@@ -9,7 +9,7 @@ export default (props) => {
   return (
     <svg width={props.dim} height={props.dim} className={props.extraClass ? props.extraClass : "heroArc"}>
       <path transform={`translate${props.translate}`} className="percentPathHolder" d={drawArc(half,half+3,1)}></path>
-      <path transform={`translate${props.translate}`} fillOpacity={0.3} fill={props.color} d={drawArc(half+1,half+2,1)}></path>
+      <path transform={`translate${props.translate}`} fillOpacity={props.fillOpacity ? props.fillOpacity : 0.3} fill={props.color} d={drawArc(half+1,half+2,1)}></path>
     </svg>
   )
 }

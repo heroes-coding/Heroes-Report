@@ -23,9 +23,9 @@ const loadSaveInfo = function() {
         try {
           parserPopup.saveInfo = JSON.parse(fs.readFileSync(parsedPath))
         } catch (e) {
-          parserPopup.saveInfo = {files:{},Count:0}
+          parserPopup.saveInfo = {files:{},fileNames:{},Count:0}
         }
-      } else parserPopup.saveInfo = {files:{},Count:0}
+      } else parserPopup.saveInfo = {files:{},fileNames:{},Count:0}
     }
     Object.keys(parserPopup.saveInfo.files).map(x => {
       const filePath = parserPopup.saveInfo.files[x].filePath
@@ -39,6 +39,7 @@ const loadSaveInfo = function() {
 loadSaveInfo()
 
 const saveSaveInfo = function() {
+  console.log('Saving parsed info...')
   fs.writeFileSync(parsedPath,JSON.stringify(parserPopup.saveInfo), 'utf8', {flag: 'w'}, (err) => { if (err) console.log(err) })
   fs.writeFileSync(backupParsedPath,JSON.stringify(parserPopup.saveInfo), 'utf8', {flag: 'w'}, (err) => { if (err) console.log(err) })
 }
