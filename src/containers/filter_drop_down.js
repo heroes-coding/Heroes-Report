@@ -1,9 +1,11 @@
 import React from 'react'
 
-function renderDropdown(d, updateFunction, leftComponentRenderer, rightComponentRenderer, renderName) {
+function DropdownItem(props) {
+  const { d, updateFunction, leftComponentRenderer, rightComponentRenderer, renderName, dropdownClass } = props
+  const dClass = `dropdown-item dropdownHolder ${dropdownClass || ''}`
   return (
     <button
-      className="dropdown-item dropdownHolder"
+      className={dClass}
       type="button"
       key={d.id}
       onClick={(event) => {
@@ -53,7 +55,19 @@ export default (props) => {
       </button>
       <div className="dropdown-menu" aria-labelledby={props.id}>
         {props.dropdownHeader && props.dropdownHeader}
-        {props.dropdowns.map(d => renderDropdown(d, props.updateFunction, props.leftComponentRenderer, props.rightComponentRenderer, props.renderDropdownName))}
+        {props.dropdowns.map((d,i) => {
+          return (
+            <DropdownItem
+              key={i}
+              d={d}
+              updateFunction={props.updateFunction}
+              leftComponentRenderer={props.leftComponentRenderer}
+              rightComponentRenderer={props.rightComponentRenderer}
+              renderName={props.renderDropdownName}
+              dropdownClass={props.dropdownClass}
+            />
+          )
+        })}
       </div>
       {props.info && <i title={props.info} className="fa fa-info-circle infoButton" aria-hidden="true"></i>}
     </form>

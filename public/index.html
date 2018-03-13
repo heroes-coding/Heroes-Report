@@ -179,7 +179,16 @@
         };
       };
     </script>
-    <script async type="text/javascript" src="../appWASM.js"></script>
+    <script type='text/javascript'>
+      // This is so that the WASM script is not loaded for extra Electron windows
+      if (!['/parser','/options','/preview'].includes(window.location.pathname)) {
+        const head = document.getElementsByTagName('head')[0]
+        let script = document.createElement('script')
+        script.type = 'text/javascript'
+        script.src = "../appWASM.js"
+        head.appendChild(script);
+      }
+    </script>
   </head>
   <body>
     <div id="loadingWrapper">

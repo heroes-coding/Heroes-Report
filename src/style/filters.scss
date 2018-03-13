@@ -17,6 +17,10 @@
     font-size: 12px;
 }
 
+.playerSearchDropdown {
+  display: inline-flex !important;
+}
+
 form.input-group.filterGroup.blackButton {
   background: darken($Dark,10%) !important;
 
@@ -193,7 +197,7 @@ img.tinyMap {
   border: 2px solid #2A2931;
 }
 .dropdown-item {
-  display: inline-flex !important;
+  // display: inline-flex !important;
   color: white !important;
 }
 button.dropdown-item:hover {

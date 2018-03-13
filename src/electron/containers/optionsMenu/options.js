@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import _ from 'lodash'
 import { renderNothing } from '../../../components/filterComponents'
 import FilterDropDown from '../../../containers/filter_drop_down'
 import TrafficLights from '../navigation/trafficLights'
@@ -17,11 +16,13 @@ class OptionsMenu extends Component {
     ipcRenderer.on('options',(e,options) => {
       const { prefs, accounts } = options
       const optionKeys = Object.keys(prefs)
-      const newOptions = []
+      let newOptions = []
+      let showUploads = true
       for (let k=0;k<optionKeys.length;k++) {
         const key = optionKeys[k]
         let { value, index, name } = prefs[key]
-        const isBool = value === true || value === false ? true : false
+        if (key === 'uploads') showUploads = value
+        const isBool = value === true || value === false
         const vals = { key, name, index, value, isBool }
         value = isBool ? (value ? 'Yes' : 'No') : value
         const dropdown = isBool ? [{name: 'Yes', id: true, data:{...vals, value: true}}, {name: 'No', id: false, data:{...vals, value: false}}] : Array(remote.getGlobal('nCPU')).fill(0).map((x,i) => i+1).map(x => {
@@ -30,6 +31,7 @@ class OptionsMenu extends Component {
         newOptions.push({key, name, index, value, isBool, dropdown})
       }
       newOptions.sort((x,y) => x.index < y.index ? -1 : 1)
+      newOptions = newOptions.filter(x => showUploads || x.key !== 'simUploads')
       this.setState({options: newOptions, accounts})
     })
   }
@@ -70,24 +72,42 @@ class OptionsMenu extends Component {
           <div className="rt-table" >
             <div className="rt-thead -header">
               <div className="rt-tr">
-                <div className="rt-th replayFileList -cursor-pointer">Replay Folder</div>
-                <div className="rt-th parsedList -cursor-pointer">Player</div>
-                <div className="rt-th parsedList -cursor-pointer">Rename Replays</div>
+                <div className="rt-th replayFileList">Replay Folder</div>
+                <div className="rt-th parsedList -cursor-pointer">
+                  Rename Replays
+                  <i title="Renaming replays is not retroactive" className="fa fa-info-circle infoButton" aria-hidden="true"></i>
+                </div>
+                <div className="rt-th parsedList -cursor-pointer">
+                  Delete Path
+                  <i title="Deleting a replay path will not remove previously parsed replays from your history.  It will just prevent further parsing and replay path monitoring upon program restart." className="fa fa-info-circle infoButton" aria-hidden="true"></i>
+                </div>
               </div>
             </div>
             <div className="rt-tbody">
               {this.state.accounts.map((x,i) => {
                 return (
                   <div key={i} className="rt-tr-group">
-                    <div className="rt-tr replayItem addPath">
+                    <div className="rt-tr replayItem">
                       <div className={`rt-td replayPath`}>
                         {x.replayPath.split("\\").join("\\ ")}
                       </div>
-                      <div className={`rt-td parsedPath`}>
-                        {x.handle}
+                      <div
+                        className={`rt-td parsedPath addPath`}
+                        onClick={() => {
+                          console.log(x.renameFiles)
+                          ipcRenderer.send('account:renameFilesToggle',x)
+                        }}
+                      >
+                        <i className={`fa fa-toggle-${x.renameFiles ? 'on' : 'off'}`} aria-hidden="true"></i>
                       </div>
-                      <div className={`rt-td parsedPath`}>
-                        {x.renameFiles ? 'Yes' : 'No'}
+                      <div
+                        className={`rt-td parsedPath addPath`}
+                        onClick={() => {
+                          console.log('delete account',x)
+                          ipcRenderer.send('account:deleteReplayPath',x)
+                        }}
+                      >
+                        <i className="fa fa-minus-square" aria-hidden="true"></i>
                       </div>
                     </div>
                   </div>
@@ -109,23 +129,6 @@ class OptionsMenu extends Component {
         </div>
       </div>
     )
-    /*
-    return (
-      <div className="row dataFilters">
-        <FilterDropDown
-          currentSelection={modeDic[this.props.prefs.mode].name}
-          name='Game Mode: '
-          id='gameMode'
-          dropdowns={modeChoices}
-          updateFunction={this.updateMode}
-          leftComponentRenderer={renderNothing}
-          rightComponentRenderer={renderNothing}
-          renderDropdownName={true}
-          currentID={modeDic[this.props.prefs.mode].id}
-        />
-      </div>
-    )
-    */
   }
 }
 

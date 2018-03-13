@@ -95,7 +95,6 @@ let firsts = (first,text) => {
 
 let left = (props,div, getReplay) => {
   const { hero, coplayer, slot, id, team, coplayerIsAlly, heroes, hasCoplayer } = props
-  if (coplayer) console.log(coplayer)
   return (
     <div className={`col-12 col-sm-6 col-xl-6 noPadding listPart`} align="center" onClick={() => getReplay(props)}>
       <div className="inner_list_item_left">

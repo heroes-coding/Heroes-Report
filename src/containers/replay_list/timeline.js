@@ -3,6 +3,7 @@ import * as d3 from 'd3'
 import { connect } from 'react-redux'
 import { minSinceLaunchToDate, DateToMSL } from '../../helpers/smallHelpers'
 import { getHOTSDictionary, updateTime } from '../../actions'
+import { withRouter } from 'react-router-dom'
 
 class TimeLine extends React.Component {
   constructor(props) {
@@ -145,4 +146,4 @@ const mapStateToProps = state => {
   }
 }
 
-export default connect(mapStateToProps,{getHOTSDictionary, updateTime})(TimeLine)
+export default withRouter(connect(mapStateToProps,{getHOTSDictionary, updateTime})(TimeLine))

@@ -13,9 +13,9 @@ global['nCPU'] = nCPU
 let options = {
   prefs: {
     uploads:{name: 'Upload to HOTS Api', value:true, index:0},
-    simUploads: {name: 'Max simultaneous uploads', value: 5, index: 1},
-    simParsers: {name:'Max simultaneous parsers', value: nCPU, index: 2},
-    previews:{name:'Show match previews', value: true, index: 3}
+    simUploads: {name: 'Max simultaneous uploads', value: Math.max(Math.round(nCPU/2),1), index: 1},
+    simParsers: {name:'Max simultaneous parsers', value: Math.max(Math.round(nCPU/2),1), index: 2},
+    previews:{name:'Automatically show match previews', value: true, index: 3}
   },
   accounts: [],
   replayPaths: [],
@@ -24,15 +24,49 @@ let options = {
   regions: [],
 }
 
+ipcMain.on('account:renameFilesToggle',async(e,oldAccount) => {
+  const { replayPath, renameFiles } = oldAccount
+  const newAccounts = []
+  for (let a=0;a<options.accounts.length;a++) {
+    const account = options.accounts[a]
+    if (account.replayPath === replayPath) account.renameFiles = !renameFiles
+    newAccounts.push(account)
+  }
+  options.accounts = newAccounts
+  saveOptions()
+  optionsPopup.window.webContents.send('options',options)
+})
+
+process.on('account:addCustomPath', ({replayPath,renameFiles}) => {
+  options.accounts.push({replayPath,renameFiles})
+  saveOptions()
+  optionsPopup.window.webContents.send('options',options)
+})
+
+ipcMain.on('account:deleteReplayPath',async(e,oldAccount) => {
+  const { replayPath } = oldAccount
+  const newAccounts = []
+  for (let a=0;a<options.accounts.length;a++) {
+    const account = options.accounts[a]
+    if (account.replayPath === replayPath) continue // skipping means deleting lol
+    newAccounts.push(account)
+  }
+  options.accounts = newAccounts
+  saveOptions()
+  optionsPopup.window.webContents.send('options',options)
+})
+
 ipcMain.on('option:update',(e,args) => {
   const { key, value } = args
   options.prefs[key].value = value
   console.log(options)
   saveOptions()
+  optionsPopup.window.webContents.send('options',options)
 })
 
-ipcMain.on('account:selectReplayPath',(e,args) => {
-  addNewAccount()
+ipcMain.on('account:selectReplayPath',async(e,args) => {
+  await addNewAccount(true)
+  optionsPopup.window.webContents.send('options',options)
 })
 
 let optionsPopup = {window: null}
@@ -48,6 +82,7 @@ if (fs.existsSync(optionsPath)) {
 const saveOptions = () => fs.writeFileSync(optionsPath,JSON.stringify(options), 'utf8', (err) => { if (err) console.log(err) })
 
 process.on('newaccount:manualadd',({bnetID, region, handle}) => {
+  console.log('adding new account through manual add, handle: ',handle)
   updateAccounts({bnetID, region, handle})
 })
 
@@ -55,16 +90,18 @@ const updateAccounts = function({bnetID, region, handle}) {
   options.bnetIDs.push(bnetID)
   options.handles.push(handle)
   options.regions.push(region)
-  process.emit('newaccount:send',null)
+  process.emit('newaccount:send',{bnetID, region, handle})
   saveOptions()
 }
 
-const addNewAccount = async() => {
+const addNewAccount = async(fromBrowser) => {
   let promise = new Promise(async function(resolve, reject) {
     let newAccount = await showAccountSelection(options.accounts)
     const {replayPath, bnetID, region, handle, renameFiles} = newAccount
+    console.log('adding new account through add new account, handle: ',handle)
     options.accounts.push({replayPath,renameFiles})
     updateAccounts({bnetID, region, handle})
+    if (fromBrowser) process.emit('monitorAccount', newAccount)
     return resolve(newAccount)
   })
   return promise

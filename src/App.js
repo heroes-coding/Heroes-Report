@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Storage from './helpers/storage'
 import { getHOTSDictionary, updatePreferences, rollbackState, getTalentDic, getYourData } from './actions'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Route, Switch, withRouter } from 'react-router-dom'
 import DataTable from './containers/table/data_table'
 import HeroPage from './containers/heroPage/hero_page'
 import NavigationBar from './containers/nav_bar/nav_bar'
@@ -18,8 +18,9 @@ import featuresPath from './md/features.md'
 import aboutPath from './md/about.md'
 import disclaimerPath from './md/disclaimer.md'
 import Fuse from 'fuse.js'
-let ParserAndUpdater, OptionsMenu, ipcRenderer
+let ParserAndUpdater, OptionsMenu, ipcRenderer, PreviewMenu
 if (window.isElectron) ParserAndUpdater = require('./electron/containers/parsingLogger/parserAndUpdater').default
+if (window.isElectron) PreviewMenu = require('./electron/containers/preview/previewer').default
 if (window.isElectron) OptionsMenu = require('./electron/containers/optionsMenu/options').default
 if (window.isElectron) ipcRenderer = window.require('electron').ipcRenderer
 
@@ -34,12 +35,22 @@ class App extends Component {
       window.parseReplay = function(replayPath) {
         ipcRenderer.send('parseSingleReplay',{replayPath})
       }
+      ipcRenderer.on('loadPlayer', (e,playerID) => {
+        this.props.history.push(`/players/${playerID}`)
+      })
       ipcRenderer.on('dispatchSingleReplay', (e,replay) => {
         console.log(replay,'added to window.parsedReplay')
         window.parsedReplay = replay
       })
       window.yourReplays = []
       window.playerMatchups = {}
+      window.playersByHandle = {}
+      ipcRenderer.on('getPreviewPlayerInfo',(e,results) => {
+        // This event / function takes in the preview info and checks it against player info in this main browser window and then sends it back to the main electron process to send to the actual preview window
+        const { handles, battleTags } = results
+        results.playerInfos = handles.map((h,i) => window.playersByHandle[`${h}#${battleTags[i]}`])
+        ipcRenderer.send('ferryPreviewPlayerInfo',results)
+      })
       ipcRenderer.on('replays:dispatch',(e,replays) => {
         window.yourReplays = window.yourReplays.concat(replays)
         window.yourReplays.sort((x,y) => x.MSL<y.MSL ? 1 : -1)
@@ -48,14 +59,20 @@ class App extends Component {
           const { allyIDs, enemyIDs, Won } = replays[r]
           for (let p=0;p<4;p++) {
             const [ bnetID, handle ] = allyIDs[p]
-            if (!window.playerMatchups.hasOwnProperty(bnetID)) window.playerMatchups[bnetID] = {handle, nWith: 0, nVS: 0, nWinWith: 0, nWinVS: 0, nMatches: 0}
+            if (!window.playerMatchups.hasOwnProperty(bnetID)) {
+              window.playerMatchups[bnetID] = {handle, nWith: 0, nVS: 0, nWinWith: 0, nWinVS: 0, nMatches: 0}
+              window.playersByHandle[handle] = window.playerMatchups[bnetID] // lookup by reference
+            }
             window.playerMatchups[bnetID].nWith += 1
             window.playerMatchups[bnetID].nWinWith += Won
             window.playerMatchups[bnetID].nMatches += 1
           }
           for (let p=0;p<5;p++) {
             const [ bnetID, handle ] = enemyIDs[p]
-            if (!window.playerMatchups.hasOwnProperty(bnetID)) window.playerMatchups[bnetID] = {handle, nWith: 0, nVS: 0, nWinWith: 0, nWinVS: 0, nMatches: 0}
+            if (!window.playerMatchups.hasOwnProperty(bnetID)) {
+              window.playerMatchups[bnetID] = {handle, nWith: 0, nVS: 0, nWinWith: 0, nWinVS: 0, nMatches: 0}
+              window.playersByHandle[handle] = window.playerMatchups[bnetID] // lookup by reference
+            }
             window.playerMatchups[bnetID].nVS += 1
             window.playerMatchups[bnetID].nWinVS += Won
             window.playerMatchups[bnetID].nMatches += 1
@@ -94,39 +111,36 @@ class App extends Component {
     this.props.getTalentDic()
   }
   render() {
-    const showHeaders = !['/parser','/options'].includes(window.location.pathname)
     return (
-      <BrowserRouter>
-        <div>
-          {!window.isElectron&&<NavigationBar />}
-          <div className={`container-fluid ${window.isElectron ? 'electronBody' : ''}`} >
-            <div className="row">
-              <div className="col-xl-1"></div>
-              <div className={`col-sm-12 col-lg-12 col-xl-${window.isElectron ? '12' : '10'}`} id="contentHolder">
-                <Switch>
-                  {window.isElectron && <Route path="/parser" component={ParserAndUpdater} />}
-                  {window.isElectron && <Route path="/options" component={OptionsMenu} />}
-                  <Route path="/playerlist/:id" component={PlayerList} />
-                  <Route path="/players/:id" component={PlayerPage} />
-                  <Route path="/heroes/:id" component={HeroPage} />
-                  <Route path="/you" component={YourPage} />
-                  <Route path="/features" component={Features} />
-                  <Route path="/about" component={About} />
-                  <Route path="/disclaimer" component={Disclaimer} />
-                  <Route path="/" component={DataTable} />
-                </Switch>
-              </div>
-              <div className="col-xl-1"></div>
+      <div>
+        {!window.isElectron&&<NavigationBar />}
+        <div className={`container-fluid ${window.isElectron ? 'electronBody' : ''}`} >
+          <div className="row">
+            <div className="col-xl-1"></div>
+            <div className={`col-sm-12 col-lg-12 col-xl-${window.isElectron ? '12' : '10'}`} id="contentHolder">
+              <Switch>
+                {window.isElectron && <Route path="/parser" component={ParserAndUpdater} />}
+                {window.isElectron && <Route path="/options" component={OptionsMenu} />}
+                {window.isElectron && <Route path="/preview" component={PreviewMenu} />}
+                <Route path="/playerlist/:id" component={PlayerList} />
+                <Route path="/players/:id" component={PlayerPage} />
+                <Route path="/heroes/:id" component={HeroPage} />
+                <Route path="/you" component={YourPage} />
+                <Route path="/features" component={Features} />
+                <Route path="/about" component={About} />
+                <Route path="/disclaimer" component={Disclaimer} />
+                <Route path="/" component={DataTable} />
+              </Switch>
             </div>
-            {showHeaders&&<Footer />}
+            <div className="col-xl-1"></div>
           </div>
-          {window.isElectron&&showHeaders&&<div className="electronHeader"><NavigationBar /></div>}
-          {window.isElectron&&showHeaders&&<TrafficLights window={window.remote.getCurrentWindow()} />}
-          {window.isElectron&&showHeaders&&<ElectronMenu/>}
-          {window.isElectron&&<div className="appBorder" />}
+          <Footer />
         </div>
-      </BrowserRouter>
-
+        <div className="electronHeader"><NavigationBar /></div>
+        {window.isElectron&&<TrafficLights window={window.remote.getCurrentWindow()} />}
+        <ElectronMenu/>
+        {window.isElectron&&<div className="appBorder" />}
+      </div>
     )
   }
 }
@@ -135,4 +149,45 @@ function mapStateToProps({prefs}) {
   return {prefs}
 }
 
-export default connect(mapStateToProps, {getTalentDic, getHOTSDictionary, rollbackState, getYourData})(App)
+let MainApp = withRouter(connect(mapStateToProps, {getTalentDic, getHOTSDictionary, rollbackState, getYourData})(App))
+
+class ExtraWindows extends Component {
+  render() {
+    const loading = document.getElementById('loadingWrapper')
+    if (loading) loading.parentNode.removeChild(loading)
+    return (
+      <div>
+        <div className={`container-fluid electronBody`} >
+          <div className="row">
+            <div className="col-xl-1"></div>
+            <div className={`col-sm-12 col-lg-12 col-xl-12`} id="contentHolder">
+              <Switch>
+                <Route path="/parser" component={ParserAndUpdater} />
+                <Route path="/options" component={OptionsMenu} />
+                <Route path="/preview" component={PreviewMenu} />
+              </Switch>
+            </div>
+            <div className="col-xl-1"></div>
+          </div>
+        </div>
+        <div className="appBorder" />
+      </div>
+    )
+  }
+}
+
+class AppHolder extends Component {
+  render() {
+    const showHeaders = !['/parser','/options','/preview'].includes(window.location.pathname)
+    return (
+      <BrowserRouter>
+        <div>
+          {showHeaders&&<Route path="/" component={MainApp}/>}
+          {!showHeaders&&<Route path="/" component={ExtraWindows}/>}
+        </div>
+      </BrowserRouter>
+    )
+  }
+}
+
+export default AppHolder

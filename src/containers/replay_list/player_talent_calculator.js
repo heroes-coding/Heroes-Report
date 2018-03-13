@@ -74,6 +74,16 @@ class TalentCalculator extends Component {
     if (!filteredTalents) {
       return <div></div>
     }
+    try {
+      filteredTalents.map((tals,l) => {
+        tals.filter((tal,i) => baseTalents[l][i][1]).map((tal,i) => {
+        })
+      })
+    } catch (e) {
+      console.log('OH NOES!')
+      this.props.selectTalent('reset')
+      return <div></div>
+    }
     return (
       <div className="container-fluid col-12 col-md-12 col-lg-9 order-lg-last" id="talentBox">
         <Popup

@@ -6,6 +6,8 @@ const { Protocol, MPQArchive } = require('./parser/protocol.js')
 const protoProto = require('./parser/proto.json')
 const superGet = require('./parser/superGet.js')
 const userDataPath = app.getPath('userData')
+const userDocumentsPath = app.getPath('documents')
+const returnIDs = require('./parser/bareLobby').returnIDs
 
 let HOTSPromise = (async function getHOTS() {
   let promise = new Promise(async function(resolve, reject)  {
@@ -81,27 +83,36 @@ function getUsername(replayPath,bnetID) {
       const name = details['m_playerList'][i]['m_name'].toString()
       if (pID === bnetID) handle = name
     }
+    if (handle) {
+      const lobbyText = archive.readFile('replay.server.battlelobby')
+      const { handles, battleTags } = returnIDs(lobbyText.toString())
+      const playerIndex = handles.indexOf(handle)
+      handle = `${handle}#${battleTags[playerIndex]}`
+    }
   }
   return { nReplays, handle }
 }
 
-function showDialog() {
-  dialog.showOpenDialog({defaultPath: '/Users/Jeremy/Desktop', buttonLabel: 'Select Replay Path', title: 'Select your replay path for Heroes of the Storm', properties: ['openDirectory']}, (openPath) => {
-    console.log(openPath)
+async function selectCustomPath() {
+  let promise = new Promise(async function(resolve, reject) {
+    dialog.showOpenDialog({defaultPath: userDocumentsPath, buttonLabel: 'Select Custom Replay Path', title: 'Select a path for Heroes of the Storm replays', properties: ['openDirectory']}, (openPath) => {
+      resolve(openPath)
+    })
   })
+  return promise
 }
 
 function showAccountSelection(currentAccounts) {
   let promise = new Promise(async function(resolve, reject) {
     let accounts = getAccountPaths()
-    let buttons = ['No replay path for now']
+    let buttons = ['No replay path for now','Select a custom path not listed below (make sure to tick whether to rename replays or not below before clicking this)']
     accounts.map((a,i) => {
       const {region, bnetID, replayPath, nReplays, handle} = a
       if (currentAccounts && currentAccounts.filter(x => {
         console.log(x,replayPath)
         return x.replayPath === replayPath
       }).length) return
-      buttons.push(`${handle ? handle : bnetID} (${regions[region]} region) - ${nReplays} replays (Path: ${replayPath})`)
+      buttons.push(`${handle || bnetID} (${regions[region]} region) - ${nReplays} replays (Path: ${replayPath})`)
     })
     let title, message
     if (currentAccounts && currentAccounts.length) {
@@ -111,10 +122,17 @@ function showAccountSelection(currentAccounts) {
       title = 'Welcome to Heroes Report'
       message = "Please select one of the account folders below to begin parsing and uploading!  If you don't want to upload, select the options menu (the gear) on the main window and change that option before"
     }
-    dialog.showMessageBox({buttons, title, message, checkboxLabel:'Rename replays in this folder (and subfolders) to DATE-GAMEMODE-HERO-MAP-OUTCOME .StormReplay format'}, (index, renameFiles) => {
-      if (index) {
-        const { replayPath, bnetID, region, handle } = accounts[index-1]
+    dialog.showMessageBox({buttons, title, message, checkboxLabel:'Rename replays in this folder (and subfolders) to DATE-GAMEMODE-MAP-HERO-OUTCOME .StormReplay format'}, async(index, renameFiles) => {
+      if (index > 1) {
+        const { replayPath, bnetID, region, handle } = accounts[index-2]
         resolve({replayPath, bnetID, region, handle, renameFiles})
+      } else if (index === 1) {
+        let customPath = await selectCustomPath()
+        if (customPath) {
+          let newAccount = { replayPath: customPath[0], renameFiles }
+          process.emit('monitorAccount', newAccount)
+          process.emit('account:addCustomPath', newAccount)
+        }
       }
     })
   })

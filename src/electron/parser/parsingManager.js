@@ -164,12 +164,14 @@ const saveReplay = async function(replay, filePath, renameFiles, fileID) {
   }
   updateParsingMenu({[fileID]:saveInfo.files[fileID]})
   if (fs.existsSync(repSavePath)) return
-  process.emit('dispatchReplay', condensed)
+  replaysReadyForDispatch.push(condensed)
   fs.writeFileSync(repSummaryPath,JSON.stringify(condensed), 'utf8', (err) => { if (err) console.log(err) })
   fs.writeFileSync(repSavePath,JSON.stringify(replay), 'utf8', (err) => { if (err) console.log(err) })
 }
 
 let parsed
+let replaysReadyForDispatch = []
+
 const parseResults = {0: 'Corrupt', 1: 'BadBans', 2: 'AI', 3: 'Incomplete', 4: 'Unsupported',9: 'Parsed'}
 const forkMessage = async(msg) => {
   if (msg.hasOwnProperty('protoNumber')) {
@@ -233,6 +235,8 @@ const parsingLoop = async function() {
   while (openParseCount) {
     await asleep(250)
   }
+  process.emit('dispatchReplays', replaysReadyForDispatch.slice(0,))
+  replaysReadyForDispatch = []
   saveSaveInfo()
   process.emit("replays:refresh",null)
   process.emit("massUpload",uploadInfoQueue)

@@ -234,6 +234,7 @@ class DataFilters extends Component {
             currentSelection='Coplayers'
             name=''
             id='playerSearchDropdown'
+            dropdownClass='playerSearchDropdown'
             dropdowns={this.props.playerCoplayerResults}
             updateFunction={this.updateSelectedPlayer}
             leftComponentRenderer={renderNothing}
