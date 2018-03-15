@@ -1,3 +1,4 @@
+const now = require("performance-now")
 const { HOTSPromise } = require('./electron/startup.js')
 const chokidar = require('chokidar')
 const electron = require('electron')
@@ -6,18 +7,15 @@ const path = require('path')
 const url = require('url')
 const { app, BrowserWindow, Menu, Tray, ipcMain } = electron
 const windowStateKeeper = require('electron-window-state')
-const importReplays = require('./electron/importReplays').openReplays
-const { fork } = require('child_process')
 const { parseNewReplays } = require('./electron/parser/parsingManager.js')
 const dataPath = app.getPath('userData')
-const replaysFolder = path.join(dataPath,'replaySummaries')
+const replaySummaries = path.join(dataPath,'replaySummaries.json')
 const { showParsingMenu, parserPopup, saveSaveInfo } = require('./electron/containers/parsingLogger/parseAndUpdateManager.js')
 const { options, optionsPopup, loadOptionsMenu, addNewAccount } = require('./electron/containers/optionsMenu/optionsManager.js')
 const { loadPreviewWindow }= require('./electron/containers/preview/previewManager.js')
 const { returnIDs } = require('./electron/parser/bareLobby.js')
-console.log(returnIDs)
 require('electron-context-menu')()
-require('electron-reload')(__dirname, { electron: require('${__dirname}/../../node_modules/electron') })
+// require('electron-reload')(__dirname, { electron: require('${__dirname}/../../node_modules/electron') })
 
 process.on('dispatchSingleReplay', replay => {
   mainWindow.webContents.send('dispatchSingleReplay',replay)
@@ -43,6 +41,7 @@ ipcMain.on('options:toggle',(e,args) => {
     optionsPopup.window.show()
   }
 })
+
 ipcMain.on('request:replay',(e,MSL) => {
   fs.readFile(path.join(path.join(dataPath,'replays',`${MSL}.json`)), (e,replay) => {
     if (e) return console.log(e)
@@ -51,12 +50,14 @@ ipcMain.on('request:replay',(e,MSL) => {
 })
 
 process.on('dispatchReplays', replays => {
+  console.log(`Should be sending ${replays.length} replays to main window`)
   mainWindow.webContents.send('replays:dispatch',replays)
 })
+
 process.on('newaccount:send', ({bnetID, region, handle}) => {
   mainWindow.webContents.send('playerInfo:dispatch',{bnetIDs:options.bnetIDs, handles:options.handles, regions: options.regions})
-
 })
+
 process.on('replays:refresh', nothing => {
   console.log('replays:refresh called')
   setTimeout(() => { mainWindow.webContents.send('replays:finishedSending',null) },250)
@@ -87,7 +88,7 @@ const battleLobbyResults = { handles:
      'MightyBeast',
      'Chasanak',
      'ElRickJames' ],
-  teamNumbers: [ 0, 1, 1, 0, 0, 0, 1, 1, 0, 0 ],
+  teamNumbers: [ 0,0, 0, 0, 0, 0, 0, 0, 1, 1 ],
   battleTags:
    [ '1348',
      '1918',
@@ -103,7 +104,7 @@ const battleLobbyResults = { handles:
 
 const monitorForLobby = function() {
   // This is for testing purposes only.  Delete it when everything is ready.
-  setTimeout(() => { mainWindow.webContents.send('getPreviewPlayerInfo',battleLobbyResults) }, 2000)
+  // setTimeout(() => { mainWindow.webContents.send('getPreviewPlayerInfo',battleLobbyResults) }, 4000)
   // main window is already loaded when calling this function
   const tempPath = path.join(app.getPath('temp'),'Heroes of the Storm')
   const watcher = chokidar.watch(tempPath, {
@@ -148,10 +149,33 @@ const monitorAccount = function(account) {
 function createWindow() {
   let winState = windowStateKeeper({defaultWidth: 1200, defaultHeight: 600})
   mainWindow = new BrowserWindow({width: winState.width, height: winState.height, x: winState.x, y: winState.y, minWidth: 825, minHeight: 480, frame: false, standardWindow: false, show: false})
-  mainWindow.once('ready-to-show', () => { mainWindow.show() })
+  mainWindow.once('ready-to-show', async() => {
+    if (options.accounts.length) {
+      options.accounts.forEach(account => {
+        monitorAccount(account)
+      })
+      // call parser and do normal startup stuff
+    } else {
+      let account = await addNewAccount()
+      monitorAccount(account)
+    }
+    monitorForLobby()
+    if (fs.existsSync(replaySummaries)) {
+      fs.readFile(replaySummaries, (e,summaries) => {
+        summaries = JSON.parse(`[${summaries.slice(0,summaries.length-1)}]`)
+        setTimeout(() => { mainWindow.webContents.send('replays:finishedSending',null) },250)
+        mainWindow.webContents.send('replays:dispatch',summaries)
+        // showing the main window after all of this is done makes the program FEEL less laggy
+        setTimeout(() => {
+          if (loadingWindow) loadingWindow.close()
+          mainWindow.show()
+        },1000)
+      })
+    } else mainWindow.show()
+  })
   winState.manage(mainWindow)
   const startUrl = process.env.ELECTRON_START_URL || url.format({
-    pathname: path.join(__dirname, '/../build/index.html'),
+    pathname: path.join(__dirname, '/../index.html'),
     protocol: 'file:',
     slashes: true
   })
@@ -170,32 +194,7 @@ function createWindow() {
   }
 
   mainWindow.webContents.on('did-finish-load', async() => {
-    if (fs.existsSync(replaysFolder)) {
-      const replayOpenerFork = fork(require.resolve('./electron/importReplays'))
-      replayOpenerFork.send(replaysFolder)
-      replayOpenerFork.on('message', results => {
-        if (results.hasOwnProperty('toSend')) {
-          setTimeout(() => { mainWindow.webContents.send('replays:finishedSending',null) },250)
-          mainWindow.webContents.send('replays:dispatch',results.toSend)
-        }
-      })
-      /*
-      const toSend = await importReplays(replaysFolder)
-      setTimeout(() => { mainWindow.webContents.send('replays:finishedSending',null) },250)
-      mainWindow.webContents.send('replays:dispatch',toSend)
-      */
-    }
     mainWindow.webContents.send('playerInfo:dispatch',{bnetIDs:options.bnetIDs, handles:options.handles, regions: options.regions})
-    if (options.accounts.length) {
-      options.accounts.forEach(account => {
-        monitorAccount(account)
-      })
-      // call parser and do normal startup stuff
-    } else {
-      let account = await addNewAccount()
-      monitorAccount(account)
-    }
-    monitorForLobby()
   })
   createTray()
   Menu.setApplicationMenu(mainMenu)
@@ -212,10 +211,26 @@ function createWindow() {
   })
 }
 
+let loadingWindow
+function showLoadingWindow() {
+  loadingWindow = new BrowserWindow({width: 340, height: 225, resizable: false, frame: false, standardWindow: false, show: false})
+  loadingWindow.once('ready-to-show', async() => {
+    loadingWindow.show()
+    loadPreviewWindow()
+    createWindow()
+  })
+  const loadingURL = process.env.ELECTRON_START_URL ? path.join(process.env.ELECTRON_START_URL,'loading') : url.format({
+    pathname: path.join(__dirname, '/../loading'),
+    protocol: 'file:',
+    slashes: true
+  })
+  console.log(loadingURL)
+  loadingWindow.loadURL(loadingURL)
+}
+
 // This method will be called when Electron has finished initialization and is ready to create browser windows.
 app.on('ready', () => {
-  loadPreviewWindow()
-  createWindow()
+  showLoadingWindow()
 })
 
 app.on('window-all-closed', function() {

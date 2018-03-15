@@ -18,15 +18,38 @@ import featuresPath from './md/features.md'
 import aboutPath from './md/about.md'
 import disclaimerPath from './md/disclaimer.md'
 import Fuse from 'fuse.js'
+import { sortObjectListByProperty } from './helpers/CPPBridge' // This is because sorting player matchups took 10 seconds for a list of 20K elements.  I have no idea why
+window.sortObjectListByProperty = sortObjectListByProperty
 let ParserAndUpdater, OptionsMenu, ipcRenderer, PreviewMenu
+
 if (window.isElectron) ParserAndUpdater = require('./electron/containers/parsingLogger/parserAndUpdater').default
 if (window.isElectron) PreviewMenu = require('./electron/containers/preview/previewer').default
 if (window.isElectron) OptionsMenu = require('./electron/containers/optionsMenu/options').default
 if (window.isElectron) ipcRenderer = window.require('electron').ipcRenderer
 
+const showHeaders = !['/parser','/options','/preview'].includes(window.location.pathname)
 const Features = () => <Markdown path={featuresPath} />
 const About = () => <Markdown path={aboutPath} />
 const Disclaimer = () => <Markdown path={disclaimerPath} />
+
+window.save = function(data, filename) {
+  if (!data) {
+    console.error('Console.save: No data')
+    return
+  }
+  if (!filename) filename = 'console.json'
+  if (typeof data === "object") {
+    data = JSON.stringify(data, undefined, 4)
+  }
+  let blob = new window.Blob([data], {type: 'text/json'})
+  let e = document.createEvent('MouseEvents')
+  let a = document.createElement('a')
+  a.download = filename
+  a.href = window.URL.createObjectURL(blob)
+  a.dataset.downloadurl = ['text/json', a.download, a.href].join(':')
+  e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+  a.dispatchEvent(e)
+}
 
 class App extends Component {
   constructor(props) {
@@ -81,7 +104,7 @@ class App extends Component {
         window.matchupResults = Object.keys(window.playerMatchups).map((k,i) => {
           return {bnetID:parseInt(k), ...window.playerMatchups[k]}
         })
-        window.matchupResults.sort((x,y) => x.nMatches < y.nMatches ? 1 : -1)
+        window.matchupResults = window.sortObjectListByProperty(window.matchupResults, 'nMatches', true)
         const options = {
           shouldSort: true,
           threshold: 0.25,
@@ -178,7 +201,6 @@ class ExtraWindows extends Component {
 
 class AppHolder extends Component {
   render() {
-    const showHeaders = !['/parser','/options','/preview'].includes(window.location.pathname)
     return (
       <BrowserRouter>
         <div>

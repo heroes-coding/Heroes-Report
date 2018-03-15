@@ -176,6 +176,10 @@ class PlayerMatchupTable extends Component {
     for (let r=0;r<nReplays;r++) {
       const replay = playerData[r]
       const { allies, enemies, MSL, map, Won } = replay
+      if (isNaN(map)) {
+        console.log(map)
+        continue
+      }
       for (let p=0;p<5;p++) {
         const ally = allies[p]
         const enemy = enemies[p]

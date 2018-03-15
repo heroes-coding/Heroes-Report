@@ -21,12 +21,26 @@
     -->
     <title>Heroes Report</title>
     <style media="screen" type="text/css">
+    body {
+      overflow-x: hidden;
+      overflow-y: hidden;
+      margin: 0px;
+    }
+    #loadingText {
+      color: white;
+      margin-top: auto;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 470px;
+    }
     #loadingWrapper {
         position: absolute;
-        height: 1400px;
-        background: black !important;
+        # background: black !important;
+        background: black url(tinyLogo.png) no-repeat center !important;
         width: 100%;
-        opacity: 0.75;
+        margin-top: -30px;
         top: 0;
         bottom: 0;
         z-index: 5;
@@ -37,7 +51,7 @@
           margin-left:-100px;
           position: fixed !important;
           top: 50% !important;
-          margin-top: -100px;
+          margin-top: -115px;
           width: 45px;
           z-index: 9000 !important;
       }
@@ -147,46 +161,69 @@
       }
     </style>
     <script type='text/javascript'>
-      window.moduleLoaded = false
-      var Module = {
-        preRun: [],
-        postRun: [() => {window.moduleLoaded=true}],
-        print: (function() {
-          return function(text) {
-            if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-            console.log(text);
-          };
-        })(),
-        printErr: function(text) {
-          if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-          console.error(text);
-
-        },
-        setStatus: function(text) {
-        },
-        totalDependencies: 0,
-        monitorRunDependencies: function(left) {
-          this.totalDependencies = Math.max(this.totalDependencies, left);
-          Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
-        }
-      };
-      Module.setStatus('Downloading...');
-      window.onerror = function(event) {
-        // TODO: do not warn on ok events like simulating an infinite loop or exitStatus
-        Module.setStatus('Exception thrown, see JavaScript console');
-        Module.setStatus = function(text) {
-          if (text) Module.printErr('[post-exception status] ' + text);
-        };
-      };
-    </script>
-    <script type='text/javascript'>
       // This is so that the WASM script is not loaded for extra Electron windows
-      if (!['/parser','/options','/preview'].includes(window.location.pathname)) {
+      if (typeof module === 'object') {window.module = module; module = undefined;}
+      if (!['/parser','/options','/preview','/loading'].includes(window.location.pathname)) {
+        window.moduleLoaded = false
+        var Module = {
+          preRun: [],
+          postRun: [() => {window.moduleLoaded=true}],
+          print: (function() {
+            return function(text) {
+              if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+              console.log(text);
+            };
+          })(),
+          printErr: function(text) {
+            if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+            console.error(text);
+
+          },
+          setStatus: function(text) {
+          },
+          totalDependencies: 0,
+          monitorRunDependencies: function(left) {
+            this.totalDependencies = Math.max(this.totalDependencies, left);
+            Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+          }
+        };
+        Module.setStatus('Downloading...');
+        window.onerror = function(event) {
+          // TODO: do not warn on ok events like simulating an infinite loop or exitStatus
+          Module.setStatus('Exception thrown, see JavaScript console');
+          Module.setStatus = function(text) {
+            if (text) Module.printErr('[post-exception status] ' + text);
+          };
+        };
         const head = document.getElementsByTagName('head')[0]
         let script = document.createElement('script')
         script.type = 'text/javascript'
         script.src = "../appWASM.js"
         head.appendChild(script);
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-105706120-1', 'auto');
+        ga('send', 'pageview');
+      }
+      if (!['/loading'].includes(window.location.pathname)) {
+        // you need all of these scripts for electron windows, but not loading or other 'empty' windows
+        const head = document.getElementsByTagName('head')[0]
+        const sources = ["https://code.jquery.com/jquery-3.2.1.slim.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js",
+        "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"]
+        const integrities = ["sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN",
+        "sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh",
+        "sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"]
+        for (let s=0;s<3;s++) {
+          let script = document.createElement('script')
+          script.src = sources[s]
+          script.integrity = integrities[s]
+          script.crossOrigin = "anonymous"
+          script.async = false
+          head.appendChild(script)
+        }
       }
     </script>
   </head>
@@ -199,6 +236,7 @@
           </svg>
         </div>
       </div>
+      <div id="loadingText"></div>
     </div>
     <noscript>
       You need to enable JavaScript to run this app.
@@ -217,21 +255,54 @@
     -->
   </body>
 
+  <script>
+    if (['/loading'].includes(window.location.pathname)) {
+      const asleep = (sleepTime) => {
+        let promise = new Promise(function(resolve, reject) {
+          setTimeout(() => {resolve(true)}, sleepTime)
+        })
+        return promise
+      }
+
+      function getRandomInt(max) {
+        return Math.floor(Math.random() * Math.floor(max));
+      }
+      const carouselText = [
+        "Chasing Genji",
+        "Running from Genji",
+        "Dying to Genji",
+        "Soaking tower shots",
+        "Respawning under keep as Leoric",
+        "Clearing wave before Nazeebo arrives",
+        "Killing Gul'dan's Life Leech target",
+        "Dancing between Ana and her target",
+        "Solo laning during objective on Towers of Doom",
+        "Dueling Zul'jin as beefy tank",
+        "Laynoring",
+        "Not picking Superstition against all-mage team",
+        "Pushing mid on Braxis",
+        "5 man brawling mid until first objective",
+        "Solo laning as Lúcio",
+        "Chasing Murky",
+        "Chasing Lunara",
+        "Focusing tank"
+      ]
+      const nSayings = carouselText.length
+      document.getElementById('loadingText').innerHTML = carouselText[getRandomInt(nSayings)]
+      const rotateText = async() => {
+        while (true) {
+          await asleep(500)
+          document.getElementById('loadingText').innerHTML = carouselText[getRandomInt(nSayings)]
+        }
+      }
+      rotateText()
+    }
+  </script>
   <!-- <link rel="stylesheet" href="scripts/font-awesome/css/font-awesome.min.css"> -->
-  <link href="https://fonts.googleapis.com/css?family=Bungee|VT323|Ubuntu+Mono|Roboto+Condensed|Roboto+Mono|Oswald|Fjalla+One|Magra" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Risque" rel="stylesheet">
-  <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+  <link href="https://fonts.googleapis.com/css?family=Magra|Roboto+Condensed|Ubuntu+Mono" rel="stylesheet">
+  <!--
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+  -->
   </html>
-
-  <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-105706120-1', 'auto');
-  ga('send', 'pageview');
-  </script>

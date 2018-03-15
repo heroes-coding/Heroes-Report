@@ -105,7 +105,8 @@ async function selectCustomPath() {
 function showAccountSelection(currentAccounts) {
   let promise = new Promise(async function(resolve, reject) {
     let accounts = getAccountPaths()
-    let buttons = ['No replay path for now','Select a custom path not listed below (make sure to tick whether to rename replays or not below before clicking this)']
+    const pathDude = path.join(__dirname, '/../build/loading')
+    let buttons = [pathDude,'Select a custom path not listed below (make sure to tick whether to rename replays or not below before clicking this)']
     accounts.map((a,i) => {
       const {region, bnetID, replayPath, nReplays, handle} = a
       if (currentAccounts && currentAccounts.filter(x => {

@@ -5,6 +5,7 @@ body {
   font-family:$PrimaryFont;
   color: $Light;
   @include noselecttext;
+  overflow: inherit !important;
 }
 
 .highlight {

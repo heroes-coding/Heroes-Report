@@ -31,6 +31,7 @@ class OptionsMenu extends Component {
     ipcRenderer.on('ferryPreviewPlayerInfo',async(e,args) => {
       const { results, handles:yourHandles, bnetIDs } = args
       const { handles, battleTags, playerInfos, teamNumbers } = results
+      console.log(teamNumbers)
       const fullHandles = []
       const players = []
       const playerIndexes = {}
@@ -126,7 +127,7 @@ class OptionsMenu extends Component {
                     }}
                   >
                     <div className={`rt-tr replayItem addPath`}>
-                      <div className='teamPartyBar' style={partyStyle} />
+                      <div key={teamClass} className='teamPartyBar' style={partyStyle} />
                       <div
                         className={`rt-td handleCell  ${rowClass}`}
                       >

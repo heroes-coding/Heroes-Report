@@ -76,6 +76,7 @@ process.on('newReplayPath', function(newAccount) {
 
 const replaySavePath = path.join(dataPath,'replays')
 const replaySummaryPath = path.join(dataPath,'replaySummaries')
+const replaySummaries = path.join(dataPath,'replaySummaries.json')
 if (!fs.existsSync(replaySavePath)) fs.mkdirSync(replaySavePath)
 if (!fs.existsSync(replaySummaryPath)) fs.mkdirSync(replaySummaryPath)
 const { parserPopup, updateParsingMenu, saveSaveInfo } =require('../containers/parsingLogger/parseAndUpdateManager.js')
@@ -112,8 +113,10 @@ const saveReplay = async function(replay, filePath, renameFiles, fileID) {
   }
   if (!bnetID) {
     let newInfo = promptForNewAccount(replay)
-    if (!newInfo) return
-    else {
+    if (!newInfo) {
+      openParseCount--
+      return
+    } else {
       bnetID = newInfo.bnetID
       handle = newInfo.handle
     }
@@ -124,6 +127,7 @@ const saveReplay = async function(replay, filePath, renameFiles, fileID) {
   if (!condensed) {
     saveInfo.files[fileID].result = 8
     updateParsingMenu({[fileID]:saveInfo.files[fileID]})
+    openParseCount--
     return
   }
   const repSavePath = path.join(replaySavePath,`${condensed.MSL}.json`)
@@ -163,10 +167,15 @@ const saveReplay = async function(replay, filePath, renameFiles, fileID) {
     }
   }
   updateParsingMenu({[fileID]:saveInfo.files[fileID]})
-  if (fs.existsSync(repSavePath)) return
+  if (fs.existsSync(repSavePath)) {
+    openParseCount--
+    return
+  }
   replaysReadyForDispatch.push(condensed)
   fs.writeFileSync(repSummaryPath,JSON.stringify(condensed), 'utf8', (err) => { if (err) console.log(err) })
+  fs.appendFileSync(replaySummaries, `${JSON.stringify(condensed)},`, 'utf8', (err) => { if (err) console.log(err) })
   fs.writeFileSync(repSavePath,JSON.stringify(replay), 'utf8', (err) => { if (err) console.log(err) })
+  openParseCount--
 }
 
 let parsed
@@ -191,10 +200,10 @@ const forkMessage = async(msg) => {
   else {
     saveInfo.files[fileID].result = replay
     saveInfo.files[fileID].uploaded = 0
+    openParseCount--
     updateParsingMenu({[fileID]:saveInfo.files[fileID]})
   }
   cpuAvailable[workerIndex] = true
-  openParseCount--
 }
 
 const replayQueue = []
@@ -206,7 +215,7 @@ const parsingLoop = async function() {
   isParsing = true
   const maxCPU = options.prefs.simParsers.value
   cpuAvailable = Array(maxCPU).fill(true)
-  let nWorkers = Math.min(replayQueue.length,maxCPU)
+  let nWorkers = Math.min(replayQueue.length,maxCPU)-workers.length // only need to create additional workers
   for (let w=0;w<nWorkers;w++) {
     let forked = fork(require.resolve('./parserFork'))
     forked.send({HOTS})
@@ -235,6 +244,7 @@ const parsingLoop = async function() {
   while (openParseCount) {
     await asleep(250)
   }
+  console.log('open parse count after parsing loop',openParseCount)
   process.emit('dispatchReplays', replaysReadyForDispatch.slice(0,))
   replaysReadyForDispatch = []
   saveSaveInfo()
