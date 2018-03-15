@@ -20,7 +20,7 @@ export default function getKDensity(k, bins, values) {
   } catch (e) {
     error = e
   } finally {
-    window.Module._free(buf)
+    if (!window.isElectron) window.Module._free(buf)
   }
   if (error) throw error
   // window.Module._free((nBins+nVals+1)*4)

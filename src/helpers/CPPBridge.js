@@ -13,7 +13,7 @@ export function sortArrayReturnIndices(array,desc) {
   } catch (e) {
     error = e
   } finally {
-    window.Module._free(buf)
+    if (!window.isElectron) window.Module._free(buf)
   }
   if (error) throw error
   return sortedIndices

@@ -47,11 +47,22 @@
     "web-assembly": "^0.0.1"
   },
   "main": "src/electron.js",
+  "homepage": "./",
   "build": {
     "appId": "heroes.report",
-    "directories": {
-      "buildResources": "public"
-    }
+    "files": [
+      "build/",
+      "node_modules/",
+      {
+        "from": "src",
+        "to": "build",
+        "filter": ["electron.js", "electron/**/*"]
+      },
+      {
+        "from": "public",
+        "to": "."
+      }
+    ]
   },
   "scripts": {
     "build-css": "node-sass-chokidar src/ -o src/",
@@ -63,7 +74,7 @@
     "build-js": "react-scripts build",
     "build": "npm-run-all build-css build-js",
     "pack": "electron-builder --dir",
-    "electron": "set ELECTRON_START_URL=http://localhost:3000&& electron .",
+    "electron": "electron .",
     "electron-dev": "set ELECTRON_START_URL=http://localhost:3000&& electron .",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",

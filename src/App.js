@@ -18,8 +18,8 @@ import featuresPath from './md/features.md'
 import aboutPath from './md/about.md'
 import disclaimerPath from './md/disclaimer.md'
 import Fuse from 'fuse.js'
-import { sortObjectListByProperty } from './helpers/CPPBridge' // This is because sorting player matchups took 10 seconds for a list of 20K elements.  I have no idea why
-window.sortObjectListByProperty = sortObjectListByProperty
+// import { sortObjectListByProperty } from './helpers/CPPBridge' // This is because sorting player matchups took 10 seconds for a list of 20K elements.  I have no idea why
+// window.sortObjectListByProperty = sortObjectListByProperty
 let ParserAndUpdater, OptionsMenu, ipcRenderer, PreviewMenu
 
 if (window.isElectron) ParserAndUpdater = require('./electron/containers/parsingLogger/parserAndUpdater').default
@@ -104,7 +104,7 @@ class App extends Component {
         window.matchupResults = Object.keys(window.playerMatchups).map((k,i) => {
           return {bnetID:parseInt(k), ...window.playerMatchups[k]}
         })
-        window.matchupResults = window.sortObjectListByProperty(window.matchupResults, 'nMatches', true)
+        // window.matchupResults = window.sortObjectListByProperty(window.matchupResults, 'nMatches', true)
         const options = {
           shouldSort: true,
           threshold: 0.25,

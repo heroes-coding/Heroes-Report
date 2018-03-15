@@ -71,7 +71,7 @@ class Nav extends React.Component {
             currentID={99}
           />
           <a className="navbar-brand" id="brand">
-            <img src="/tinyLogo.png" width="123" height="40" className="d-inline-block align-top-middle" alt="" />
+            <img src="tinyLogo.png" width="123" height="40" className="d-inline-block align-top-middle" alt="" />
           </a>
           <li className="nav-item list-inline-item">
             <NavLink

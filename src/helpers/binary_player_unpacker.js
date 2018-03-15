@@ -68,7 +68,7 @@ function heapFromBytes(buffer) {
     } catch (e) {
       error = e
     } finally {
-      if (buf) {
+      if (buf && !window.isElectron) {
         window.Module._free(buf)
       }
     }

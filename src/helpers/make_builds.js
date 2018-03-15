@@ -43,7 +43,7 @@ export default function getBuilds(buildsArray, nBuilds) {
   } catch (e) {
     error = e
   } finally {
-    window.Module._free(buf)
+    if (!window.isElectron) window.Module._free(buf)
   }
   if (error) throw error
   return results

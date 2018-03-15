@@ -23,7 +23,7 @@ function heapFromBytes(buffer) {
     } catch (e) {
       error = e
     } finally {
-      window.Module._free(buf)
+      if (!window.isElectron) window.Module._free(buf)
     }
     if (error) throw error
     resolve(unpackedReplays)

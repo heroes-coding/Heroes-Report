@@ -37,7 +37,7 @@ export function exponentialSmoothingCP(timedData,shouldSmooth=0,filterZeroes) {
   } catch (e) {
     error = e
   } finally {
-    window.Module._free(buf)
+    if (!window.isElectron) window.Module._free(buf)
   }
   if (error) throw error
   // console.log(timedPoints)

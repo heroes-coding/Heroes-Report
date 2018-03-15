@@ -1,0 +1,11 @@
+          return new Promise((function(resolve, reject) {
+            request = new XMLHttpRequest();
+            request.open('GET', wasmBinaryFile);
+            request.responseType = 'arraybuffer';
+            request.send();
+
+            request.onload = function() {
+              var bytes = request.response;
+              resolve(bytes)
+            };
+          }))
