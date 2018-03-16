@@ -15,13 +15,15 @@ const togglePreviewWindow = () => {
 function loadPreviewWindow() {
   let winState = windowStateKeeper({defaultWidth: minWidth, defaultHeight: minHeight, file: 'previewWindowState.json'})
   previewWindow = new BrowserWindow({minWidth, minHeight, width: winState.width, height: winState.height, x: winState.x, y: winState.y, resizable: true, show:false, frame: false})
+  previewWindow.windowID = "preview"
   previewWindow.on('close', function(event) {
     event.preventDefault()
     togglePreviewWindow()
   })
   const location = process.env.ELECTRON_START_URL ? process.env.ELECTRON_START_URL + '/preview' : undefined
+  console.log(__dirname.replace('electron\\containers\\preview',''))
   previewWindow.loadURL(location || url.format({
-    pathname: path.join(__dirname, '/../build/index.html/preview'),
+    pathname: path.join(__dirname.replace('electron\\containers\\preview',''), '/../build/index.html'),
     protocol: 'file:',
     slashes: true
   }))

@@ -11,6 +11,9 @@
 /dist
 */dist
 
+#tokens
+/private
+
 # misc
 .DS_Store
 .env.local

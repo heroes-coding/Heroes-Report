@@ -1,11 +1,18 @@
-          return new Promise((function(resolve, reject) {
-            request = new XMLHttpRequest();
-            request.open('GET', wasmBinaryFile);
-            request.responseType = 'arraybuffer';
-            request.send();
+  return new Promise((function(resolve, reject) {
+    request = new XMLHttpRequest();
+    request.open('GET', wasmBinaryFile);
+    request.responseType = 'arraybuffer';
+    request.send();
 
-            request.onload = function() {
-              var bytes = request.response;
-              resolve(bytes)
-            };
-          }))
+    request.onload = function() {
+      var bytes = request.response;
+      resolve(bytes)
+    };
+  }))
+
+
+let url = require('url')
+let path = require('path')
+
+let electron = require('electron')
+electron.remote.getCurrentWindow().loadURL(`file://${path.join(__dirname, '../build/index.html')}`)

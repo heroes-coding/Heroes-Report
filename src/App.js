@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Storage from './helpers/storage'
 import { getHOTSDictionary, updatePreferences, rollbackState, getTalentDic, getYourData } from './actions'
-import { BrowserRouter, Route, Switch, withRouter } from 'react-router-dom'
+import { Redirect, BrowserRouter, Route, Switch, withRouter } from 'react-router-dom'
 import DataTable from './containers/table/data_table'
 import HeroPage from './containers/heroPage/hero_page'
 import NavigationBar from './containers/nav_bar/nav_bar'
@@ -13,21 +13,21 @@ import PlayerPage from './containers/player_page'
 import PlayerList from './containers/player_list/player_list'
 import YourPage from './containers/your_page'
 import getReplayBinary from './helpers/binary_replay_unpacker'
-import Markdown from './containers/markdown_display'
+import Markdown from './containers/markdown_display_redux'
 import featuresPath from './md/features.md'
 import aboutPath from './md/about.md'
 import disclaimerPath from './md/disclaimer.md'
 import Fuse from 'fuse.js'
-// import { sortObjectListByProperty } from './helpers/CPPBridge' // This is because sorting player matchups took 10 seconds for a list of 20K elements.  I have no idea why
-// window.sortObjectListByProperty = sortObjectListByProperty
+import { sortObjectListByProperty } from './helpers/CPPBridge' // This is because sorting player matchups took 10 seconds for a list of 20K elements.  I have no idea why
+window.sortObjectListByProperty = sortObjectListByProperty
 let ParserAndUpdater, OptionsMenu, ipcRenderer, PreviewMenu
 
-if (window.isElectron) ParserAndUpdater = require('./electron/containers/parsingLogger/parserAndUpdater').default
-if (window.isElectron) PreviewMenu = require('./electron/containers/preview/previewer').default
-if (window.isElectron) OptionsMenu = require('./electron/containers/optionsMenu/options').default
+if (window.isElectron && window.windowID === 'parser') ParserAndUpdater = require('./electron/containers/parsingLogger/parserAndUpdater').default
+else if (window.isElectron && window.windowID === 'preview') PreviewMenu = require('./electron/containers/preview/previewer').default
+else if (window.isElectron && window.windowID === 'options') OptionsMenu = require('./electron/containers/optionsMenu/options').default
 if (window.isElectron) ipcRenderer = window.require('electron').ipcRenderer
 
-const showHeaders = !['/parser','/options','/preview'].includes(window.location.pathname)
+const showHeaders = !['parser','options','preview'].includes(window.windowID)
 const Features = () => <Markdown path={featuresPath} />
 const About = () => <Markdown path={aboutPath} />
 const Disclaimer = () => <Markdown path={disclaimerPath} />
@@ -104,7 +104,7 @@ class App extends Component {
         window.matchupResults = Object.keys(window.playerMatchups).map((k,i) => {
           return {bnetID:parseInt(k), ...window.playerMatchups[k]}
         })
-        // window.matchupResults = window.sortObjectListByProperty(window.matchupResults, 'nMatches', true)
+        window.matchupResults = window.sortObjectListByProperty(window.matchupResults, 'nMatches', true)
         const options = {
           shouldSort: true,
           threshold: 0.25,
@@ -185,9 +185,9 @@ class ExtraWindows extends Component {
             <div className="col-xl-1"></div>
             <div className={`col-sm-12 col-lg-12 col-xl-12`} id="contentHolder">
               <Switch>
-                <Route path="/parser" component={ParserAndUpdater} />
-                <Route path="/options" component={OptionsMenu} />
-                <Route path="/preview" component={PreviewMenu} />
+                {window.windowID==='parser'&&<Route path="/" component={ParserAndUpdater}/>}
+                {window.windowID==='options'&&<Route path="/" component={OptionsMenu} />}
+                {window.windowID==='preview'&&<Route path="/" component={PreviewMenu} />}
               </Switch>
             </div>
             <div className="col-xl-1"></div>

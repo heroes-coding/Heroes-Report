@@ -112,11 +112,14 @@ const width = 450
 function loadOptionsMenu() {
   optionsPopup.window = new BrowserWindow({width, height, resizable: false, show:false, frame: false})
   const location = process.env.ELECTRON_START_URL ? process.env.ELECTRON_START_URL + '/options' : undefined
+  console.log(__dirname.replace('electron\\containers\\optionsMenu',''))
   optionsPopup.window.loadURL(location || url.format({
-    pathname: path.join(__dirname, '/../build/index.html/options'),
+    pathname: path.join(__dirname.replace('electron\\containers\\optionsMenu',''), '/../build/index.html'),
+    hash: 'options',
     protocol: 'file:',
     slashes: true
   }))
+  optionsPopup.window.windowID = "options"
 }
 
 exports.options = options

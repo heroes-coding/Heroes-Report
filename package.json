@@ -2,7 +2,8 @@
   "name": "heroes",
   "author": "Jeremy Schutte",
   "productName": "Heroes Report",
-  "version": "0.1.0",
+  "description": "A report... about heroes",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
@@ -22,6 +23,7 @@
     "grunt-contrib-uglify": "^3.3.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-exec": "^3.0.0",
+    "history": "^4.7.2",
     "jquery": "1.9.1 - 3",
     "lz-string": "^1.4.4",
     "md5": "^2.2.1",
@@ -49,14 +51,22 @@
   "main": "src/electron.js",
   "homepage": "./",
   "build": {
+    "icon": "build/icon.ico",
     "appId": "heroes.report",
+    "buildVersion": "0.2",
+    "win": {
+      "icon": "build/icon.ico"
+    },
     "files": [
       "build/",
       "node_modules/",
       {
         "from": "src",
         "to": "build",
-        "filter": ["electron.js", "electron/**/*"]
+        "filter": [
+          "electron.js",
+          "electron/**/*"
+        ]
       },
       {
         "from": "public",
@@ -85,16 +95,13 @@
   "devDependencies": {
     "electron": "^1.8.2",
     "electron-builder": "^20.5.1",
-    "eslint-config-standard": "^11.0.0-beta.0",
-    "eslint-plugin-import": "^2.8.0",
-    "eslint-plugin-node": "^5.2.1",
-    "eslint-plugin-promise": "^3.6.0",
-    "eslint-plugin-standard": "^3.0.1",
+    "electron-react-devtools": "^0.5.3",
     "eslint": "^4.14.0",
     "eslint-config-standard": "^11.0.0-beta.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-node": "^5.2.1",
+    "eslint-plugin-promise": "^3.6.0",
     "eslint-plugin-react": "^7.5.1",
-    "electron-react-devtools": "^0.5.3"
+    "eslint-plugin-standard": "^3.0.1"
   }
 }

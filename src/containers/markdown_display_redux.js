@@ -1,11 +1,25 @@
 import Remarkable from 'remarkable'
 import React, { Component } from 'react'
+import path from 'path'
 const parser = new Remarkable({html: true, linkify: true, breaks: true, xhtmlOut: true})
 
 class Markdown extends Component {
   componentWillMount() {
-    const path = this.props.path
-    window.fetch(path)
+    const shortPath = this.props.path
+    const fullPath = path.join(__dirname,'/../build',shortPath)
+    console.log(shortPath,__dirname,window.isElectron,fullPath)
+    const request = new window.XMLHttpRequest()
+    request.open('GET', window.isElectron ? shortPath : fullPath)
+    request.responseType = 'text'
+    request.send()
+    request.onload = () => {
+      var text = request.response
+      this.setState({
+        markdown: parser.render(text)
+      })
+    }
+    /*
+    window.fetch(window.isElectron ? shortPath : fullPath)
       .then(response => {
         return response.text()
       })
@@ -14,6 +28,7 @@ class Markdown extends Component {
           markdown: parser.render(text)
         })
       })
+    */
   }
   constructor(props) {
     super(props)

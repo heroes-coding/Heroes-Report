@@ -49,14 +49,17 @@ const updateParsingMenu = (files) => {
   if (parserPopup.parserWindow) parserPopup.parserWindow.webContents.send('parsing',files)
 }
 
-function showParsingMenu(mainWindow) {
+function showParsingMenu() {
   let winState = windowStateKeeper({defaultWidth: 300, defaultHeight: 600, file: 'parserWindowState.json'})
   parserPopup.parserWindow = new BrowserWindow({minWidth: 495, minHeight: 300, width: winState.width, height: winState.height, x: winState.x, y: winState.y, show:false, frame: false})
+  parserPopup.parserWindow.windowID = "parser"
   winState.manage(parserPopup.parserWindow)
+  // parserPopup.parserWindow.webContents.openDevTools()
   parserPopup.parserWindow.on('closed', (e) => { parserPopup.parserWindow = null })
-  const location = process.env.ELECTRON_START_URL ? process.env.ELECTRON_START_URL + '/parser' : undefined
+  const location = process.env.ELECTRON_START_URL
+  console.log(__dirname.replace('electron\\containers\\parsingLogger',''))
   parserPopup.parserWindow.loadURL(location || url.format({
-    pathname: path.join(__dirname, '/../build/index.html/parser'),
+    pathname: path.join(__dirname.replace('electron\\containers\\parsingLogger',''), '/../build/index.html'),
     protocol: 'file:',
     slashes: true
   }))
