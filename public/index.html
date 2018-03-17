@@ -161,12 +161,19 @@
       }
     </style>
     <script type='text/javascript'>
-      const { webFrame } = require('electron');
-      webFrame.registerURLSchemeAsPrivileged('file');
-      window.isProduction = process.execPath.includes('Heroes Report')
+      window.isElectron = window.process ? true : false
+      if (window.isElectron) {
+        window.remote = window.require('electron').remote
+        window.windowID = window.remote.getCurrentWindow().windowID
+      }
+      window.isProduction = window.process && window.process.execPath.includes('Heroes Report')
+      if (window.isElectron) {
+        const { webFrame } = require('electron');
+        webFrame.registerURLSchemeAsPrivileged('file');
+      }
       // This is so that the WASM script is not loaded for extra Electron windows
       if (typeof module === 'object') {window.module = module; module = undefined;}
-      if (!['/parser','/options','/preview','/loading'].includes(window.location.pathname)) {
+      if (!['parser','options','preview','loading'].includes(window.windowID)) {
         window.moduleLoaded = false
         var Module = {
           preRun: [],
@@ -179,8 +186,7 @@
           })(),
           printErr: function(text) {
             if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-            console.error(text);
-
+            if (!text.includes('wasm streaming') && !text.includes('falling back')) console.error(text);
           },
           setStatus: function(text) {
           },
@@ -210,7 +216,7 @@
         ga('create', 'UA-105706120-1', 'auto');
         ga('send', 'pageview');
       }
-      if (!['/loading'].includes(window.location.pathname)) {
+      if (!['loading'].includes(window.windowID)) {
         // you need all of these scripts for electron windows, but not loading or other 'empty' windows
         const head = document.getElementsByTagName('head')[0]
         const sources = ["https://code.jquery.com/jquery-3.2.1.slim.min.js",
@@ -259,7 +265,7 @@
   </body>
 
   <script>
-    if (['/loading'].includes(window.location.pathname)) {
+    if (['loading'].includes(window.windowID)) {
       const asleep = (sleepTime) => {
         let promise = new Promise(function(resolve, reject) {
           setTimeout(() => {resolve(true)}, sleepTime)

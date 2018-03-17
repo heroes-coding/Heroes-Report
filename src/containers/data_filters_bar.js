@@ -227,7 +227,7 @@ class DataFilters extends Component {
           minMSL={this.props.startDate}
           maxMSL={this.props.endDate}
         />}
-        {this.isMenu(0b0010) && window.location.pathname === "/players/you" && <div>
+        {this.isMenu(0b0010) && window.location.pathname.includes("players/you") && <div>
           <FilterDropDown
             info={"Find a player you played against or with.  All other filters are ignored for this search for simplicity.  By default this displays the players you have had the most matches with, search for other players to the right."}
             resetFunction={this.updateSelectedPlayer}

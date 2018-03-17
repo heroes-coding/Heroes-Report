@@ -11,6 +11,7 @@ const { parseNewReplays } = require('./electron/parser/parsingManager.js')
 const dataPath = app.getPath('userData')
 const replaySummaries = path.join(dataPath,'replaySummaries.json')
 const { showParsingMenu, parserPopup, saveSaveInfo } = require('./electron/containers/parsingLogger/parseAndUpdateManager.js')
+const { previewWindow } = require('./electron/containers/preview/previewManager.js')
 const { options, optionsPopup, loadOptionsMenu, addNewAccount } = require('./electron/containers/optionsMenu/optionsManager.js')
 const { loadPreviewWindow }= require('./electron/containers/preview/previewManager.js')
 const { returnIDs } = require('./electron/parser/bareLobby.js')
@@ -37,7 +38,6 @@ ipcMain.on('loadPlayer',(e,playerID) => {
 ipcMain.on('options:toggle',(e,args) => {
   if (optionsPopup.window.isVisible()) optionsPopup.window.hide()
   else {
-    optionsPopup.window.webContents.send('options',options)
     optionsPopup.window.show()
   }
 })
@@ -59,16 +59,37 @@ process.on('newaccount:send', ({bnetID, region, handle}) => {
 })
 
 process.on('replays:refresh', nothing => {
-  console.log('replays:refresh called')
   setTimeout(() => { mainWindow.webContents.send('replays:finishedSending',null) },250)
 })
 
 let tray
 function createTray() {
-  tray = new Tray('tinyTray.png')
+  const trayPath = process.env.ELECTRON_START_URL ? 'tinyTray.png' : path.join(__dirname, '/../build/tinyTray.png')
+  tray = new Tray(trayPath)
   tray.setToolTip('Heroes Report Replay Analyzer')
   const trayMenu = Menu.buildFromTemplate([
-    {label: 'Tray Menu Item'},
+    {
+      label: 'Toggle Parsing and Uploading Menu',
+      click(item, focusedWindow) { toggleWindow(parserPopup.parserWindow) },
+      accelerator: 'CommandOrControl+U'
+    },
+    {
+      label: 'Toggle Preview Menu',
+      click(item, focusedWindow) { toggleWindow(previewWindow.window) },
+      accelerator: 'CommandOrControl+P'
+    },
+    {
+      label: 'Toggle Options Menu',
+      click(item, focusedWindow) { toggleWindow(optionsPopup.window) },
+      accelerator: 'CommandOrControl+O'
+    },
+    {
+      label: 'Toggle Debug Consoles',
+      click(item, focusedWindow) {
+        for (let w=0;w<4;w++) [parserPopup.parserWindow,optionsPopup.window,previewWindow.window,mainWindow][w].toggleDevTools()
+      },
+      accelerator: 'CommandOrControl+D'
+    },
     {role: 'quit'}
   ])
   tray.setContextMenu(trayMenu)
@@ -168,7 +189,6 @@ function createWindow() {
         setTimeout(() => {
           if (loadingWindow) loadingWindow.close()
           mainWindow.show()
-          mainWindow.webContents.openDevTools()
         },1000)
       })
     } else mainWindow.show()
@@ -181,12 +201,17 @@ function createWindow() {
   })
   mainWindow.loadURL(startUrl)
   showParsingMenu()
-  loadOptionsMenu()
+  loadOptionsMenu(options)
 
   // The below, interrupting other window shutdowns with hides, has to be done in the main process HERE.  Otherwise, it will be called asynchronously (after the window has closed)
   for (let w=0;w<2;w++) {
     let window = [parserPopup.parserWindow,optionsPopup.window][w]
     window.on('close', function(event) {
+      console.log(global['quitting'])
+      if (global['quitting']) {
+        console.log('quitting...')
+        return
+      }
       event.preventDefault()
       if (window.isVisible()) window.hide()
       else window.show()
@@ -197,16 +222,16 @@ function createWindow() {
     mainWindow.webContents.send('playerInfo:dispatch',{bnetIDs:options.bnetIDs, handles:options.handles, regions: options.regions})
   })
   createTray()
-  mainWindow.on('closed', function() {
+  mainWindow.on('closed', function(event) {
     console.log('closing main window...')
     // Dereference the window object, usually you would store windows in an array if your app supports multi windows
     saveSaveInfo()
     mainWindow = null
+    for (let w=0;w<2;w++) [parserPopup.parserWindow,optionsPopup.window][w] = null
     tray.destroy()
-    parserPopup.parserWindow.destroy()
     // need to shutdown uploader and parsers, too...
+    global['quitting'] = true
     app.quit()
-    process.exit(0)
   })
 }
 
@@ -223,16 +248,27 @@ function showLoadingWindow() {
     protocol: 'file:',
     slashes: true
   })
-  console.log(loadingURL)
   loadingWindow.loadURL(loadingURL)
 }
 
+const toggleWindow = (window) => {
+  if (window.isVisible()) window.hide()
+  else window.show()
+}
 // This method will be called when Electron has finished initialization and is ready to create browser windows.
 app.on('ready', () => {
   showLoadingWindow()
   globalShortcut.register('CommandOrControl+D', () => {
-    setImmediate(function() { BrowserWindow.getFocusedWindow().toggleDevTools() })
+    for (let w=0;w<4;w++) [parserPopup.parserWindow,optionsPopup.window,previewWindow.window,mainWindow][w].toggleDevTools()
   })
+  globalShortcut.register('CommandOrControl+P', () => { toggleWindow(previewWindow.window) })
+  globalShortcut.register('CommandOrControl+U', () => { toggleWindow(parserPopup.parserWindow) })
+  globalShortcut.register('CommandOrControl+O', () => { toggleWindow(optionsPopup.window) })
+})
+
+app.on('quit', function() {
+  console.log('ev:app quit')
+  app.exit(0)
 })
 
 app.on('window-all-closed', function() {

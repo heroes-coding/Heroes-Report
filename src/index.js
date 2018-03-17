@@ -1,2 +1,2 @@
 let MainApp
-if (window.location.pathname !== '/loading') MainApp = require('./MainApp')
+if (!window.location.pathname.includes('loading')) MainApp = require('./MainApp')

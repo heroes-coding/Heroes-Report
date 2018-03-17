@@ -30,15 +30,28 @@ const uploadLoop = async function() {
   uploading = true
   while (uploadQueue.length) {
     while (currentUploads > options.prefs.simUploads.value) await asleep(100)
-    const { fileName, fileID } = uploadQueue.shift()
+    const { fileName, fileID, hash } = uploadQueue.shift()
+    let status
+    try {
+      const exists = await checkAPIHash(hash)
+      if (exists) status = 1
+      else status = 2
+    } catch (e) {
+      status = 3
+    }
+    if (status === 3) {
+      uploadQueue.push({ fileName, fileID, hash })
+      updateFileStatus(fileID,5)
+      continue
+    } else if (status === 1) continue
     uploadOne(fileName,fileID)
     if (!APIOkay()) break
   }
   uploading = false
 }
 
-const enqueueReplayForUpload = function(fileName,fileID) {
-  uploadQueue.push({fileName,fileID})
+const enqueueReplayForUpload = function(fileName,fileID,hash) {
+  uploadQueue.push({fileName,fileID,hash})
   if (!options.prefs.uploads.value) {
     APIStatus.APIFailed = true
     return
@@ -125,6 +138,12 @@ function checkAPIHash(hash) {
 process.on("massUpload", async uploadInfoQueue => {
   const toCheck = Object.keys(uploadInfoQueue)
   if (toCheck.length===0) return
+  for (let k=0;k<toCheck.length;k++) {
+    const hash = toCheck[k]
+    const {filePath, fileID} = uploadInfoQueue[hash]
+    enqueueReplayForUpload(filePath, fileID,hash)
+  }
+  /*
   try {
     let results = await checkAPIHashes(toCheck)
     process.emit("uploadCheckResult",{uploadInfoQueue,results})
@@ -135,6 +154,7 @@ process.on("massUpload", async uploadInfoQueue => {
   } catch (e) {
     console.log(e)
   }
+  */
 })
 
 function checkAPIHashes(hashList) {

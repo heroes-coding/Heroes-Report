@@ -55,7 +55,14 @@
     "appId": "heroes.report",
     "buildVersion": "0.2",
     "win": {
-      "icon": "build/icon.ico"
+      "icon": "build/icon.ico",
+      "publish": ["github"],
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["ia32"]
+        }
+      ]
     },
     "files": [
       "build/",

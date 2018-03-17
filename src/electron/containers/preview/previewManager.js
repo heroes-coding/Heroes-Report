@@ -3,35 +3,40 @@ const url = require('url')
 const path = require('path')
 const options = require('../optionsMenu/optionsManager.js').options
 const windowStateKeeper = require('electron-window-state')
-let previewWindow
+let previewWindow = {window:null}
 const minWidth = 700
 const minHeight = 755
 
 const togglePreviewWindow = () => {
-  if (previewWindow.isVisible()) previewWindow.hide()
-  else previewWindow.show()
+  if (previewWindow.window.isVisible()) previewWindow.window.hide()
+  else previewWindow.window.show()
 }
 
 function loadPreviewWindow() {
   let winState = windowStateKeeper({defaultWidth: minWidth, defaultHeight: minHeight, file: 'previewWindowState.json'})
-  previewWindow = new BrowserWindow({minWidth, minHeight, width: winState.width, height: winState.height, x: winState.x, y: winState.y, resizable: true, show:false, frame: false})
-  previewWindow.windowID = "preview"
-  previewWindow.on('close', function(event) {
+  previewWindow.window = new BrowserWindow({minWidth, minHeight, width: winState.width, height: winState.height, x: winState.x, y: winState.y, resizable: true, show:false, frame: false})
+  previewWindow.window.windowID = "preview"
+  previewWindow.window.on('close', function(event) {
+    console.log(global['quitting'])
+    if (global['quitting']) {
+      console.log('quitting...')
+      return
+    }
     event.preventDefault()
     togglePreviewWindow()
   })
   const location = process.env.ELECTRON_START_URL ? process.env.ELECTRON_START_URL + '/preview' : undefined
   console.log(__dirname.replace('electron\\containers\\preview',''))
-  previewWindow.loadURL(location || url.format({
+  previewWindow.window.loadURL(location || url.format({
     pathname: path.join(__dirname.replace('electron\\containers\\preview',''), '/../build/index.html'),
     protocol: 'file:',
     slashes: true
   }))
-  previewWindow.once('ready-to-show', async() => {
+  previewWindow.window.once('ready-to-show', async() => {
     ipcMain.on('ferryPreviewPlayerInfo', (e,results) => {
-      previewWindow.webContents.send('ferryPreviewPlayerInfo',{results,handles:options.handles,bnetIDs:options.bnetIDs})
-      if (!previewWindow.isVisible() && options.prefs.previews.value) previewWindow.show()
-      previewWindow.focus()
+      previewWindow.window.webContents.send('ferryPreviewPlayerInfo',{results,handles:options.handles,bnetIDs:options.bnetIDs})
+      if (!previewWindow.window.isVisible() && options.prefs.previews.value) previewWindow.window.show()
+      previewWindow.window.focus()
     })
     ipcMain.on('preview:toggle', nothing => {
       togglePreviewWindow()
@@ -40,3 +45,4 @@ function loadPreviewWindow() {
 }
 
 exports.loadPreviewWindow = loadPreviewWindow
+exports.previewWindow = previewWindow

@@ -9,7 +9,7 @@ electron.ipcMain.setMaxListeners(32)
 const { HOTSPromise } = require('../startup.js')
 const { app, dialog } = electron
 const { asleep } = require('../helpers/asleep')
-const { checkAPIHash, checkAPIHashes, enqueueReplayForUpload } = require('../helpers/HOTSApi.js')
+const { checkAPIHash, enqueueReplayForUpload } = require('../helpers/HOTSApi.js')
 const { fullToPartial } = require('../helpers/fullToPartial.js')
 const dataPath = app.getPath('userData')
 const os = require('os')
@@ -61,7 +61,6 @@ process.on('clearUploadInfoQueue', nothing => {
 })
 
 process.on('addSingleReplay', function({rPath, bnetID, renameFiles}) {
-  console.log('add single replay called')
   const fileID = ++saveInfo.Count
   const newInfo = {filePath:rPath, apiHash: null, uploaded: null, hash: null, result: null, index:fileID}
   saveInfo.files[fileID.toString()] = newInfo
@@ -149,24 +148,7 @@ const saveReplay = async function(replay, filePath, renameFiles, fileID) {
   saveInfo.files[fileID].apiHash = replay.apiHash
   saveInfo.files[fileID].hash = replay.hash
   saveInfo.files[fileID].result = 9
-  let uploaded
-  if (uploadedSingly > 50) uploadInfoQueue[replay.apiHash] = {filePath,fileID}
-  else {
-    try {
-      uploadedSingly++
-      uploaded = await checkAPIHash(replay.apiHash)
-    } catch (e) {
-      console.log(e)
-      saveInfo.files[fileID].uploaded = 5
-      enqueueReplayForUpload(filePath,fileID)
-    }
-    if (uploaded) saveInfo.files[fileID].uploaded = 2 // uploaded by someone else
-    else {
-      saveInfo.files[fileID].uploaded = 3 // pending
-      enqueueReplayForUpload(filePath,fileID)
-    }
-  }
-  updateParsingMenu({[fileID]:saveInfo.files[fileID]})
+
   if (fs.existsSync(repSavePath)) {
     openParseCount--
     return
@@ -176,6 +158,23 @@ const saveReplay = async function(replay, filePath, renameFiles, fileID) {
   fs.appendFileSync(replaySummaries, `${JSON.stringify(condensed)},`, 'utf8', (err) => { if (err) console.log(err) })
   fs.writeFileSync(repSavePath,JSON.stringify(replay), 'utf8', (err) => { if (err) console.log(err) })
   openParseCount--
+  let uploaded
+  if (uploadedSingly > 50) uploadInfoQueue[replay.apiHash] = {filePath,fileID}
+  else {
+    try {
+      uploadedSingly++
+      uploaded = await checkAPIHash(replay.apiHash)
+    } catch (e) {
+      saveInfo.files[fileID].uploaded = 5
+      enqueueReplayForUpload(filePath,fileID,replay.apiHash)
+    }
+    if (uploaded) saveInfo.files[fileID].uploaded = 2 // uploaded by someone else
+    else {
+      saveInfo.files[fileID].uploaded = 3 // pending
+      enqueueReplayForUpload(filePath,fileID,replay.apiHash)
+    }
+  }
+  updateParsingMenu({[fileID]:saveInfo.files[fileID]})
 }
 
 let parsed
@@ -208,6 +207,7 @@ const forkMessage = async(msg) => {
 
 const replayQueue = []
 let isParsing = false
+let parsingLimbo = false
 let openParseCount = 0
 const parsingLoop = async function() {
   if (isParsing) return
@@ -215,14 +215,15 @@ const parsingLoop = async function() {
   isParsing = true
   const maxCPU = options.prefs.simParsers.value
   cpuAvailable = Array(maxCPU).fill(true)
-  let nWorkers = Math.min(replayQueue.length,maxCPU)-workers.length // only need to create additional workers
-  for (let w=0;w<nWorkers;w++) {
+  let nWorkersToCreate = Math.min(replayQueue.length,maxCPU)-workers.length // only need to create additional workers
+  for (let w=0;w<nWorkersToCreate;w++) {
     let forked = fork(require.resolve('./parserFork'))
     forked.send({HOTS})
     forked.on('message', forkMessage)
     workers.push(forked)
   }
-  openParseCount = 0 // see above global
+  if (!parsingLimbo) openParseCount = 0 // see above global
+  let nWorkers = workers.length
   while (replayQueue.length) {
     let workerOpen = false
     for (let w=0;w<nWorkers;w++) {
@@ -240,11 +241,12 @@ const parsingLoop = async function() {
     if (!replayQueue.length) await asleep(250)
   }
   isParsing = false
+  parsingLimbo = true
   console.log('is parsing set to false')
   while (openParseCount) {
     await asleep(250)
   }
-  console.log('open parse count after parsing loop',openParseCount)
+  parsingLimbo = false
   process.emit('dispatchReplays', replaysReadyForDispatch.slice(0,))
   replaysReadyForDispatch = []
   saveSaveInfo()
@@ -280,17 +282,6 @@ const parseNewReplays = async function(account,isStartup) {
         if ([3,4,5,null].includes(oldInfo.uploaded) && oldInfo.apiHash) {
           const { apiHash, filePath } = oldInfo
           uploadInfoQueue[apiHash] = {filePath,fileID}
-          /*
-          checkAPIHash(oldInfo.apiHash).then(uploaded => {
-            if (uploaded) {
-              saveInfo.files[fileID].uploaded = 2
-              updateParsingMenu({[fileID]:saveInfo.files[fileID]})
-            } else {
-              saveInfo.files[fileID].uploaded = 3 // pending
-              enqueueReplayForUpload(rPath,fileID)
-            }
-          })
-          */
         }
       }
     }

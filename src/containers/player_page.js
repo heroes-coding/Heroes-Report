@@ -113,7 +113,10 @@ class PlayerPage extends Component {
                 <li className="nav-item playerReplays">
                   <a className={`nav-link playerNav ${curHero ? '' : 'active'}`}
                     href="#"
-                    onClick={() => { this.reset() }}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      this.reset()
+                    }}
                   >Replay Listing</a>
                 </li>
                 <FilterDropDown

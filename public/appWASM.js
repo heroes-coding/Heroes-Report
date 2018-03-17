@@ -726,7 +726,6 @@ function integrateWasmJS() {
 
     function getBinaryPromise() {
         if (!Module["wasmBinary"] && (ENVIRONMENT_IS_WEB || ENVIRONMENT_IS_WORKER) && typeof fetch === "function") {
-          console.log('going through my XML, baby!')
           return new Promise((function(resolve, reject) {
             request = new XMLHttpRequest();
             request.open('GET', wasmBinaryFile);
@@ -803,7 +802,6 @@ function integrateWasmJS() {
             }))
         }
         if (!Module["wasmBinary"] && typeof WebAssembly.instantiateStreaming === "function" && !isDataURI(wasmBinaryFile) && typeof fetch === "function") {
-            console.log('doning the streaming')
             WebAssembly.instantiateStreaming(fetch(wasmBinaryFile, {
                 credentials: "same-origin"
             }), info).then(receiveInstantiatedSource).catch((function(reason) {

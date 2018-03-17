@@ -117,11 +117,9 @@ class App extends Component {
         window.playerFuse = new Fuse(window.matchupResults, options)
       })
       ipcRenderer.on('replays:finishedSending', nothing => {
-        console.log('replays:finishedSending')
-        if (window.location.pathname === "/players/you") this.props.getYourData()
+        if (window.location.pathname.includes("players/you")) this.props.getYourData()
       })
       ipcRenderer.on('playerInfo:dispatch',(e,{bnetIDs, handles, regions}) => {
-        console.log('playerInfo:dispatch received')
         if (!bnetIDs.length) return
         window.fullIDs = bnetIDs.map((b,i) => `${regions[i]}-${b}`)
         // console.log(bnetIDs,handles,regions)
@@ -159,9 +157,9 @@ class App extends Component {
           </div>
           <Footer />
         </div>
-        <div className="electronHeader"><NavigationBar /></div>
+        {window.isElectron&&<div className="electronHeader"><NavigationBar /></div>}
         {window.isElectron&&<TrafficLights window={window.remote.getCurrentWindow()} />}
-        <ElectronMenu/>
+        {window.isElectron&&<ElectronMenu/>}
         {window.isElectron&&<div className="appBorder" />}
       </div>
     )

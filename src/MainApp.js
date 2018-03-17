@@ -18,8 +18,6 @@ window.debug = function(msg) {
     console.log(msg)
   }
 }
-console.log(window.location)
-
 const createStoreWithMiddleware = applyMiddleware(ReduxPromise)(createStore)
 
 ReactDOM.render(

@@ -120,6 +120,9 @@ function loadOptionsMenu() {
     slashes: true
   }))
   optionsPopup.window.windowID = "options"
+  optionsPopup.window.once('ready-to-show', () => {
+    optionsPopup.window.webContents.send('options',options)
+  })
 }
 
 exports.options = options
