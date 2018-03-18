@@ -56,10 +56,11 @@ function showParsingMenu() {
   winState.manage(parserPopup.parserWindow)
   // parserPopup.parserWindow.webContents.openDevTools()
   parserPopup.parserWindow.on('closed', (e) => { parserPopup.parserWindow = null })
-  const location = process.env.ELECTRON_START_URL
-  console.log(__dirname.replace('electron\\containers\\parsingLogger',''))
+  const location = process.env.ELECTRON_START_URL || undefined
+  const fullPath = path.join(__dirname.split('electron')[0], 'index.html')
+  console.log('__dirname',__dirname, fullPath,url.format({pathname: fullPath,protocol: 'file:', slashes: true}))
   parserPopup.parserWindow.loadURL(location || url.format({
-    pathname: path.join(__dirname.replace('electron\\containers\\parsingLogger',''), '/../build/index.html'),
+    pathname: fullPath,
     protocol: 'file:',
     slashes: true
   }))

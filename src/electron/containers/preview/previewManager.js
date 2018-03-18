@@ -26,9 +26,10 @@ function loadPreviewWindow() {
     togglePreviewWindow()
   })
   const location = process.env.ELECTRON_START_URL ? process.env.ELECTRON_START_URL + '/preview' : undefined
-  console.log(__dirname.replace('electron\\containers\\preview',''))
+  const fullPath = path.join(__dirname.split('electron')[0], 'index.html')
+  console.log('__dirname',__dirname, fullPath,url.format({pathname: fullPath,protocol: 'file:', slashes: true}))
   previewWindow.window.loadURL(location || url.format({
-    pathname: path.join(__dirname.replace('electron\\containers\\preview',''), '/../build/index.html'),
+    pathname: fullPath,
     protocol: 'file:',
     slashes: true
   }))

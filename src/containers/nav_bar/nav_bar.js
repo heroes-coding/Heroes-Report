@@ -39,8 +39,7 @@ class Nav extends React.Component {
     this.setState({curHero: null})
   }
   render() {
-    console.log('window is electron?',window.isElectron)
-    const playerSearch = _.debounce((term) => {
+      const playerSearch = _.debounce((term) => {
       this.playerSearch(term)
     }, 500)
     return (

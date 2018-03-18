@@ -65,7 +65,6 @@ class PlayerPage extends Component {
   }
   componentDidMount() {
     const {id} = this.props.match.params
-    console.log(id,window.fullIDs,'full ids and id on player page')
     if (id==='you' && window.fullIDs) this.loadYou()
     else this.loadOtherPlayer(id)
     this.props.updateTime('reset',null)

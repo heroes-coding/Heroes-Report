@@ -392,7 +392,6 @@ class Replay extends Component {
               })}
               {[0,1].map(team => {
                 const teamPlayers = players.slice(team*5+0,team*5+5)
-                console.log(towns,mercs,globes)
                 return (
                   <Team
                     key={team}

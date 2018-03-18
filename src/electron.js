@@ -189,7 +189,10 @@ function createWindow() {
         mainWindow.webContents.send('replays:dispatch',summaries)
         // showing the main window after all of this is done makes the program FEEL less laggy
         setTimeout(() => {
-          if (loadingWindow) loadingWindow.close()
+          if (loadingWindow) {
+            loadingWindow.close()
+            loadingWindow.destroy()
+          }
           mainWindow.show()
         },1000)
       })

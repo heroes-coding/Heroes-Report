@@ -46,7 +46,6 @@ export default (props) => {
                 return <div key={i}></div>
               }
               if (!name || !left || !right) return <div key={i}></div>
-              console.log(name,statName,left,right)
               const spaceLeft = spacesLeft - name.length - left.length
               const spaceMiddle = spacesMiddle-right.length
               return (

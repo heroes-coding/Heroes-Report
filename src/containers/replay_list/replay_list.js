@@ -130,7 +130,6 @@ class ReplayList extends Component {
     const { map, Length, Kills, Assists, Deaths, mode, Experience, Globes } = replayValues
     const statValues = [0,0,0]
     const { heroes, Won, hero, fullTals, FirstTo10, FirstTo20, FirstFort, Winners, KDA, MSL, build, allies, enemies, ends } = rep
-    console.log(ends)
     const sortStats = this.props.prefs.sortStats
     sortStats.map((x,i) => {
       if (x==="KDA") {
