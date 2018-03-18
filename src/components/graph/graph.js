@@ -66,7 +66,8 @@ class Graph extends React.Component {
   render() {
     const props = this.props
     let { points, linePoints, graphClass, yLabel, xLabel, xRatio, yRatio, xOff, yOff, title, formatter, noArea, yFormatter, multiLines, colors, lineLabels, bars, yMax, step, xMin, xMax, yMin, containerClass, labelPoints, stackedBars, errorBars } = props
-    const toMap = points || bars || linePoints || [].concat(...multiLines)
+    let toMap = points || bars || linePoints || [].concat(...multiLines)
+    toMap = toMap.filter(x => x)
     if (!toMap.length) {
       return <div></div>
     }

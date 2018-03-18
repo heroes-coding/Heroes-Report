@@ -33,7 +33,6 @@
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "react-error-overlay": "^4.0.0",
     "react-list": "^0.8.8",
     "react-popper": "^0.7.5",
     "react-redux": "^5.0.6",
@@ -54,6 +53,13 @@
   "build": {
     "appId": "heroes.report",
     "buildVersion": "0.2",
+    "mac": {
+      "icon": "build/icon.icns",
+      "publish": [
+        "github"
+      ],
+      "target": "dmg"
+    },
     "win": {
       "icon": "build/icon.ico",
       "publish": [

@@ -45,11 +45,12 @@ class PlayerStatList extends Component {
     if (!providedStats) {
       const index = decoderNumbers[statName]
       stats = playerData.map(x => x.stats[index] === Infinity ? 20 : x.stats[index])
-      if (stats.length === 0) {
-        return <div></div>
-      }
     } else {
       stats = providedStats
+    }
+    stats = stats.filter(x => x !== null)
+    if (stats.length === 0) {
+      return <div></div>
     }
     const mean = formatNumber(d3.mean(stats)).toString()
     const std = `${stats.length > 1 ? formatNumber(d3.deviation(stats)) : '---'}`

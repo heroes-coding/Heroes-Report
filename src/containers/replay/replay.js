@@ -392,6 +392,7 @@ class Replay extends Component {
               })}
               {[0,1].map(team => {
                 const teamPlayers = players.slice(team*5+0,team*5+5)
+                console.log(towns,mercs,globes)
                 return (
                   <Team
                     key={team}
@@ -405,9 +406,9 @@ class Replay extends Component {
                       }).filter(x => x))) : '-----'
                     }
                     D={d3.sum(teamPlayers.map(p => stats[p]))}
-                    Towns={towns[team].length-1}
-                    Mercs={mercs[team].length-1}
-                    Globes={d3.sum(teamPlayers.map(p => globes[p].length))}
+                    Towns={towns[team] ? towns[team].length-1 : '-'}
+                    Mercs={mercs[team] ? mercs[team].length-1 : '-'}
+                    Globes={globes ? d3.sum(teamPlayers.map(p => globes[p].length)) : '-'}
                   />
                 )
               })}
@@ -433,7 +434,7 @@ class Replay extends Component {
               formatter={formatNumber}
               yFormatter={formatNumber}
             />
-            <div className="matchupGraphs">
+            {globes&&<div className="matchupGraphs">
               {[0,1].map(team => {
                 const teamPlayers = players.slice(team*5,team*5+5).filter(p => globes[p].length)
                 return (
@@ -458,8 +459,8 @@ class Replay extends Component {
                   />
                 )
               })}
-            </div>
-            <div className="matchupGraphs">
+            </div>}
+            {towns[0]&&<div className="matchupGraphs">
               <Graph
                 graphClass="globesGraph"
                 yMax = {d3.max(towns.map(t => t.length))}
@@ -512,23 +513,23 @@ class Replay extends Component {
                 formatter={formatNumber}
                 yFormatter={formatNumber}
               />
-            </div>
-            <Wheel
+            </div>}
+            {wheelData&&<Wheel
               key={MSL}
               dataRoot={wheelData.deathRoot}
               wheelName="Death"
               isDeath={true}
               openPopup={this.openPopup}
               messagePopup={this.messagePopup}
-            />
-            <Wheel
+            />}
+            {wheelData&&<Wheel
               key={`M${MSL}`}
               dataRoot={wheelData.murderRoot}
               wheelName="Murder"
               isDeath={false}
               openPopup={this.openPopup}
               messagePopup={this.messagePopup}
-            />
+            />}
           </div>
         </div>
         <div className={`col-12 col-md-6 col-xl-6 replayCol`} align="center">
@@ -550,13 +551,13 @@ class Replay extends Component {
               </div>
             </div>
             {[
-              {category: "Map Specific Stats", stats:mapStats.map(k => [k,window.HOTS.nMapStat[k]])},
+              mapStats ? {category: "Map Specific Stats", stats:mapStats.map(k => [k,window.HOTS.nMapStat[k]])} : null,
               {category: "Overall Stats", stats:[["Experience",null],["Mercs",null],["Globes","Regeneration Globes"],["Level",null],["FireTime","Time on Fire"]]},
               {category: "Death Stats", stats:[["KDA",null],["Deaths",null],["OutnmbdDeaths","Outnumbered Deaths"],["DeadTime","Time Spent Dead"],["Kills",null],["Vengeances",null],["Assists",null],["KillStreak","Kill Streak"]]},
               {category: "Damage Stats", stats:[["HeroDam","Hero Damage"],["TFHeroDam","Teamfight Hero Damage"],["BuildingDam","Building Damage"],["MinionDam","Minion Damage"],["SummonDam"],["Summon Damage"],["CreepDam","Creep Damage"]]},
               {category: "Sustain Stats", stats:[["Healing",null],["SelfHealing","Self Healing"],["ClutchHeals","Clutch Heals"],["Protection",null],["TFDamTaken","Teamfight Damage Taken"],["Escapes",null],["TFEscapes","Teamfight Escapes"]]},
               {category: "Crowd Control", stats:[["CCTime","C.C. Seconds"],["StunTime","Stunning Seconds"],["SilenceTime","Silencing Seconds"],["RootTime","Rooting Seconds"]]},
-            ].map(c => {
+            ].filter(z => z).map(c => {
               return (
                 <div key={c.category} className="statCat">
                   <div className="statCatTitle">{c.category}</div>

@@ -45,6 +45,8 @@ export default (props) => {
               if ((!isNaN(left) && !parseInt(left) && !parseInt(right)) || right==="0:00") {
                 return <div key={i}></div>
               }
+              if (!name || !left || !right) return <div key={i}></div>
+              console.log(name,statName,left,right)
               const spaceLeft = spacesLeft - name.length - left.length
               const spaceMiddle = spacesMiddle-right.length
               return (
