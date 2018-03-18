@@ -65,6 +65,7 @@ process.on('replays:refresh', nothing => {
 
 let tray
 function createTray() {
+  console.log(process.env.ELECTRON_START_URL,'start url')
   const trayPath = process.env.ELECTRON_START_URL ? 'tinyTray.png' : path.join(__dirname, '/../build/tinyTray.png')
   tray = new Tray(trayPath)
   tray.setToolTip('Heroes Report Replay Analyzer')

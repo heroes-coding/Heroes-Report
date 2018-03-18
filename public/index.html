@@ -207,8 +207,7 @@
         const head = document.getElementsByTagName('head')[0]
         let script = document.createElement('script')
         script.type = 'text/javascript'
-        const source = window.isProduction ? "../appWASM.js" : window.process && window.process.platform === 'darwin' ? "../public/appWASM.js" : "../appWASM.js"
-        console.log(source)
+        const source = "../appWASM.js"
         script.src = source
         head.appendChild(script);
 

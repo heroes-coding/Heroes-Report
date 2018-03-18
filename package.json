@@ -103,6 +103,7 @@
     "pack": "electron-builder --dir",
     "electron": "electron .",
     "electron-dev": "set ELECTRON_START_URL=http://localhost:3000&& electron .",
+    "electron-mac-dev": "ELECTRON_START_URL=http://localhost:3000 electron .",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "dist": "yarn build && build",
