@@ -664,7 +664,7 @@ function isDataURI(filename) {
 
 function integrateWasmJS() {
     var wasmTextFile = "appWASM.wast";
-    var wasmBinaryFile = "../appWASM.wasm";
+    var wasmBinaryFile = window.process && window.process.platform === 'darwin' ? "appWASM.wasm" : "../appWASM.wasm";
     var asmjsCodeFile = "appWASM.temp.asm.js";
     if (typeof Module["locateFile"] === "function") {
         if (!isDataURI(wasmTextFile)) {

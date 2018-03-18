@@ -130,6 +130,7 @@ class ReplayList extends Component {
     const { map, Length, Kills, Assists, Deaths, mode, Experience, Globes } = replayValues
     const statValues = [0,0,0]
     const { heroes, Won, hero, fullTals, FirstTo10, FirstTo20, FirstFort, Winners, KDA, MSL, build, allies, enemies, ends } = rep
+    console.log(ends)
     const sortStats = this.props.prefs.sortStats
     sortStats.map((x,i) => {
       if (x==="KDA") {
@@ -163,7 +164,7 @@ class ReplayList extends Component {
           MSL={MSL}
           region={region}
           FirstTo10={FirstTo10}
-          FirstTo20={d3.max(ends) < 20 ? 2 : FirstTo20}
+          FirstTo20={ends ? (d3.max(ends) < 20 ? 2 : FirstTo20) : 2}
           FirstFort={FirstFort}
           date={minSinceLaunchToDate(MSL)}
           heroes={heroes}

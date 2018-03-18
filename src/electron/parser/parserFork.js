@@ -171,6 +171,7 @@ function parseFile(replayPath,HOTS, getProto=null) {
         }
       }
       if (build<40336) {
+        console.log(build)
         thisReplay['h'] = {}
         for (let p=0;p<10;p++) thisReplay['h'][p] = [heroes[p],p,Math.floor(p/5)===winners,heroNames[p],battleTags[p]]
         thisReplay['r'] = [minSinceLaunch, build, region, gameLength, mapName, gameMode, null, null,null,winners]

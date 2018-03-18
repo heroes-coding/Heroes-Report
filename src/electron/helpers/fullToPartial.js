@@ -1,4 +1,5 @@
 const fullToPartial = function(replay, bnetID, handle, HOTS) {
+  console.log('entering full to partial',replay,bnetID,handle)
   const rep = {}
   const [minSinceLaunch, build, region, gameLength, mapName, gameMode, firstTo10, firstTo20, firstFort,winners] = replay.r
   const first10= firstTo10 && (firstTo10[0]===0 || firstTo10[0]) ? firstTo10[0] : 2
@@ -21,8 +22,13 @@ const fullToPartial = function(replay, bnetID, handle, HOTS) {
   rep.bnetIDs = replay.bnetIDs
   rep.h = replay.h
   rep.heroes = [0,1,2,3,4,5,6,7,8,9].map(h => replay.h[h][0])
-  const levels = replay.e.l.map(x => x.length)
-  rep.ends = [levels[1-team],levels[team]]
+  try {
+    const levels = replay.e.l.map(x => x.length)
+    console.log(levels)
+    rep.ends = [levels[1-team],levels[team]]
+  } catch (e) {
+    // pass - old replay won't have levels data
+  }
   rep.hero = replay.h[slot][0]
   rep.role = HOTS.roleN[rep.hero]
   rep.franchise = HOTS.franchiseN[rep.hero]
@@ -34,7 +40,7 @@ const fullToPartial = function(replay, bnetID, handle, HOTS) {
   rep.allyRoleCounts = {0:0,1:0,2:0,3:0}
   rep.enemyRoleCounts = {0:0,1:0,2:0,3:0}
   rep.order = []
-  if (replay.e.po.length) {
+  if (replay.e.po && replay.e.po.length) {
     const firstPickers = replay.e.po[0]
   }
   rep.allyIDs = []
@@ -56,11 +62,12 @@ const fullToPartial = function(replay, bnetID, handle, HOTS) {
   const y = replay.h[slot]
   const mapStatIDs = [null,null]
   const mapStats = [null,null]
-  Object.keys(y[60]).map((x,i) => {
-    mapStatIDs[i] = parseInt(x)
-    mapStats[i] = y[60][x]
-  })
-
+  if (y[60]) {
+    Object.keys(y[60]).map((x,i) => {
+      mapStatIDs[i] = parseInt(x)
+      mapStats[i] = y[60][x]
+    })
+  }
   // eslint-disable-next-line no-unused-vars
   const [ hero, hslot, stat2, stat3, stat4, Award, Deaths, stat7, stat8, Kills, Assists, HighestKillStreak, HeroLevel, Experience, HeroDamage, DamageTaken, StructureDamage, SiegeDamage, Healing, SelfHealing, DeadTime, CrowdControlTime, CreepDamage, SummonDamage, Mercs, WatchTowerCaptures, MinionDamage, Globes, Silenced, statID1, statValue1, statID2, statValue2, statID3, statValue3, statID4, statValue4, statID5, statValue5, statID6, statValue6, statID7, statValue7, TeamfightDamageTaken, TeamfightEscapes, SecondsofSilence, ClutchHeals, OutnumberedDeaths, Escapes, SecondsofStuns, Vengeances, TeamfightHeroDamage, RootTime, ProtectionGiventoAllies, stat54, NumberofPings, NumberofChatCharactersTyped, stat57, Votedfor, SecondsonFire, mStats ] = y
   rep.KDA = Deaths === 0 ? 20 : (Kills + Assists)/Deaths
@@ -102,7 +109,7 @@ const fullToPartial = function(replay, bnetID, handle, HOTS) {
     // do nothing.  Missing team data is okay.
   }
 
-  rep.stats = [gameLength, mapName, -1, gameMode, minSinceLaunch, mapStatIDs[0], Kills, Vengeances, Assists, Experience, mapStatIDs[1], Mercs, SiegeDamage, rep.ends[1], rep.ends[0], SelfHealing, DeadTime, RootTime, NumberofChatCharactersTyped > 50 ? 1 : 0, SecondsonFire, TeamfightDamageTaken, Deaths >= (teamDeaths[team] - Deaths)/2 ? 1 : 0, StructureDamage, HeroDamage, TeamfightHeroDamage, SecondsofSilence, Healing, Escapes, Globes, mapStats[0], mapStats[1], Deaths, Award, NumberofPings > 42 ? 1 : 0, OutnumberedDeaths, ProtectionGiventoAllies, SecondsofStuns, CrowdControlTime, Votedfor ? (Math.floor(Votedfor/5) === team ? 0 : 1) : 2, (rep.role === 1 && HeroDamage > (teamDamage[team] - HeroDamage)/4) ? 1 : 0, HeroDamage < 0.1*(teamDamage[team] - HeroDamage) ? 1 : 0, teamTownKills[team], heroTownKills[slot], MinionDamage, votesReceived[slot], teamMercCaptures[team]]
+  rep.stats = [gameLength, mapName, -1, gameMode, minSinceLaunch, mapStatIDs[0], Kills, Vengeances, Assists, Experience, mapStatIDs[1], Mercs, SiegeDamage, rep.ends ? rep.ends[1] : null, rep.ends ? rep.ends[0] : null, SelfHealing, DeadTime, RootTime, NumberofChatCharactersTyped > 50 ? 1 : 0, SecondsonFire, TeamfightDamageTaken, Deaths >= (teamDeaths[team] - Deaths)/2 ? 1 : 0, StructureDamage, HeroDamage, TeamfightHeroDamage, SecondsofSilence, Healing, Escapes, Globes, mapStats[0], mapStats[1], Deaths, Award, NumberofPings > 42 ? 1 : 0, OutnumberedDeaths, ProtectionGiventoAllies, SecondsofStuns, CrowdControlTime, Votedfor ? (Math.floor(Votedfor/5) === team ? 0 : 1) : 2, (rep.role === 1 && HeroDamage > (teamDamage[team] - HeroDamage)/4) ? 1 : 0, HeroDamage < 0.1*(teamDamage[team] - HeroDamage) ? 1 : 0, teamTownKills[team], heroTownKills[slot], MinionDamage, votesReceived[slot], teamMercCaptures[team]]
   rep.stats = rep.stats.map(x => x || 0)
   return rep
 }

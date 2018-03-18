@@ -140,9 +140,12 @@ function showAccountSelection(currentAccounts) {
 }
 
 function getAccountPaths() {
-  const heroesPath = path.join(app.getPath('documents'),'Heroes of the Storm/Accounts')
+  console.log(app.getPath('documents'))
+  const heroesPath = process.platform === 'darwin' ?
+    path.join(app.getPath('userData'),'../Blizzard/Heroes of the Storm/Accounts') :
+    path.join(app.getPath('documents'),'Heroes of the Storm/Accounts')
   try {
-    const accounts = fs.readdirSync(heroesPath)
+    const accounts = fs.readdirSync(heroesPath).filter(a => !isNaN(a))
     const idPaths = []
     accounts.map(account => {
       const accountPath = path.join(heroesPath,account)

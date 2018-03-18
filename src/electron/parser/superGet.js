@@ -6,7 +6,7 @@ function superGet(url) {
     let timeout = setTimeout(() => {
       console.log('problem with', url)
       reject(new Error('Timeout'))
-    },10000)
+    },60000)
     let request = https.get(url, function(response) {
       let results = []
       response.setEncoding('utf8')
