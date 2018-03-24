@@ -14,3 +14,11 @@ Remember, you might need to set the homepage in package.json to "./"
 rm -rf /var/www/react/
 cp -r /var/www/reactbackup /var/www/react/
 cp -r build/. /var/www/react/
+
+
+Mac build:
+export CSC_IDENTITY_AUTO_DISCOVERY=false
+GH_TOKEN=XXX-REPLACETHISWITHREALNUMBER-XXX electron-builder build -m -p onTagOrDraft
+
+Windows build:
+set GH_TOKEN=XXX-REPLACETHISWITHREALNUMBER-XXX electron-builder build -w -p onTagOrDraft

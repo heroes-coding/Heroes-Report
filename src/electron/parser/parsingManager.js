@@ -20,9 +20,9 @@ const { mapNicks, modeNicks } = require('../helpers/definitions.js')
 const { formatTime, formatDate, minSinceLaunchToDate } = require('../helpers/simpleFunctions.js')
 const { parseFile } = require('./parserFork.js')
 
-electron.ipcMain.on('parseSingleReplay', async(e,{replayPath}) => {
+electron.ipcMain.on('parseSingleReplay', async(e,{replayPath, summaryOnly}) => {
   console.log('request for parseSingleReplay called',replayPath)
-  const replay = await parseFile(replayPath,HOTS,getProto)
+  const replay = await parseFile(replayPath,HOTS,getProto,summaryOnly)
   process.emit('dispatchSingleReplay',replay)
 })
 

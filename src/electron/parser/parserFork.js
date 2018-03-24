@@ -25,7 +25,7 @@ let getTalentN = function(talentName,heroN,talentN,HOTS) {
   return talentName
 }
 
-function parseFile(replayPath,HOTS, getProto=null) {
+function parseFile(replayPath,HOTS, getProto=null, summaryOnly=null) {
   let promise = new Promise(async function(resolve, reject) {
     try {
       const file = fs.readFileSync(replayPath)
@@ -36,7 +36,7 @@ function parseFile(replayPath,HOTS, getProto=null) {
       let header = Protocol.decodeReplayHeader(archive.header.userDataHeader.content,proto.typeInfos,proto.hID)
       let build = header['m_version']['m_build']
       let details = Protocol.decodeReplayDetails(archive.readFile('replay.details'),proto.typeInfos,proto.dID)
-      if (!(details['m_playerList'][0]['m_toon']['m_programId'].toString() === "Hero" && details['m_playerList'][9]['m_toon']['m_programId'].toString() === "Hero")) { // computer players}
+      if (!summaryOnly && !(details['m_playerList'][0]['m_toon']['m_programId'].toString() === "Hero" && details['m_playerList'][9]['m_toon']['m_programId'].toString() === "Hero")) { // computer players}
         console.log('has computer players')
         return resolve(2)
       }
@@ -85,7 +85,7 @@ function parseFile(replayPath,HOTS, getProto=null) {
       thisReplay.apiHash = apiHash
       gameMode = HOTS.modesN[gameMode]
       let region = details['m_playerList'][0]['m_toon']['m_region']
-      if (region===98) return resolve(98)
+      if (region===98 && !summaryOnly) return resolve(98)
 
       if (HOTS.mapDic.hasOwnProperty(mapName)) mapName = HOTS.mapDic[mapName]
       else if (HOTS.mapDic.hasOwnProperty(mapName.toLowerCase())) mapName = HOTS.mapDic[mapName.toLowerCase()]
@@ -97,8 +97,16 @@ function parseFile(replayPath,HOTS, getProto=null) {
       }
 
       thisReplay.bnetIDs = bnetIDs
-      let hashKey = mapName.toString() + region.toString() + gameMode.toString() + bnetIDs.join("") + heroes.join("") + build.toString() + winners.toString()
-      let hashCode = hasher.hash(hashKey,64).str()
+      let hashKey, hashCode
+      if (!summaryOnly) {
+        const MN = mapName.toString()
+        const RN = region.toString()
+        const GM = gameMode.toString()
+        const BN = build.toString()
+        const WN = winners.toString()
+        hashKey = MN + RN + GM + bnetIDs.join("") + heroes.join("") + BN + WN
+        hashCode = hasher.hash(hashKey,64).str()
+      }
       let messages = Protocol.decodeReplayMessageEvents(archive.readFile('replay.message.events'),proto.typeInfos,1,proto.mTypes)
       let pings = [[],[],[],[],[],[],[],[],[],[]]
       let chats = []
@@ -331,14 +339,17 @@ function parseFile(replayPath,HOTS, getProto=null) {
             if (HOTS.nickDic.hasOwnProperty(nickHero)) {
               console.log(`heroDic missing {$heroes[p]}, but able to add it anyway (${HOTS.nickDic[nickHero]})`)
               heroes[p] = HOTS.nickDic[nickHero]
-            } else console.log("Missing a hero: ",heroes[p])
+            } else {
+              console.log("Missing a hero: ",heroes[p], ", and their nickname: ", nickHero, ", and the slug: ",atts.scopes[p+1][4002][0]['value'].toString())
+            }
           }
         }
       }
 
       for (let p =0;p<10;p++) {
         full.push({})
-        full[p].Level = parseInt(atts.scopes[p+1][4008][0]['value'].toString())
+        const level = parseInt(atts.scopes[p+1][4008][0]['value'].toString())
+        full[p].Level = level
         full[p].Takedowns = scoreResults["Takedowns"][p][0]["m_value"]
         full[p].Deaths = scoreResults["Deaths"][p][0]["m_value"]
         full[p].TownKills = scoreResults["TownKills"][p][0]["m_value"]

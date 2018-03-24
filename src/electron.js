@@ -19,6 +19,12 @@ const { returnIDs } = require('./electron/parser/bareLobby.js')
 require('electron-context-menu')()
 // require('electron-reload')(__dirname, { electron: require('${__dirname}/../../node_modules/electron') })
 
+/*
+const addon = require('./rust/hi')
+console.log(addon)
+console.log(addon.hello())
+*/
+
 process.on('dispatchSingleReplay', replay => {
   mainWindow.webContents.send('dispatchSingleReplay',replay)
 })
@@ -134,14 +140,16 @@ const monitorForLobby = function() {
     persistent: true
   })
   watcher.on('ready', () => watcher.on('add', path => {
-    console.log(path)
     if (path.includes('replay.server.battlelobby')) {
       setTimeout(async() => {
-        console.log(path,' added!')
-        let file = fs.readFileSync(path)
-        let results = returnIDs(file.toString())
-        console.log(results)
-        mainWindow.webContents.send('getPreviewPlayerInfo',results)
+        try {
+          let file = fs.readFileSync(path)
+          let results = returnIDs(file.toString())
+          console.log(path,' added!')
+          mainWindow.webContents.send('getPreviewPlayerInfo',results)
+        } catch (e) {
+          console.log(e,'Problem with preview info')
+        }
       }, 250)
     }
   }))
@@ -159,6 +167,11 @@ const monitorAccount = function(account) {
     persistent: true
   })
   watcher.on('ready', () => watcher.on('add', path => {
+    const parts = path.split('.')
+    if (parts[parts.length-1] !== 'StormReplay') {
+      console.log('not a complete replay!', path)
+      return
+    }
     if (!parserPopup.saveInfo.fileNames.hasOwnProperty(path)) {
       setTimeout(() => {
         process.emit('addSingleReplay', {rPath:path, renameFiles})

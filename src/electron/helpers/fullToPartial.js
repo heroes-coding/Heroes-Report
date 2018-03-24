@@ -1,5 +1,4 @@
 const fullToPartial = function(replay, bnetID, handle, HOTS) {
-  console.log('entering full to partial',replay,bnetID,handle)
   const rep = {}
   const [minSinceLaunch, build, region, gameLength, mapName, gameMode, firstTo10, firstTo20, firstFort,winners] = replay.r
   const first10= firstTo10 && (firstTo10[0]===0 || firstTo10[0]) ? firstTo10[0] : 2
