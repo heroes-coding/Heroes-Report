@@ -19,12 +19,6 @@ const { returnIDs } = require('./electron/parser/bareLobby.js')
 require('electron-context-menu')()
 // require('electron-reload')(__dirname, { electron: require('${__dirname}/../../node_modules/electron') })
 
-/*
-const addon = require('./rust/hi')
-console.log(addon)
-console.log(addon.hello())
-*/
-
 process.on('dispatchSingleReplay', replay => {
   mainWindow.webContents.send('dispatchSingleReplay',replay)
 })
@@ -116,8 +110,8 @@ const battleLobbyResults = { handles:
      'MightyBeast',
      'Chasanak',
      'ElRickJames' ],
-  teamNumbers: [ 0,0, 0, 0, 0, 0, 0, 0, 1, 1 ],
-  battleTags:
+teamNumbers: [ 0,0, 0, 0, 0, 0, 0, 0, 1, 1 ],
+battleTags:
    [ '1348',
      '1918',
      '14616',
@@ -129,10 +123,9 @@ const battleLobbyResults = { handles:
      '1357',
      '1854' ] }
 
-
 const monitorForLobby = function() {
   // This is for testing purposes only.  Delete it when everything is ready.
-  // setTimeout(() => { mainWindow.webContents.send('getPreviewPlayerInfo',battleLobbyResults) }, 4000)
+  setTimeout(() => { mainWindow.webContents.send('getPreviewPlayerInfo',battleLobbyResults) }, 4000)
   // main window is already loaded when calling this function
   const tempPath = path.join(app.getPath('temp'),'Heroes of the Storm')
   const watcher = chokidar.watch(tempPath, {

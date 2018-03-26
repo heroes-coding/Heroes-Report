@@ -6,11 +6,11 @@ const returnIDs = function(lobbyText) {
   for (let m=0;m<matches.length;m++) {
     const bareText = matches[m]
     const battleTagIndex = bareText.lastIndexOf("#")
-    const battleTag = bareText.slice(battleTagIndex+1,)
+    const battleTag = bareText.slice(battleTagIndex+1,bareText.length-1)
     battleTags.push(battleTag)
     const nameText = bareText.slice(0,battleTagIndex)
     const nameStart = Math.max.apply(null,["\x00","\x01","\x02","\x03","\x04","\x05","\x06","\x07","\x08","\x09","\x0a","\x0b","\x0c","\x0d","\x0e","\x0f","\x10","\x11","\x12","\x13","\x14","\x15","\x16","\x17","\x18","\x19","\x1a","\x1b","\x1c","\x1d","\x1e","\x1f","\x00","\x01","\x02","\x03","\x04","\x05","\x06","\x07","\x08","\x09","\x0a","\x0b","\x0c","\x0d","\x0e","\x0f","\x10","\x11","\x12","\x13","\x14","\x15","\x16","\x17","\x18","\x19","\x1a","\x1b","\x1c","\x1d","\x1e","\x1f","%","#",";",")","(","/","+","$","*","'","!","'","!","%","#",";",")","(","/","+","$","*"," "].map(c => nameText.lastIndexOf(c)))
-    const handle = nameText.slice(nameStart+1,)
+    const handle = nameText.slice(nameStart+1,nameText.length-1)
     handles.push(handle)
     const handleIndex = lobbyText.indexOf(`${handle}`)
     const teamGibberish = lobbyText.slice(handleIndex-9,handleIndex-1)

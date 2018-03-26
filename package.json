@@ -108,15 +108,14 @@
     "eject": "react-scripts eject",
     "dist": "yarn build && build",
     "react-start": "react-scripts start",
-    "postinstall": "install-app-deps",
-    "neon-build": "electron-build-env neon build neon-hi"
+    "postinstall": "install-app-deps"
   },
   "proxy": "http://localhost:3000",
   "devDependencies": {
     "electron": "^1.8.2",
-    "electron-build-env": "^0.2.0",
     "electron-builder": "^20.5.1",
     "electron-react-devtools": "^0.5.3",
+    "electron-rebuild": "^1.7.3",
     "eslint": "^4.14.0",
     "eslint-config-standard": "^11.0.0-beta.0",
     "eslint-plugin-import": "^2.8.0",
