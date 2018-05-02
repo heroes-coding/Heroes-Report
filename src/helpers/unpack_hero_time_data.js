@@ -77,7 +77,7 @@ window.heroStat = heroStatToKey
 
 export async function getHeroTimeData(prefs,hero) {
   let promise = new Promise(async function(resolve, reject) {
-    const url = `https://heroes.report/stats/h/${hero}/${prefs.mode}/${prefs.mmr}/${prefs.map}.json?${getRandomString()}`
+    const url = `https://heroes.report/stats/h/${hero}/${prefs.mode}/${prefs.mmr}/${prefs.map}.json`
     const response = await axios.get(url)
     const dat = response.data
     const startTime = window.performance.now()

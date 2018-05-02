@@ -20,6 +20,7 @@ require('electron-context-menu')()
 // require('electron-reload')(__dirname, { electron: require('${__dirname}/../../node_modules/electron') })
 
 process.on('dispatchSingleReplay', replay => {
+  // THIS IS FOR USER SPECIFIED REPLAY FILES - BASICALLY FOR YOU TO ANALYZE A REPLAY IN MORE DETAIL IF NECESSARY
   mainWindow.webContents.send('dispatchSingleReplay',replay)
 })
 
@@ -123,9 +124,21 @@ battleTags:
      '1357',
      '1854' ] }
 
+const getPreviewFromPath = function(path) {
+  try {
+    let file = fs.readFileSync(path)
+    let results = returnIDs(file.toString())
+    console.log(path,' added!',results)
+    mainWindow.webContents.send('getPreviewPlayerInfo',results)
+  } catch (e) {
+    console.log(e,'Problem with preview info')
+  }
+}
+
 const monitorForLobby = function() {
   // This is for testing purposes only.  Delete it when everything is ready.
-  setTimeout(() => { mainWindow.webContents.send('getPreviewPlayerInfo',battleLobbyResults) }, 4000)
+  // setTimeout(() => { mainWindow.webContents.send('getPreviewPlayerInfo',battleLobbyResults) }, 4000)
+  getPreviewFromPath('./public/replay.server.battlelobby')
   // main window is already loaded when calling this function
   const tempPath = path.join(app.getPath('temp'),'Heroes of the Storm')
   const watcher = chokidar.watch(tempPath, {
@@ -135,14 +148,7 @@ const monitorForLobby = function() {
   watcher.on('ready', () => watcher.on('add', path => {
     if (path.includes('replay.server.battlelobby')) {
       setTimeout(async() => {
-        try {
-          let file = fs.readFileSync(path)
-          let results = returnIDs(file.toString())
-          console.log(path,' added!')
-          mainWindow.webContents.send('getPreviewPlayerInfo',results)
-        } catch (e) {
-          console.log(e,'Problem with preview info')
-        }
+        getPreviewFromPath(path)
       }, 250)
     }
   }))
@@ -189,9 +195,33 @@ function createWindow() {
     }
     monitorForLobby()
     if (fs.existsSync(replaySummaries)) {
-      fs.readFile(replaySummaries, (e,summaries) => {
+      fs.readFile(replaySummaries, async(e,summaries) => {
         summaries = JSON.parse(`[${summaries.slice(0,summaries.length-1)}]`)
+        const HOTS = await HOTSPromise
         setTimeout(() => { mainWindow.webContents.send('replays:finishedSending',null) },250)
+        for (let r=0;r<summaries.length;r++) {
+          let rep = summaries[r]
+          for (let t=0;t<7;t++) {
+            let tal = rep.fullTals[t]
+            if (tal && isNaN(tal)) {
+              if (HOTS.talentN.hasOwnProperty(tal)) summaries[r].fullTals[t] = HOTS.talentN[tal]
+              else summaries[r].fullTals[t] = null
+            }
+          }
+          for (let h=0;h<10;h++) {
+            const hero = rep.h[h]
+            for (let t=30;t<44;t+=2) {
+              const tal = hero[t]
+              if (tal && isNaN(tal)) {
+                if (HOTS.talentN.hasOwnProperty(tal)) summaries[r].h[h][t] = HOTS.talentN[tal]
+                else summaries[r].h[h][t] = undefined
+                /* summaries[r].h[h][t] = HOTS.talentN[tal]
+                else summaries[r].h[h][t] = undefined */
+              }
+            }
+          }
+        }
+        console.log(summaries[0])
         mainWindow.webContents.send('replays:dispatch',summaries)
         // showing the main window after all of this is done makes the program FEEL less laggy
         setTimeout(() => {

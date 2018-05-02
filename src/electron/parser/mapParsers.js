@@ -269,7 +269,7 @@ function Bay(scoreResults,uniqueDic,mapStats,mapObjectives) {
       let team = specialEvent['m_fixedData'][0]['m_value']/4096 - 1
       let turnInNum = specialEvent['m_intData'][0]['m_value']
       let coins = specialEvent['m_intData'][1]['m_value']
-      let otherCoins = specialEvent['m_intData'][2]['m_value']
+      let otherCoins = specialEvent['m_intData'][2] ? specialEvent['m_intData'][2]['m_value'] : 0
       mapObjectives[18].push([time,team,turnInNum,coins,otherCoins])
     }
   }

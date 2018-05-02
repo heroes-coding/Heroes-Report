@@ -35,7 +35,7 @@ function heapFromBytes(buffer) {
 export default async function getReplayBinary(date,mode) {
   let promise = new Promise(function(resolve, reject) {
     const binaryReq = new window.XMLHttpRequest()
-    binaryReq.open("GET", `https://heroes.report/stats/compressed/${"694-1"}`, true)
+    binaryReq.open("GET", `https://heroes.report/full/${"999-1"}`, true)
     binaryReq.responseType = "arraybuffer"
     binaryReq.onload = async function(oEvent) {
       const arrayBuffer = binaryReq.response

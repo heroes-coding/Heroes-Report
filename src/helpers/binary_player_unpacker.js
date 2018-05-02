@@ -81,8 +81,7 @@ function heapFromBytes(buffer) {
 export default async function getPlayerBinary(fullID) {
   let promise = new Promise(function(resolve, reject) {
     const binaryReq = new window.XMLHttpRequest()
-    // binaryReq.open("GET", `https://heroes.report/stats/players/808192`, true)
-    binaryReq.open("GET", `https://heroes.report/stats/playersCompressed/${fullID}`, true)
+    binaryReq.open("GET", `https://heroes.report/histories/${fullID}`, true)
     binaryReq.responseType = "arraybuffer"
     binaryReq.onload = async function(oEvent) {
       const arrayBuffer = binaryReq.response

@@ -1,6 +1,7 @@
 "use strict"
 const protocolJS = require('./protocol.js')
-const { Protocol, MPQArchive } = protocolJS
+const { Protocol } = protocolJS
+const MPQArchive = require('empeeku/mpyq').MPQArchive
 const protos = {}
 const hasher = require('fnv-plus')
 const fs = require('fs')

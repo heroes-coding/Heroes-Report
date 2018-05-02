@@ -189,7 +189,7 @@ function messageTalentUnpacker(response,hero) {
 export default async function getPackedTalents(hero, prefs) {
   let promise = new Promise(function(resolve, reject) {
     const binaryReq = new window.XMLHttpRequest()
-    const url =`https://heroes.report/stats/z/${prefs.time}/${prefs.mode}/${prefs.mmr}/${prefs.map}/${hero}.json?${getRandomString()}`
+    const url =`https://heroes.report/stats/z/${prefs.time}/${prefs.mode}/${prefs.mmr}/${prefs.map}/${hero}.json`
     // console.log('downloading ',url)
     binaryReq.open("GET",url, true)
     binaryReq.onload = async function(oEvent) {

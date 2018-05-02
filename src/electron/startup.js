@@ -11,7 +11,7 @@ const returnIDs = require('./parser/bareLobby').returnIDs
 
 let HOTSPromise = (async function getHOTS() {
   let promise = new Promise(async function(resolve, reject)  {
-    let configPromise = superGet('https://heroes.report/stats/config.json')
+    let configPromise = superGet('https://heroes.report/static/config.json')
     const configPath = path.join(userDataPath,'config.json')
     let config
     if (fs.existsSync(configPath)) {
@@ -23,7 +23,7 @@ let HOTSPromise = (async function getHOTS() {
     const HOTSPath = path.join(userDataPath,'HOTS.json')
     if (!config || newConfig.version > config.version) {
       console.log('getting new version of HOTS dictionary...')
-      HOTS = await superGet('https://heroes.report/stats/HOTS.json')
+      HOTS = await superGet('https://heroes.report/static/HOTS.json')
       fs.writeFileSync(HOTSPath,HOTS, 'utf8', (err) => { if (err) console.log(err) })
       fs.writeFileSync(configPath,JSON.stringify(newConfig), 'utf8', (err) => { if (err) console.log(err) })
       HOTS = JSON.parse(HOTS)

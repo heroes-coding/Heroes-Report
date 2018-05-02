@@ -19,8 +19,16 @@ import aboutPath from './md/about.md'
 import disclaimerPath from './md/disclaimer.md'
 import Fuse from 'fuse.js'
 import { sortObjectListByProperty } from './helpers/CPPBridge' // This is because sorting player matchups took 10 seconds for a list of 20K elements.  I have no idea why
+
 window.sortObjectListByProperty = sortObjectListByProperty
 let ParserAndUpdater, OptionsMenu, ipcRenderer, PreviewMenu
+
+/*
+getReplayBinary().then(res => {
+  window.repBin = res
+  console.log(res)
+})
+*/
 
 if (window.isElectron && window.windowID === 'parser') ParserAndUpdater = require('./electron/containers/parsingLogger/parserAndUpdater').default
 else if (window.isElectron && window.windowID === 'preview') PreviewMenu = require('./electron/containers/preview/previewer').default

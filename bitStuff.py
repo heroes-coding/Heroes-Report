@@ -16,19 +16,6 @@ def getMax(array):
         total = (total*n)+n
     return total
 
-2928/732
-842085136
-getBytes(4293913866)
-16**7
-5*16
-0*16+5
-5812/4
-5%16
-5//16
-2113536000/1024/1024/1024
-10000*4*3/1024
-16777216/1024/1024
-80/4
 replayBitDic = [
 #3 Structures 1-2 / firstTo10 / firstTo20 / Player Three Percentiles 9 /Player 6 Talents 1-2
 getBytes(6*6*3*5**4*4*6*100*5*5),
@@ -219,9 +206,6 @@ getBytes(147*5*5*4*2*60*24*100),
 ]
 
 
-import numpy as np
-np.exp(np.log(your_array).sum())
-
 def multiplyAll(array):
     return getBytes(np.exp(np.log(array).sum()))
 
@@ -246,6 +230,7 @@ for i in range(16):
             ["[{},{},{}]".format(el[0],el[3],el[4]) for el in replayBits[i]]
             )))
 
+sum([len(val) for val in replayBits.values()])
 
 
 ranges = {
@@ -271,6 +256,8 @@ ranges = {
 position = 130
 decoderVals = []
 decoderList = [ [] for i in range(16) ]
+terms = 'pGlobes', 'pStructures', 'pMercs', 'heroes', 'KDA', 'mmrPercentiles', "pTalents[0]", "pTalents[1]", "pTalents[2]", "pTalents[3]", "pTalents[4]", "pTalents[5]", "pTalents[6]", "pTalents[7]", "pTalents[8]", "pTalents[9]"
+
 
 for byte, vals in replayBits.items():
     rev = vals[::-1]
@@ -281,6 +268,7 @@ for byte, vals in replayBits.items():
             inty = int(key[-2])
             pos = ranges[termy][inty]
         else:
+            print("{}key, position)
             pos = position
             position += 1
         decoderList[byte].append((MAX,MULT,pos))
@@ -289,9 +277,12 @@ for byte, vals in replayBits.items():
 
 lengths = [len(r) for r in decoderList]
 
+
+
 print("const int nInts = {};".format(len(lengths)))
 print("const int nOuts = {};".format(sum(lengths)))
 print ("const int intLengths[{}] = {{ {} }};".format(len(lengths),", ".join([str(l) for l in lengths])))
+
 print ("const int decoders[{}][{}][{}] = {{ {} }};".format(len(lengths),max(lengths),3,
        ", ".join([ "{{ {} }}".format( 
                ", ".join(
@@ -299,13 +290,11 @@ print ("const int decoders[{}][{}][{}] = {{ {} }};".format(len(lengths),max(leng
 )) for i in range(len(lengths))])))
 
 
-6000000/300/60/60
-    
+
 # Another check
 sorted(decoderVals,key=lambda x: x[-1])
 
 
-terms = 'pGlobes', 'pStructures', 'pMercs', 'heroes', 'KDA', 'mmrPercentiles', "pTalents[0]", "pTalents[1]", "pTalents[2]", "pTalents[3]", "pTalents[4]", "pTalents[5]", "pTalents[6]", 
 
 
 for p in range(10):

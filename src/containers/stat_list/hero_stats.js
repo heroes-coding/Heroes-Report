@@ -165,7 +165,7 @@ class HeroStatList extends Component {
                   ...['Experience', 'Mercs', 'Globes', "Time on Fire", "Level Avg", "Pings"].map(s => { return this.stat(s,lastBuild, buildData) })
                 ]},
               {category: 'CC Stats',
-                left:'Mean',
+                left:'Patch',
                 right: 'Sigma',
                 hasGraphs: true,
                 stats:[
@@ -184,7 +184,7 @@ class HeroStatList extends Component {
                 stats:['1st To 10 Δ','1st To 20 Δ', '1st Fort Δ', "Short Game Δ","Norm. Game Δ","Long Game Δ"].map(s => { return this.percent(s,lastBuild, buildData) })
               },
               {category: 'Death Stats',
-                left:'Mean',
+                left:'Patch',
                 right: 'Sigma',
                 hasGraphs: true,
                 stats:[
@@ -192,14 +192,14 @@ class HeroStatList extends Component {
                   ...["Deaths", "Out#d Deaths", "Dead Time", "Kills", "Vengeances", "Kill Streak", "Assists", "Escapes","TF Escapes"].map(s => { return this.stat(s,lastBuild, buildData) })
                 ]},
               {category: 'Sustain Stats',
-                left:'Mean',
+                left:'Patch',
                 right: 'Sigma',
                 hasGraphs: true,
                 stats:[
                   ...["Heal & Shld","Damage Taken","TF Dam Taken", "Healing", "Self Healing", "Protection", "Clutch Heals"].map(s => { return this.stat(s,lastBuild, buildData) })
                 ]},
               {category: 'Damage Stats',
-                left:'Mean',
+                left:'Patch',
                 right: 'Sigma',
                 hasGraphs: true,
                 stats:[

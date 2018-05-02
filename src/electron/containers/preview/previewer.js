@@ -50,11 +50,13 @@ class OptionsMenu extends Component {
         else player = {...player, ...{nWith: '-', nVS: '-', nWinWith: '-', nWinVS: '-', nMatches: '-'}}
         players.push(player)
       }
+      console.log('players:',players)
       const mmrsPath = `https://heroes.report/api/mmrsbyhandle/${fullHandles.join(",")}`
-      // console.log(mmrsPath)
+      console.log(mmrsPath)
       // const mmrsPath = `https://heroes.report/search/mmrs/${bnetIDs.join(",")}`
       let res = await axios.get(mmrsPath)
       res = res.data
+      console.log(res)
       const resKeys = Object.keys(res)
       for (let m=0;m<resKeys.length;m++) {
         const id =resKeys[m]

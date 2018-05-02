@@ -12,7 +12,7 @@ const totalStatsCount = 53
 async function getMainData(prefs, rollbackState) {
   // GET MAIN DATA IS WORKING.  THE PROBLEM IS ELSEWHERE
   window.saveLocal(prefs,'reactprefs')
-  const url = `https://heroes.report/stats/o/${prefs.time}/${prefs.mode}/${prefs.mmr}/${prefs.map}.json?${getRandomString()}`
+  const url = `https://heroes.report/stats/o/${prefs.time}/${prefs.mode}/${prefs.mmr}/${prefs.map}.json`
   let mainData, dData
   let reset = false
   try {
@@ -21,7 +21,7 @@ async function getMainData(prefs, rollbackState) {
   } catch (e) {
     try {
       reset = true
-      const defaultURL = `https://heroes.report/stats/o/${defaultPreferences.time}/${defaultPreferences.mode}/${defaultPreferences.mmr}/${defaultPreferences.map}.json?${getRandomString()}`
+      const defaultURL = `https://heroes.report/stats/o/${defaultPreferences.time}/${defaultPreferences.mode}/${defaultPreferences.mmr}/${defaultPreferences.map}.json`
       mainData = await axios.get(defaultURL)
       dData = await filterData(mainData.data,defaultPreferences)
     } catch (e) {
