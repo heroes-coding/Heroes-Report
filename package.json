@@ -51,7 +51,6 @@
     "web-assembly": "^0.0.1"
   },
   "main": "src/electron.js",
-  "homepage": "./",
   "build": {
     "appId": "heroes.report",
     "buildVersion": "0.4.2",
