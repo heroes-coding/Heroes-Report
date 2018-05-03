@@ -72,10 +72,10 @@ async function getTalentDic() {
   }
   needNew = true
   if (needNew) {
-    const talentBuilder = await axios.get(`https://heroes.report/static/talentBuilder.json?${getRandomString()}`)
+    const talentBuilder = await axios.get(`https://heroes.report/local/talentBuilder.json?${getRandomString()}`)
     talentDic = unpackTalentBuilder(talentBuilder.data)
     /*
-    talentDic = await axios.get(`https://heroes.report/static/talentDic.json?${getRandomString()}`)
+    talentDic = await axios.get(`https://heroes.report/local/talentDic.json?${getRandomString()}`)
     talentDic = talentDic.data
     */
     talentDic.builds = _.invert(talentDic.builds)

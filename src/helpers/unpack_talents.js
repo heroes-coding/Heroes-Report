@@ -3,7 +3,7 @@ import { getRandomString } from './smallHelpers'
 let talentsUnpacker
 function makeTalentUnpacker() {
   if (!talentsUnpacker) {
-    talentsUnpacker = new window.Worker('webworkers/unpack_talents_ww.js')
+    talentsUnpacker = new window.Worker('/webworkers/unpack_talents_ww.js')
   }
 }
 setTimeout(makeTalentUnpacker,500)
@@ -173,7 +173,7 @@ function getTalentsWithJavascript(response,hero) {
 function messageTalentUnpacker(response,hero) {
   let promise = new Promise(function(resolve, reject) {
     if (!talentsUnpacker) {
-      talentsUnpacker = new window.Worker('webworkers/unpack_talents_ww.js')
+      talentsUnpacker = new window.Worker('/webworkers/unpack_talents_ww.js')
     }
     let unpackTime = window.performance.now()
     talentsUnpacker.addEventListener('message', function handler(e) {

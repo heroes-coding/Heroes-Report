@@ -8,10 +8,10 @@ window._ = _
 const GET_HOTS_DATA = 'get_hots_data'
 
 async function getHOTSDictionary() {
-  const buildsPromise = axios.get('https://heroes.report/static/timeframes.json')
+  const buildsPromise = axios.get('https://heroes.report/local/timeframes.json')
   let HOTS = window.loadLocal('HOTS')
   let version = 0
-  const configCheckPromise = axios.get(`https://heroes.report/static/config.json?${getRandomString()}`)
+  const configCheckPromise = axios.get(`https://heroes.report/local/config.json?${getRandomString()}`)
   // should implement lzstring here
   let configCheck = await configCheckPromise
   if (configCheck.status === 200) {
@@ -20,7 +20,7 @@ async function getHOTSDictionary() {
     version = parseFloat(configCheck.version)
   }
   if (!HOTS || HOTS.version < version) {
-    HOTS = await axios.get(`https://heroes.report/static/HOTS.json?${getRandomString()}`)
+    HOTS = await axios.get(`https://heroes.report/local/HOTS.json?${getRandomString()}`)
     HOTS = HOTS.data
     HOTS.version = version
     window.saveLocal(HOTS,'HOTS')
