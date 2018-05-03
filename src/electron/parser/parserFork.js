@@ -331,7 +331,7 @@ function parseFile(replayPath,HOTS, getProto=null, summaryOnly=null) {
         if (nickMaps.hasOwnProperty(nickMap)) {
           mapName = nickMaps[nickMap]
           console.log('Found the map: ',mapName)
-        }
+        } else if (nickMap) console.log({nickMap})
       }
       if (build>=43571) {
         for (let p=0;p<10;p++) {

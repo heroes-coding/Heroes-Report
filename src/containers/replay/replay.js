@@ -533,7 +533,7 @@ class Replay extends Component {
         </div>
         <div className={`col-12 col-md-6 col-xl-6 replayCol`} align="center">
           <div className="inner_list_item_left replayFlex reportStatHolder">
-            {chat.length && <ChatLog chat={chat} colors={colors} handles={handles} heroNames={heroNames} />}
+            {chat.length && window.isElectron && <ChatLog chat={chat} colors={colors} handles={handles} heroNames={heroNames} />}
             <div className="barLegend">
               <div className="legendTitle">Bar Graphs Legend</div>
               <div className="legendFlexBody">
