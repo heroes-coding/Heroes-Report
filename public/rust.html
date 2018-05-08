@@ -105,14 +105,14 @@ function newString(module, str) {
     }
   }
 
-
+/*
   const memory = new WebAssembly.Memory({initial: 200});
   const imports = {
     env: {
       memory: memory
     }
   };
-
+*/
   fetchAndInstantiate("./hash.wasm", {})
     .then(mod => {
       Module.alloc   = mod.exports.alloc;
@@ -122,6 +122,7 @@ function newString(module, str) {
       Module.memory  = mod.exports.memory;
     Module.get_array = mod.exports.get_array;
     Module.load_stuff = mod.exports.load_stuff;
+    Module.get_stuff =  mod.exports.get_stuff;
     Module.get_one = mod.exports.get_one;
 
       var input = document.getElementById("input");

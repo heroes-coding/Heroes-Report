@@ -3,6 +3,8 @@ yarn build
 rm -rf /var/www/reactbackup
 cp -r /var/www/react/ /var/www/reactbackup
 cp -r build/. /var/www/react/
+chown -R ubuntu /var/www/react
+
 
 git add .
 git commit -m "confidence interval in popup"
@@ -10,6 +12,8 @@ git push origin master
 
 
 Remember, you might need to set the homepage in package.json to "./"
+"homepage": "./" (top level directive)
+*** AND REMEMBER, YOU MUST REMOVE THIS WHEN BUILDING FOR THE WEB ***
 
 rm -rf /var/www/react/
 cp -r /var/www/reactbackup /var/www/react/
@@ -22,3 +26,14 @@ GH_TOKEN=XXX-REPLACETHISWITHREALNUMBER-XXX electron-builder build -m -p onTagOrD
 
 Windows build:
 set GH_TOKEN=XXX-REPLACETHISWITHREALNUMBER-XXX electron-builder build -w -p onTagOrDraft
+
+
+Building a rust file:
+cargo  +nightly build --target wasm32-unknown-unknown --release
+rm ../../../public/hash.wasm
+wasm-gc target\wasm32-unknown-unknown\release\sha.wasm ../../../public/hash.wasm
+
+cd
+cargo  +nightly build --target wasm32-unknown-unknown --release
+rm ../../../public/rustyReplays.wasm
+wasm-gc target\wasm32-unknown-unknown\release\replays.wasm ../../../public/rustyReplays.wasm
