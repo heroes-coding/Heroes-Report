@@ -12,29 +12,18 @@ import Footer from './containers/footer/footer'
 import PlayerPage from './containers/player_page'
 import PlayerList from './containers/player_list/player_list'
 import YourPage from './containers/your_page'
-import getReplayBinary from './helpers/binary_replay_unpacker'
 import Markdown from './containers/markdown_display_redux'
 import featuresPath from './md/features.md'
 import aboutPath from './md/about.md'
 import disclaimerPath from './md/disclaimer.md'
 import Fuse from 'fuse.js'
 import { sortObjectListByProperty } from './helpers/CPPBridge' // This is because sorting player matchups took 10 seconds for a list of 20K elements.  I have no idea why
-import { loadRustyReplays } from './rust/connectors'
+import createIDB from './helpers/indexeddb'
 window.sortObjectListByProperty = sortObjectListByProperty
 let ParserAndUpdater, OptionsMenu, ipcRenderer, PreviewMenu
+let IDBPromise = createIDB()
+window.IDBPromise = IDBPromise
 
-loadRustyReplays()
-getReplayBinary([999,992],[1,1],[0,0]).then(res => {
-  window.res = res
-  /*
-  window.rustyReplays.addBasics(window.HOTS)
-  for (let i=0;i<res.length;i++) {
-    if (res[i].length === 0 || res[i].length % 16 !== 0) continue
-    let replaysAdded = window.rustyReplays.addReplays(res[i])
-    console.log({replaysAdded})
-  }
-  */
-})
 
 if (window.isElectron && window.windowID === 'parser') ParserAndUpdater = require('./electron/containers/parsingLogger/parserAndUpdater').default
 else if (window.isElectron && window.windowID === 'preview') PreviewMenu = require('./electron/containers/preview/previewer').default

@@ -19,7 +19,9 @@ export const SELECT_COPLAYER = 'select_coplayer'
 export const UPDATE_TIME = 'update_time'
 export const SEARCH_FOR_COPLAYER = 'search_for_coplayer'
 export const UPDATE_TALENT_HERO = 'update_talent_hero'
+export const UPDATE_FULL_MODE = 'update_full_mode'
 export const SELECT_YOUR_ACCOUNT = 'select_your_account'
+export const UPDATE_DATE_RANGE = 'update_date_range'
 export const TEST_URL = 'https://heroes.report/stats/o/52351/3/10/99.json'
 export * from './filter_heroes'
 export * from './filter_dictionary'
@@ -40,6 +42,23 @@ export function selectCoplayer(coplayerData) {
   return {
     type: SELECT_COPLAYER,
     coplayerData
+  }
+}
+
+
+
+export function updateDateRange(rangeType, payload) {
+  return {
+    rangeType,
+    type: UPDATE_DATE_RANGE,
+    payload
+  }
+}
+
+export function updateFullMode(payload) {
+  return {
+    type: UPDATE_FULL_MODE,
+    payload
   }
 }
 

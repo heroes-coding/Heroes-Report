@@ -23,11 +23,15 @@ import UpdateTalentHero from './talent_hero_reducer'
 import SearchReducer from './search_reducer'
 import PlayerCoplayerReducer from './player_coplayer_reducer'
 import SelectedCoplayerReducer from './selected_coplayer_reducer'
+import DateRangeReducer from './date_range_reducer'
+import FullModeReducer from './full_modes_reducer'
 
 const rootReducer = combineReducers({
   HOTS: HOTSDictionaryReducer,
   searchTerm: SearchReducer,
   roles: RolesActiveReducer,
+  fullModes: FullModeReducer,
+  dates: DateRangeReducer,
   selectedCoplayer: SelectedCoplayerReducer,
   franchises: FranchisesActiveReducer,
   prefs: PreferencesReducer,

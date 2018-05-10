@@ -82,7 +82,7 @@ class TalentCalculator extends Component {
           const maxWR = d3.max(winRates)
           return (
             <div key={l} className={`${window.isElectron ? 'talentRowElectron' : 'talentRow'} row`}>
-              {tals.map((tal,i) => {
+              {tals.filter(tal => window.HOTS.cTalents[hero].hasOwnProperty(tal[0])).map((tal,i) => {
                 const [ id, adjustedWins, adjustedTotal, wins, total ] = tal.slice(0,5)
                 const key = window.HOTS.nTalents[id]
                 const picLoc = window.HOTS.talentPics[id]

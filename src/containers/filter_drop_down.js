@@ -16,6 +16,7 @@ function DropdownItem(props) {
       {leftComponentRenderer(d.data ? d.data : d.id)}
       {renderName ? d.name : ''}
       {rightComponentRenderer(d.data ? d.data : d.id)}
+      {d.isActive&&<i className="fa fa-check-square checked" aria-hidden="true"></i>}
     </button>
   )
 }

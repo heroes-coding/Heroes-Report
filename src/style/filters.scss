@@ -17,8 +17,49 @@
     font-size: 12px;
 }
 
+// THIS IS FOR REACT DATE PICKER
+input {
+    overflow: visible;
+    border-radius: 5px;
+    outline: none;
+    border: none;
+    text-align: center;
+    margin: 3px 2px 0px 2px;
+    padding: 4px;
+    background-color: lighten($Dark,5%);
+    color: $Light;
+    width: 90px;
+}
+
+.checked {
+    position: absolute;
+    right: 8px;
+    margin-top: 6px;
+    opacity: 0.75;
+    color: $Highlight;
+}
+
+.react-datepicker__time-container .react-datepicker__time .react-datepicker__time-box ul.react-datepicker__time-list {
+    list-style: none;
+    margin: 0;
+    height: calc(195px + (1.7rem / 2));
+    overflow-y: scroll;
+    padding: 6px !important;
+  }
+
+
 .playerSearchDropdown {
   display: inline-flex !important;
+}
+
+span.dateText {
+    display: inline-block;
+    margin: 6px 0px 0px 4px;
+}
+
+span.dateText2 {
+    display: inline-block;
+    margin: 6px 0px 0px 0px;
 }
 
 form.input-group.filterGroup.blackButton {
