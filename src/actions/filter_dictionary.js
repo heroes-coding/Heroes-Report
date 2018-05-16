@@ -8,7 +8,7 @@ window._ = _
 const GET_HOTS_DATA = 'get_hots_data'
 
 async function getHOTSDictionary() {
-  const buildsPromise = axios.get('https://heroes.report/local/timeframes.json')
+  const buildsPromise = axios.get(`https://heroes.report/local/timeframes.json?${getRandomString()}`)
   let HOTS = window.loadLocal('HOTS')
   let version = 0
   const configCheckPromise = axios.get(`https://heroes.report/local/config.json?${getRandomString()}`)
@@ -54,7 +54,7 @@ async function getHOTSDictionary() {
   const maps = {}
   for (let m=0; m<mapKeys.length; m++) {
     const mapID = mapKeys[m]
-    maps[mapID] = {name: HOTS.nMaps[mapID], id: mapID}
+    maps[mapID] = {name: HOTS.nMaps[mapID], id: parseInt(mapID)}
   }
   maps[99] = {name: 'All Maps', id: 99}
   window.mapsDic = maps

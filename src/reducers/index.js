@@ -25,12 +25,22 @@ import PlayerCoplayerReducer from './player_coplayer_reducer'
 import SelectedCoplayerReducer from './selected_coplayer_reducer'
 import DateRangeReducer from './date_range_reducer'
 import FullModeReducer from './full_modes_reducer'
+import FullMapsReducer from './full_maps_reducer'
+import FullRegionsReducer from './full_regions_reducer'
+import RustyStatsReducer from './rusty_stats_reducer'
+import RustyGraphsReducer from './rusty_graphs_reducer'
+import FullTimeDensityReducer from './full_timedensity_reducer'
 
 const rootReducer = combineReducers({
   HOTS: HOTSDictionaryReducer,
   searchTerm: SearchReducer,
   roles: RolesActiveReducer,
+  timeDensity: FullTimeDensityReducer,
   fullModes: FullModeReducer,
+  fullMaps: FullMapsReducer,
+  rustyStats: RustyStatsReducer,
+  rustyGraphs: RustyGraphsReducer,
+  fullRegions: FullRegionsReducer,
   dates: DateRangeReducer,
   selectedCoplayer: SelectedCoplayerReducer,
   franchises: FranchisesActiveReducer,

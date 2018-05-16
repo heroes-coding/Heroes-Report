@@ -7,7 +7,7 @@ class Graph extends React.Component {
     super(props)
     this.state = {
       popupOpen:false,
-      popupX:0,
+      updateRusty:0,
       popupY:5,
       popupName: '',
       popupDesc: '',
@@ -25,7 +25,9 @@ class Graph extends React.Component {
     const { xRatio, yRatio } = this.props
     const bRect = this.div.getBoundingClientRect()
     const { width, height } = bRect
-    x = x*width/xRatio
+    const xPerc = width/xRatio*0.8
+
+    x = x*xPerc
     y = y*height/yRatio+85
     /*
     x = x*width/xRatio-width/2
@@ -65,7 +67,7 @@ class Graph extends React.Component {
   }
   render() {
     const props = this.props
-    let { points, linePoints, graphClass, yLabel, xLabel, xRatio, yRatio, xOff, yOff, title, formatter, noArea, yFormatter, multiLines, colors, lineLabels, bars, yMax, step, xMin, xMax, yMin, containerClass, labelPoints, stackedBars, errorBars } = props
+    let { midline, points, linePoints, graphClass, yLabel, xLabel, xRatio, yRatio, xOff, yOff, title, formatter, noArea, yFormatter, multiLines, colors, lineLabels, bars, yMax, step, xMin, xMax, yMin, containerClass, labelPoints, stackedBars, errorBars } = props
     let toMap = points || bars || linePoints || [].concat(...multiLines)
     toMap = toMap.filter(x => x)
     if (!toMap.length) {
@@ -84,10 +86,10 @@ class Graph extends React.Component {
     xMax = bars ? xMax + 0.5 : xMax
     const xRange = xMax-xMin
     if (yMin===undefined) {
-      yMin = bars ? 0 : d3.min(ys)
+      yMin = bars ? 0 : errorBars ? d3.min(errorBars.map(y => y[1])): d3.min(ys)
     }
     if (yMax===undefined) {
-      yMax = d3.max(ys.filter(y => y < Infinity))
+      yMax = errorBars ? d3.max(errorBars.map(y => y[2])) : d3.max(ys.filter(y => y < Infinity))
     }
     const yRange = yMax-yMin
     const xPad = xRange*0.025
@@ -171,7 +173,7 @@ class Graph extends React.Component {
             return (
               <g key={y}>
                 <line x1={xOff-5} y1={y} x2={xOff} y2={y} className="tick" />
-                <text x={xOff-10} y={y+20} className="tickText">{tick}</text>
+                <text x={xOff-10} y={y+5} className="tickText">{tick}</text>
                 <line x1={xOff} y1={y} x2={xRatio} y2={y} className="tickLine" />
               </g>
             )
@@ -290,6 +292,7 @@ class Graph extends React.Component {
             })
           })}
           <line x1={xOff} y1={yRatio-yOff} x2={xRatio} y2={yRatio-yOff} className="axisLine" />
+          {midline && <line x1={xOff} y1={yScale(midline)-yOff} x2={xRatio} y2={yRatio-yOff} className="midLine" />}
           {!simple&&<line x1={xOff} y1={yRatio-yOff} x2={xOff} y2="0" className="axisLine" />}
           {line&&<path d={line} className={noArea ? 'line' : 'areaLine'} />}
           {lines&&lines.map((line,i) => <path key={i}d={line} className='line multiline' style={{stroke:colors[i]}} />)}

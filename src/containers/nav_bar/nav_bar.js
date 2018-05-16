@@ -39,7 +39,7 @@ class Nav extends React.Component {
     this.setState({curHero: null})
   }
   render() {
-      const playerSearch = _.debounce((term) => {
+    const playerSearch = _.debounce((term) => {
       this.playerSearch(term)
     }, 500)
     return (
@@ -50,12 +50,13 @@ class Nav extends React.Component {
         <ul className="list-inline mx-auto justify-content-center">
           <li className="nav-item list-inline-item">
             <NavLink
-              to=""
+              to="/advanced"
               exact className="nav-link"
-              activeClassName="active"
+              activeClassName="active advanced"
               isActive={linkFunction}
               onClick={() => this.setState({curHero: null})}
-            >Stats</NavLink>
+            >Advanced
+            </NavLink>
           </li>
           <FilterDropDown
             currentSelection="Heroes"
@@ -75,7 +76,16 @@ class Nav extends React.Component {
           </a>
           <li className="nav-item list-inline-item">
             <NavLink
-              to={`${window.isElectron ? '/players/you' : '/you'}`}
+              to=""
+              exact className="nav-link"
+              activeClassName="active"
+              isActive={linkFunction}
+              onClick={() => this.setState({curHero: null})}
+            >Stats</NavLink>
+          </li>
+          <li className="nav-item list-inline-item">
+            <NavLink
+              to={`${window.isElectron ? '/players/you' : this.props.prefs.fullID ? `/players/${this.props.prefs.fullID}` : '/you'}`}
               exact className="nav-link"
               activeClassName="active"
               isActive={linkFunction}

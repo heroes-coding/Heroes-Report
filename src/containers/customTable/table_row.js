@@ -23,8 +23,7 @@ class TableRow extends Component {
           {picRenderer(id,color)}
           {nameRenderer(id,name,color,stats)}
           {stats && stats.map(stat => {
-            let { value, id } = stat
-            return cellRenderer(value,id)
+            return cellRenderer(stat)
           }
           )}
         </div>

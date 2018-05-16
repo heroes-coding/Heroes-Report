@@ -57,6 +57,17 @@ export const modeChoices = [
   {"name":"Casual (QM & UD)","id":6},
   {"name":"Ranked (HL & TL)","id":7}
 ]
+export const timeDensityChoices = [
+  {"name":"One Day","id":1440},
+  {"name":"Two days","id":1440*2},
+  {"name":"Three days","id":1440*3},
+  {"name":"One Week","id":1440*7},
+  {"name":"Two Weeks","id":1440*14},
+  {"name":"Three Weeks","id":1440*21},
+  {"name":"Four Weeks","id":1440*28},
+  {"name":"One Month","id":0}
+]
+
 export const modeDic = _.keyBy(modeChoices, 'id')
 
 export const mmrChoices = []

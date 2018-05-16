@@ -11,6 +11,7 @@ import ElectronMenu from './electron/containers/navigation/electronMenu'
 import Footer from './containers/footer/footer'
 import PlayerPage from './containers/player_page'
 import PlayerList from './containers/player_list/player_list'
+import Advanced from './containers/advanced/advanced'
 import YourPage from './containers/your_page'
 import Markdown from './containers/markdown_display_redux'
 import featuresPath from './md/features.md'
@@ -153,6 +154,7 @@ class App extends Component {
                 <Route path="/features" component={Features} />
                 <Route path="/about" component={About} />
                 <Route path="/disclaimer" component={Disclaimer} />
+                <Route path="/advanced" component={Advanced} />
                 <Route path="/" component={DataTable} />
               </Switch>
             </div>

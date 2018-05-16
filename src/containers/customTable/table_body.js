@@ -3,7 +3,7 @@ import TableRow from './table_row'
 
 export default class TableBody extends Component {
   render() {
-    const { nameRenderer, picRenderer, cellRenderer, rows } = this.props
+    const { nameRenderer, picRenderer, cellRenderer, rows, errorMessage } = this.props
     return (
       <div className="rt-tbody">
         {rows.map((row,index) => {
@@ -21,7 +21,7 @@ export default class TableBody extends Component {
           )
         }
         )}
-        {!rows.length &&<div className="rt-tr">Not enough data to show!  Go play some matches!</div>}
+        {!rows.length &&<div className="rt-tr errorMessage">{errorMessage || 'Not enough data to show!  Go play some matches!'}</div>}
       </div>
     )
   }

@@ -1,7 +1,8 @@
 import createIDB from './indexeddb'
-import { loadRustyReplays } from '../rust/connectors'
+import { loadRustyReplays } from '../containers/advanced/connectors'
 import asleep from './asleep'
 import { dateToDSL } from './smallHelpers'
+import axios from 'axios'
 let rustyPromise
 let retrievedReplays = 0
 const retrievedData = []
@@ -39,44 +40,51 @@ export default async function getReplayBinary(dates, modeTypes, partial=true) {
         offsets.push(0)
       }
     }
-    const binaryReq = new window.XMLHttpRequest()
-    const request = `http://localhost:3333/?day=${days.join(",")}&mode=${modes.join(",")}&offset=${offsets.join(",")}`
-    console.log({request})
-    binaryReq.open("GET", `http://localhost:3333/?day=${days.join(",")}&mode=${modes.join(",")}&offset=${offsets.join(",")}`, true)
-    binaryReq.responseType = "arraybuffer"
-    binaryReq.onload = async function(oEvent) {
-      const arrayBuffer = binaryReq.response
-      window.aBuffer = arrayBuffer
-      let realInts = []
-      let offset = 0
-      for (let d=0;d<days.length;d++) {
-        let length = new Uint32Array(arrayBuffer.slice(offset,offset+4))[0]
-        offset = offset + 4
-        const newBuffer = new Uint32Array((offsets[d] + length)/4)
-        newBuffer.set(results[d])
-        newBuffer.set(new Uint32Array(arrayBuffer.slice(offset,offset+length)), offsets[d]/4)
-        realInts.push(newBuffer)
-        await database.addFull({ dayMode: `${days[d]}-${modes[d]}`, data:newBuffer })
-        offset += length
-      }
-      await rustyPromise
-      while (!window.HOTS) await asleep(50)
-      window.rustyReplays.addBasics(window.HOTS)
 
-      console.time(`${partial ? "Partial" : "Full"} Replay Adding`)
-      if (partial) {
-        for (let i=0;i<realInts.length;i++) {
-          if (realInts[i].length === 0 || realInts[i].length % 16 !== 0) continue
-          retrievedReplays += window.rustyReplays.addReplays(realInts[i],days[i],modes[i])
-        }
-      } else {
-        retrievedReplays += window.rustyReplays.addManyReplays(realInts,days,modes)
-      }
-      console.timeEnd(`${partial ? "Partial" : "Full"} Replay Adding`)
-      console.log({retrievedReplays})
-      resolve(retrievedReplays)
+    const data = `day=${days.join(",")}&mode=${modes.join(",")}&offset=${offsets.join(",")}`
+    console.log({data})
+    // const result = await axios.post('http://localhost:3333/', params, { headers: { 'Content-Type':'text/plain' } })
+    const result = await axios.request({
+      responseType: 'arraybuffer',
+      data,
+      url: 'http://localhost:3333/',
+      method: 'post',
+      headers: {
+        'Content-Type':'text/plain',
+      },
+    })
+    window.result = result
+    console.log({result})
+    const arrayBuffer = result.data
+    window.aBuffer = arrayBuffer
+    let realInts = []
+    let offset = 0
+    for (let d=0;d<days.length;d++) {
+      let length = new Uint32Array(arrayBuffer.slice(offset,offset+4))[0]
+      offset = offset + 4
+      const newBuffer = new Uint32Array((offsets[d] + length)/4)
+      newBuffer.set(results[d])
+      newBuffer.set(new Uint32Array(arrayBuffer.slice(offset,offset+length)), offsets[d]/4)
+      realInts.push(newBuffer)
+      await database.addFull({ dayMode: `${days[d]}-${modes[d]}`, data:newBuffer })
+      offset += length
     }
-    binaryReq.send(null)
+    await rustyPromise
+    while (!window.HOTS) await asleep(50)
+    window.rustyReplays.addBasics(window.HOTS)
+    console.time(`${partial ? "Partial" : "Full"} Replay Adding`)
+    if (partial) {
+      for (let i=0;i<realInts.length;i++) {
+        if (realInts[i].length === 0 || realInts[i].length % 16 !== 0) continue
+        console.log({DSL: days[i]})
+        retrievedReplays += window.rustyReplays.addReplays(realInts[i],days[i],modes[i])
+      }
+    } else {
+      retrievedReplays += window.rustyReplays.addManyReplays(realInts,days,modes)
+    }
+    console.timeEnd(`${partial ? "Partial" : "Full"} Replay Adding`)
+    console.log({retrievedReplays})
+    resolve(retrievedReplays)
   })
   return promise
 }

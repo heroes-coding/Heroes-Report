@@ -182,6 +182,7 @@ export async function getHeroTimeData(prefs,hero) {
     let minimumMultiplier = 10
     let counter = 0
     gData.builds = gData.builds.filter((x,i) => {
+      if (!window.builds.hasOwnProperty(x[1])) return false
       const passed = x[2]*minimumMultiplier > mean || i > nBuilds-10
       if (passed) {
         gData.dict[x[1]] = ['builds',counter++]

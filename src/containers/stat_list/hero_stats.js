@@ -241,7 +241,7 @@ class MatchupTable extends Component {
     const labelPoints1 = []
     const data2 = []
     const labelPoints2 = []
-    matchupData.map((x,i) => {
+    matchupData.filter(x => window.builds).map((x,i) => {
       const heroData = x.heroes[id]
       if (!heroData) {
         return
@@ -281,6 +281,7 @@ class MatchupTable extends Component {
         })
       }
     })
+    console.log({data1, labelPoints1})
     return (
       <div className="matchupGraphs">
         <Graph
@@ -324,7 +325,7 @@ class MatchupTable extends Component {
       orderID: id
     })
   }
-  renderInfo(value, id) {
+  renderInfo({value, id}) {
     let display
     if (id%2) {
       display=roundedPercent(value*1000)

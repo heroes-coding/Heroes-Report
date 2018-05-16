@@ -1,0 +1,25 @@
+@import "../../style/utilities/utilities.scss";
+@import "../replay_list/replay_list.scss";
+
+svg.rustyGraph {
+    font-size: 0.6em;
+}
+
+svg:not(:root) {
+    overflow: visible;
+}
+
+.rustySearch {
+  display: inline;
+  margin: 10px;
+  outline: 1px solid darken($Light,50%);
+  font-size: 0.9em;
+}
+
+.rustySearch form input {
+  color: $Color3;
+}
+
+.rustySearch form input:hover {
+  color: $Color3;
+}

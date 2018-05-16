@@ -13,7 +13,6 @@ export const DateToMSL = function(date) {
   return (date - fakeLaunchDate)/(60000)
 }
 
-
 export const updatedTimeMins = function(updatedMins) {
   if (updatedMins < 180) {
     return Math.round(updatedMins) + ' mins.'

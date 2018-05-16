@@ -70,7 +70,6 @@ async function getTalentDic() {
       needNew = false
     }
   }
-  needNew = true
   if (needNew) {
     const talentBuilder = await axios.get(`https://heroes.report/local/talentBuilder.json?${getRandomString()}`)
     talentDic = unpackTalentBuilder(talentBuilder.data)

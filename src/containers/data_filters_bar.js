@@ -3,11 +3,11 @@ import FilterDropDown from '../containers/filter_drop_down'
 import _ from 'lodash'
 import ButtonLabeledSpacer from '../components/button_labeled_spacer'
 import IconList from '../containers/icon_list'
-import { modeChoices, modeDic, mmrChoices, mmrDic } from '../helpers/definitions'
+import { modeChoices, modeDic, mmrChoices, mmrDic, timeDensityChoices } from '../helpers/definitions'
 import SearchBar from '../components/search_bar'
 import { renderTime, renderNothing, renderTinyMap, renderPeeps, renderTinyHero, renderTeam, renderPlayerData } from '../components/filterComponents'
 import { connect } from 'react-redux'
-import { updateFullMode, updateDateRange, updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime, heroSearch, coplayerSearch, selectCoplayer } from '../actions'
+import { updateTimeDensity, updateRustyStats, updateRustyGraphs, updateFullMode, updateFullMaps, updateFullRegions, updateDateRange, updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime, heroSearch, coplayerSearch, selectCoplayer } from '../actions'
 import UpdateStatCat from './update_stat_cat'
 import TimeLine from './replay_list/timeline'
 import PlayerReplaysSelector from '../selectors/player_replays_selector'
@@ -39,7 +39,14 @@ class DataFilters extends Component {
     this.updateStartDate= this.updateStartDate.bind(this)
     this.updateEndDate= this.updateEndDate.bind(this)
     this.updateFullMode = this.updateFullMode.bind(this)
+    this.updateFullMaps = this.updateFullMaps.bind(this)
+    this.updateFullRegions = this.updateFullRegions.bind(this)
     this.getFullData = this.getFullData.bind(this)
+    this.filterData = this.filterData.bind(this)
+    this.updateTimeDensity = this.updateTimeDensity.bind(this)
+  }
+  updateTimeDensity(timeDensity) {
+    this.props.updateTimeDensity(timeDensity)
   }
   updateSelectedPlayer(data) {
     if (data === 'A' || data.bnetID==='All') {
@@ -55,16 +62,21 @@ class DataFilters extends Component {
   updateTime(newTime) {
     this.props.updatePreferences('time', newTime)
   }
-  updateFullMode(newMode) {
-    this.props.updateFullMode(newMode)
+  updateFullMaps(newMap) {
+    this.props.updateFullMaps(newMap)
+  }
+  updateFullRegions(newRegion) {
+    this.props.updateFullRegions(newRegion)
   }
   updateAllies(hero) {
     this.props.addHeroFilter(0, hero)
   }
   updateStartDate(newDate) {
+    this.gotRusty = false
     this.props.updateDateRange("startDate",newDate)
   }
   updateEndDate(newDate) {
+    this.gotRusty = false
     this.props.updateDateRange("endDate",newDate)
   }
   updateEnemies(hero) {
@@ -82,10 +94,33 @@ class DataFilters extends Component {
   updateMap(newMap) {
     this.props.updatePreferences('map', newMap)
   }
+  updateFullMode(newMode) {
+    this.gotRusty = false
+    this.props.updateFullMode(newMode)
+  }
   getFullData() {
-    const { dates, fullModes } = this.props
-    const modesToUse = fullModes.filter(x => x.isActive).map(x => x.id)
-    getReplayBinary(dates,modesToUse)
+    let promise = new Promise(async(resolve, reject) => {
+      console.log('get full data called')
+      if (this.isRusty) return
+      this.isRusty = true
+      this.gotRusty = true
+      const { dates, fullModes } = this.props
+      const modesToUse = fullModes.filter(x => x.isActive).map(x => x.id)
+      const retrievedReplays = await getReplayBinary(dates,modesToUse)
+      this.isRusty = undefined
+      resolve(retrievedReplays)
+    })
+    return promise
+  }
+  async filterData() {
+    if (this.isRusty) return
+    if (!this.gotRusty) await this.getFullData()
+    this.isRusty = true
+    this.gotRusty = true
+    let { stats, winrateData } = window.rustyReplays.filterData(this.props)
+    this.props.updateRustyStats(stats)
+    this.props.updateRustyGraphs(winrateData)
+    this.isRusty = undefined
   }
   isMenu(bits) {
     // This uses bit switching to determine which menu parts to show for different screens
@@ -100,16 +135,8 @@ class DataFilters extends Component {
   }
   heroSearch(term) {
     this.props.heroSearch(term)
-    /*
-    this.props.dispatchPlayerSearch(player)
-    if (player==='') {
-      this.props.history.push('/')
-    } else {
-      this.props.history.push(`/playerlist/${player}`)
-    }
-    this.setState({curHero: null})
-    */
   }
+
   render() {
     const heroSearch = _.debounce((term) => {
       this.heroSearch(term)
@@ -127,10 +154,12 @@ class DataFilters extends Component {
     }, 500)
     const [allies, enemies, self] = this.props.filterHeroes
     const { startDate, endDate } = this.props.dates
+
+    window.sortedMaps = this.props.HOTS.sortedMaps
     return (
       <div>
         <div className="row dataFilters">
-          {true&&<form className="input-group filterGroup  justify-content-center">
+          {this.isMenu(0b1000)&&<form className="input-group filterGroup  justify-content-center">
             <span className="dateText">Dates:</span>
             <DatePicker
               selected={startDate}
@@ -146,7 +175,7 @@ class DataFilters extends Component {
               maxDate={moment()}
             />
           </form>}
-          {true&&<FilterDropDown
+          {this.isMenu(0b1000)&&<FilterDropDown
             currentSelection={""}
             name={`Game Modes: ${this.props.fullModes.filter(x => x.isActive).map(x => x.name.split(" ").map(x => x[0]).join("")).join("|")}`}
             id='gameMode'
@@ -157,7 +186,12 @@ class DataFilters extends Component {
             renderDropdownName={true}
             currentID={1}
           />}
-          {true && <ButtonLabeledSpacer info="Load all replays that fit the filters to the left / above" filterName='Get Individual Replay Data' faIcon='fa-refresh' onPress={() => { this.getFullData() }}/>}
+          {this.isMenu(0b1000) && <ButtonLabeledSpacer
+            info="Load all replays that fit the filters to the left / above"
+            filterName='Get Individual Replay Data'
+            faIcon='fa-refresh'
+            onPress={() => { this.getFullData() }}
+          />}
           {this.isMenu(0b0101) && <FilterDropDown
             currentSelection=''
             name=''
@@ -170,13 +204,24 @@ class DataFilters extends Component {
             buttonLabel={window.builds ? window.builds[this.props.prefs.time].name : ''}
             currentID={this.props.prefs.time}
           />}
+          {this.isMenu(0b1000)&&<FilterDropDown
+            currentSelection={""}
+            name={`Regions: ${this.props.fullRegions.filter(x => x.isActive).map(x => ["","US","EU","KR","","CN"][x.id]).join("|")}`}
+            id='gameMode'
+            dropdowns={this.props.fullRegions}
+            updateFunction={(region) => this.updateFullRegions(region)}
+            leftComponentRenderer={renderNothing}
+            rightComponentRenderer={renderNothing}
+            renderDropdownName={true}
+            currentID={1}
+          />}
           <FilterDropDown
-            currentSelection={window.mapsDic ? window.mapsDic[this.props.prefs.map].name : ''}
+            currentSelection={window.mapsDic ? (this.isMenu(0b1000) ? `Maps (${this.props.fullMaps.filter(x => x.isActive).length || 'All'})` : window.mapsDic[this.props.prefs.map].name) : ''}
             name=''
             id='gameMap'
-            dropdowns={this.props.HOTS.sortedMaps ? this.props.HOTS.sortedMaps : []}
-            updateFunction={this.updateMap}
-            leftComponentRenderer={renderTinyMap}
+            dropdowns={this.props.HOTS.sortedMaps ? (this.isMenu(0b1000) ? [{id: 'A', name: 'All Maps (reset)', isActive: false}, ...this.props.HOTS.sortedMaps.filter(x => x.id <30).map(x => { return { id: x.id, name: x.name, isActive: this.props.fullMaps[x.id].isActive } })] : this.props.HOTS.sortedMaps) : []}
+            updateFunction={this.isMenu(0b1000) ? this.updateFullMaps : this.updateMap}
+            leftComponentRenderer={this.isMenu(0b1000) ? renderNothing : renderTinyMap}
             rightComponentRenderer={renderNothing}
             renderDropdownName={true}
             currentID={window.mapsDic ? window.mapsDic[this.props.prefs.map].id : 99}
@@ -192,7 +237,7 @@ class DataFilters extends Component {
             renderDropdownName={true}
             currentID={ mmrDic[this.props.prefs.mmr].id }
           />}
-          <FilterDropDown
+          {this.isMenu(0b0111) && <FilterDropDown
             currentSelection={modeDic[this.props.prefs.mode].name}
             name='Game Mode: '
             id='gameMode'
@@ -202,9 +247,14 @@ class DataFilters extends Component {
             rightComponentRenderer={renderNothing}
             renderDropdownName={true}
             currentID={modeDic[this.props.prefs.mode].id}
-          />
+          />}
           {/* below I use getHeroTalents if menu is not 1 */}
-          {this.isMenu(0b0101) && <ButtonLabeledSpacer info="Filter replay data with your selected filters" filterName='Update' faIcon='fa-refresh' onPress={() => { this.isMenu(0b0001) ? this.props.getMainData(this.props.prefs, this.props.rollbackState) : this.getHeroes(this.props.prefs.hero,this.props.prefs) }} />}
+          {this.isMenu(0b0101) && <ButtonLabeledSpacer
+            info="Filter replay data with your selected filters"
+            filterName='Update'
+            faIcon='fa-refresh'
+            onPress={() => { this.isMenu(0b0001) ? this.props.getMainData(this.props.prefs, this.props.rollbackState) : this.getHeroes(this.props.prefs.hero,this.props.prefs) }}
+          />}
           {this.isMenu(0b0001) && <UpdateStatCat />}
           {this.isMenu(0b0010) && <FilterDropDown
             currentSelection=""
@@ -229,8 +279,8 @@ class DataFilters extends Component {
             containerClass='halfy input-group filterGroup'
             hideArrow={true}
           />}
-          {this.isMenu(0b0011) && <form className={`${this.isMenu(0b0010) ? 'halfy' : ''} input-group filterGroup buttonSpacer blackButton`}><SearchBar placeholder="Hero search" overClass="btn btn-small btn-link iconFilter" onSearchTermChange={heroSearch} noautoclear={true} /></form>}
-          {this.isMenu(0b0010) && <FilterDropDown
+          {this.isMenu(0b0011) && <SearchBar formClass={`${this.isMenu(0b0010) ? 'halfy' : ''} input-group filterGroup buttonSpacer blackButton`} placeholder="Hero search" overClass="btn btn-small btn-link iconFilter" onSearchTermChange={heroSearch} noautoclear={true} />}
+          {this.isMenu(0b1010) && <FilterDropDown
             currentSelection=""
             resetFunction={this.updateAllies}
             buttonLabel={
@@ -253,7 +303,7 @@ class DataFilters extends Component {
             containerClass='halfy input-group filterGroup'
             hideArrow={true}
           />}
-          {this.isMenu(0b0010) && <FilterDropDown
+          {this.isMenu(0b1010) && <FilterDropDown
             currentSelection=""
             resetFunction={this.updateEnemies}
             buttonLabel={
@@ -276,11 +326,24 @@ class DataFilters extends Component {
             containerClass='halfy input-group filterGroup'
             hideArrow={true}
           />}
-          {this.isMenu(0b0011) && <IconList info={"Choose roles and/or universes of heroes to filter by"} className='float-left' iconList={this.props.roles.concat(this.props.franchises)} updateFilter={this.props.updateFilter} />}
-          {this.isMenu(0b1000) && <TimeLine
-            minMSL={this.props.startDate}
-            maxMSL={this.props.endDate}
+          {this.isMenu(0b1000) && <FilterDropDown
+            currentSelection={timeDensityChoices.filter(x => x.id === this.props.timeDensity)[0].name}
+            name='Time Period: '
+            id='timeDensity'
+            dropdowns={timeDensityChoices}
+            updateFunction={this.updateTimeDensity}
+            leftComponentRenderer={renderNothing}
+            rightComponentRenderer={renderNothing}
+            renderDropdownName={true}
+            currentID={this.props.timeDensity}
           />}
+          {this.isMenu(0b1000) && <ButtonLabeledSpacer
+            info="Filter loaded data"
+            filterName='Filter Individual Replay Data'
+            faIcon='fa-refresh'
+            onPress={() => { this.filterData() }}
+          />}
+          {this.isMenu(0b0011) && <IconList info={"Choose roles and/or universes of heroes to filter by"} className='float-left' iconList={this.props.roles.concat(this.props.franchises)} updateFilter={this.props.updateFilter} />}
           {this.isMenu(0b0010) && window.location.pathname.includes("players/you") && <div>
             <FilterDropDown
               info={"Find a player you played against or with.  All other filters are ignored for this search for simplicity.  By default this displays the players you have had the most matches with, search for other players to the right."}
@@ -305,8 +368,8 @@ class DataFilters extends Component {
 }
 
 function mapStateToProps(state) {
-  const { HOTS, prefs, status, roles, franchises, filterHeroes, timeRange, playerCoplayerResults, dates, fullModes } = state
-  return { ...PlayerReplaysSelector(state), HOTS, prefs, status, roles, franchises, filterHeroes, timeRange, playerCoplayerResults, dates, fullModes }
+  const { HOTS, timeDensity, prefs, status, roles, franchises, filterHeroes, timeRange, playerCoplayerResults, dates, fullModes, fullMaps, fullRegions } = state
+  return { ...PlayerReplaysSelector(state), HOTS, timeDensity, prefs, status, roles, franchises, filterHeroes, timeRange, playerCoplayerResults, dates, fullModes, fullMaps, fullRegions }
 }
 
-export default connect(mapStateToProps, { updateFullMode, updatePreferences, updateDateRange, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime, heroSearch, coplayerSearch, selectCoplayer })(DataFilters)
+export default connect(mapStateToProps, { updateTimeDensity, updateRustyStats, updateRustyGraphs, updateFullMode, updateFullMaps, updateFullRegions, updatePreferences, updateDateRange, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime, heroSearch, coplayerSearch, selectCoplayer })(DataFilters)

@@ -72,7 +72,7 @@ input.searchInput {
     font-size: 0.8em;
 }
 
-.nav-link:hover, .nav-link.active {
+.nav-link:hover, .nav-link.active, .advanced-link:hover, .advanced-link.active {
     text-decoration: none !important;
     background: $Highlight !important;
     color: $Light !important;
@@ -82,19 +82,38 @@ input.searchInput {
 .d-flex {
     display: -ms-flexbox!important;
     display: flex!important;
-    min-width: 425px;
+    min-width: 480px;
     border-bottom: 3px solid $Dark;
 }
 
+.advanced, .patreon {
+  text-align: center;
+  font-size: 1em;
+}
+
+
+
 .nav-link {
     color: $Highlight;
-    padding: 0.25rem 0.25rem 0.25rem 0.25rem;
-    margin: 0px 2px;
+    padding: 4px;
+    margin: 0px -1px;
     border-radius: 5px 5px 0px 0;
     position: relative;
     top: 8px;
     @include noselecttext;
 }
+
+.advanced-link {
+    color: $Highlight;
+    padding: 0rem 0.25rem 0rem 0.25rem;
+    margin: 0px 2px;
+    border-radius: 5px 5px 0px 0;
+    @include noselecttext;
+    margin-left: -115px;
+    top: 20px;
+    font-size: 0.8em;
+}
+
 
 .dropdown-menu.show {
     display: block;
@@ -129,7 +148,7 @@ img.tinyHero.dropDownHero {
     width: -moz-fit-content;
     width: fit-content;
     border: 1px solid #1C1F24;
-    margin: 0px 2px;
+    margin: 0px -1px;
     padding: 0px 4px;
     border-radius: 5px 5px 0px 0px;
     position: relative;

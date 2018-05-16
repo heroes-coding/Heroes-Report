@@ -14,9 +14,7 @@ class YourPage extends Component {
   }
   componentDidMount() {
     const fullID = this.props.prefs.fullID
-    if (fullID) {
-      this.props.history.push(`/players/${fullID}`)
-    }
+    if (fullID) { this.props.history.push(`/players/${fullID}`) }
   }
   updatePlayer(player) {
     this.setState({...this.state, player})

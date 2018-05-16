@@ -91,6 +91,7 @@ class PlayerStatList extends Component {
       window.timings['Winrate Correlation Data (' + statName + ')'] = Math.round(window.performance.now()*100 - 100*expTime)/100
       const colors = ["#00ff00","#ff0000"]
       const labels = ["Allies","Enemies"]
+      console.log(timedData, colors, labels)
       return (
         <div className="graphs">
           <Graph

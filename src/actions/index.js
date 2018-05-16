@@ -20,8 +20,13 @@ export const UPDATE_TIME = 'update_time'
 export const SEARCH_FOR_COPLAYER = 'search_for_coplayer'
 export const UPDATE_TALENT_HERO = 'update_talent_hero'
 export const UPDATE_FULL_MODE = 'update_full_mode'
+export const UPDATE_FULL_MAPS = 'update_full_maps'
+export const UPDATE_FULL_REGIONS = 'update_full_regions'
 export const SELECT_YOUR_ACCOUNT = 'select_your_account'
 export const UPDATE_DATE_RANGE = 'update_date_range'
+export const UPDATE_RUSTY_STATS = 'UPDATE_RUSTY_stats'
+export const UPDATE_RUSTY_GRAPHS= 'UPDATE_RUSTY_graphs'
+export const UPDATE_TIME_DENSITY = 'update_density'
 export const TEST_URL = 'https://heroes.report/stats/o/52351/3/10/99.json'
 export * from './filter_heroes'
 export * from './filter_dictionary'
@@ -45,7 +50,27 @@ export function selectCoplayer(coplayerData) {
   }
 }
 
+export function updateRustyStats(payload) {
+  return {
+    type: UPDATE_RUSTY_STATS,
+    payload
+  }
+}
 
+export function updateTimeDensity(payload) {
+  return {
+    type: UPDATE_TIME_DENSITY,
+    payload
+  }
+}
+
+
+export function updateRustyGraphs(payload) {
+  return {
+    type: UPDATE_RUSTY_GRAPHS,
+    payload
+  }
+}
 
 export function updateDateRange(rangeType, payload) {
   return {
@@ -58,6 +83,20 @@ export function updateDateRange(rangeType, payload) {
 export function updateFullMode(payload) {
   return {
     type: UPDATE_FULL_MODE,
+    payload
+  }
+}
+
+export function updateFullMaps(payload) {
+  return {
+    type: UPDATE_FULL_MAPS,
+    payload
+  }
+}
+
+export function updateFullRegions(payload) {
+  return {
+    type: UPDATE_FULL_REGIONS,
     payload
   }
 }

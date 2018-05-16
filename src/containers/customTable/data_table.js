@@ -23,9 +23,9 @@ class DataTable extends Component {
     })
   }
   render() {
-    const { nameRenderer, picRenderer, cellRenderer, rowsPerPage } = this.props
+    const { nameRenderer, picRenderer, cellRenderer, rowsPerPage, errorMessage } = this.props
     let page = this.state.page
-    const nPages = Array(Math.ceil(this.props.rows.length/10)).fill().map((x,i) => i)
+    const nPages = Array(Math.ceil(this.props.rows.length/rowsPerPage)).fill().map((x,i) => i)
     return (
       <div className="ReactTable -striped -highlight">
         <div className="rt-table" >
@@ -41,9 +41,10 @@ class DataTable extends Component {
             cellRenderer = {cellRenderer}
             nameRenderer = {nameRenderer}
             picRenderer = {picRenderer}
+            errorMessage = {errorMessage}
           />
         </div>
-        <div className="rt-thead pagesDiv">
+        {nPages > 1 && <div className="rt-thead pagesDiv">
           {nPages.map(n => {
             return (
               <div
@@ -53,7 +54,7 @@ class DataTable extends Component {
               >{n+1}</div>
             )
           })}
-        </div>
+        </div>}
       </div>
     )
   }
