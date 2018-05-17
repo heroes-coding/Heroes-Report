@@ -138,7 +138,6 @@ const saveReplay = async function(replay, filePath, renameFiles, fileID) {
     const oldFilePath = filePath
     const dirName = oldFilePath.match(/(.*)[\/\\]/)[1]||''
     filePath = path.join(dirName,`${formatDate(date)} ${formatTime(date)} ${modeNicks[mode]} ${isNaN(map) ? map : mapNicks[map]} ${isNaN(hero) ? hero : HOTS.nHeroes[hero]} ${Won ? 'Victory' : 'Defeat'}.StormReplay`)
-    console.log('renaming files...')
     if (oldFilePath !== filePath) {
       fs.renameSync(oldFilePath,filePath)
     }

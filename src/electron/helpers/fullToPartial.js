@@ -23,7 +23,6 @@ const fullToPartial = function(replay, bnetID, handle, HOTS) {
   rep.heroes = [0,1,2,3,4,5,6,7,8,9].map(h => replay.h[h][0])
   try {
     const levels = replay.e.l.map(x => x.length)
-    console.log(levels)
     rep.ends = [levels[1-team],levels[team]]
   } catch (e) {
     // pass - old replay won't have levels data

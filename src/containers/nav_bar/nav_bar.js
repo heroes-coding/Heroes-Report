@@ -48,7 +48,7 @@ class Nav extends React.Component {
         {window.isElectron&&<div className="dragSpacerBottomLeft" />}
         {window.isElectron&&<div className="dragSpacerTop" />}
         <ul className="list-inline mx-auto justify-content-center">
-          <li className="nav-item list-inline-item">
+          {false &&<li className="nav-item list-inline-item">
             <NavLink
               to="/advanced"
               exact className="nav-link"
@@ -57,6 +57,15 @@ class Nav extends React.Component {
               onClick={() => this.setState({curHero: null})}
             >Advanced
             </NavLink>
+          </li>}
+          <li className="nav-item list-inline-item">
+            <NavLink
+              to=""
+              exact className="nav-link"
+              activeClassName="active"
+              isActive={linkFunction}
+              onClick={() => this.setState({curHero: null})}
+            >Stats</NavLink>
           </li>
           <FilterDropDown
             currentSelection="Heroes"
@@ -74,15 +83,6 @@ class Nav extends React.Component {
           <a className="navbar-brand" id="brand">
             <img src={`${window.isElectron ? '' : '/'}tinyLogo.png`} width="123" height="40" className="d-inline-block align-top-middle" alt="" />
           </a>
-          <li className="nav-item list-inline-item">
-            <NavLink
-              to=""
-              exact className="nav-link"
-              activeClassName="active"
-              isActive={linkFunction}
-              onClick={() => this.setState({curHero: null})}
-            >Stats</NavLink>
-          </li>
           <li className="nav-item list-inline-item">
             <NavLink
               to={`${window.isElectron ? '/players/you' : this.props.prefs.fullID ? `/players/${this.props.prefs.fullID}` : '/you'}`}

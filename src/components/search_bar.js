@@ -16,16 +16,14 @@ class SearchBar extends Component {
   }
   render() {
     return (
-      <form className={this.props.formClass} onSubmit= { e => { e.preventDefault() }}>
-        <input
-          id={this.props.id}
-          placeholder={ this.props.placeholder }
-          className={this.props.overClass || "searchInput"}
-          value = { this.state.term }
-          onChange={ event => { this.onInputChange(event.target.value) }}
-          style={ this.props.style }
-        />
-      </form>
+      <input
+        id={this.props.id}
+        placeholder={ this.props.placeholder }
+        className={this.props.overClass || "searchInput"}
+        value = { this.state.term }
+        onChange={ event => { this.onInputChange(event.target.value) }}
+        style={ this.props.style }
+      />
     )
   }
   onInputChange(term) {

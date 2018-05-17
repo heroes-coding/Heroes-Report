@@ -1,4 +1,17 @@
-const now = require("performance-now")
+// Keeps track of where a log comes from.  Pretty useful to keep long term.
+['log', 'warn'].forEach(function(method) {
+  var old = console[method]
+  console[method] = function() {
+    var stack = (new Error()).stack.split(/\n/)
+    // Chrome includes a single "Error" line, FF doesn't.
+    if (stack[0].indexOf('Error') === 0) {
+      stack = stack.slice(1)
+    }
+    var args = [].slice.apply(arguments).concat([stack[1].trim()])
+    return old.apply(console, args)
+  }
+})
+
 const { HOTSPromise } = require('./electron/startup.js')
 const chokidar = require('chokidar')
 const electron = require('electron')
@@ -138,7 +151,7 @@ const getPreviewFromPath = function(path) {
 const monitorForLobby = function() {
   // This is for testing purposes only.  Delete it when everything is ready.
   // setTimeout(() => { mainWindow.webContents.send('getPreviewPlayerInfo',battleLobbyResults) }, 4000)
-  getPreviewFromPath('./public/replay.server.battlelobby')
+  // getPreviewFromPath('./public/replay.server.battlelobby')
   // main window is already loaded when calling this function
   const tempPath = path.join(app.getPath('temp'),'Heroes of the Storm')
   const watcher = chokidar.watch(tempPath, {
@@ -174,7 +187,7 @@ const monitorAccount = function(account) {
     if (!parserPopup.saveInfo.fileNames.hasOwnProperty(path)) {
       setTimeout(() => {
         process.emit('addSingleReplay', {rPath:path, renameFiles})
-      },500) // after half a second, send file info to parser.  should be enough time
+      },10000) // after ten seconds, send file info to parser.  Should be enough time, and half a second MAY have been causing issues before
     }
   }))
   parseNewReplays(account,true)
@@ -215,13 +228,10 @@ function createWindow() {
               if (tal && isNaN(tal)) {
                 if (HOTS.talentN.hasOwnProperty(tal)) summaries[r].h[h][t] = HOTS.talentN[tal]
                 else summaries[r].h[h][t] = undefined
-                /* summaries[r].h[h][t] = HOTS.talentN[tal]
-                else summaries[r].h[h][t] = undefined */
               }
             }
           }
         }
-        console.log(summaries[0])
         mainWindow.webContents.send('replays:dispatch',summaries)
         // showing the main window after all of this is done makes the program FEEL less laggy
         setTimeout(() => {

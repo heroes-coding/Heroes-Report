@@ -143,18 +143,6 @@ process.on("massUpload", async uploadInfoQueue => {
     const {filePath, fileID} = uploadInfoQueue[hash]
     enqueueReplayForUpload(filePath, fileID,hash)
   }
-  /*
-  try {
-    let results = await checkAPIHashes(toCheck)
-    process.emit("uploadCheckResult",{uploadInfoQueue,results})
-    for (let e=0;e<results.absent.length;e++) {
-      const {filePath, fileID} = uploadInfoQueue[results.absent[e]]
-      enqueueReplayForUpload(filePath,fileID)
-    }
-  } catch (e) {
-    console.log(e)
-  }
-  */
 })
 
 function checkAPIHashes(hashList) {
