@@ -65,7 +65,8 @@ export const timeDensityChoices = [
   {"name":"Two Weeks","id":1440*14},
   {"name":"Three Weeks","id":1440*21},
   {"name":"Four Weeks","id":1440*28},
-  {"name":"One Month","id":0}
+  {"name":"One Month","id":0},
+  {"name": "By Build", "id": 666}
 ]
 
 export const modeDic = _.keyBy(modeChoices, 'id')

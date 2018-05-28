@@ -13,6 +13,14 @@ export const DateToMSL = function(date) {
   return (date - fakeLaunchDate)/(60000)
 }
 
+export const getCookie = term => {
+  return window.document.cookie.split(term + "=").slice(1,).join("").split(";")[0]
+}
+
+export const setCookie = (term, value) => {
+  window.document.cookie = `${term}=${value}`
+}
+
 export const updatedTimeMins = function(updatedMins) {
   if (updatedMins < 180) {
     return Math.round(updatedMins) + ' mins.'

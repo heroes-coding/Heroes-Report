@@ -9,7 +9,6 @@ import { renderTime, renderNothing, renderTinyMap, renderPeeps, renderTinyHero, 
 import { connect } from 'react-redux'
 import { updateTimeDensity, updateRustyStats, updateRustyGraphs, updateFullMode, updateFullMaps, updateFullRegions, updateDateRange, updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime, heroSearch, coplayerSearch, selectCoplayer } from '../actions'
 import UpdateStatCat from './update_stat_cat'
-import TimeLine from './replay_list/timeline'
 import PlayerReplaysSelector from '../selectors/player_replays_selector'
 import DatePicker from 'react-datepicker'
 import moment from 'moment'
@@ -17,10 +16,7 @@ import 'react-datepicker/dist/react-datepicker.css'
 import getReplayBinary from '../helpers/binary_replay_unpacker'
 window.moment = moment
 
-const fetchedFullReplays = []
-
 const roleDropdownData = ['Assassin','Warrior','Support','Specialist'].map(x => { return {name:x, id:x} })
-
 class DataFilters extends Component {
   constructor(props) {
     super(props)
@@ -138,6 +134,7 @@ class DataFilters extends Component {
   }
 
   render() {
+    console.log({token: this.props.token})
     const heroSearch = _.debounce((term) => {
       this.heroSearch(term)
     }, 500)
@@ -368,8 +365,8 @@ class DataFilters extends Component {
 }
 
 function mapStateToProps(state) {
-  const { HOTS, timeDensity, prefs, status, roles, franchises, filterHeroes, timeRange, playerCoplayerResults, dates, fullModes, fullMaps, fullRegions } = state
-  return { ...PlayerReplaysSelector(state), HOTS, timeDensity, prefs, status, roles, franchises, filterHeroes, timeRange, playerCoplayerResults, dates, fullModes, fullMaps, fullRegions }
+  const { HOTS, token, timeDensity, prefs, status, roles, franchises, filterHeroes, timeRange, playerCoplayerResults, dates, fullModes, fullMaps, fullRegions } = state
+  return { ...PlayerReplaysSelector(state), token, HOTS, timeDensity, prefs, status, roles, franchises, filterHeroes, timeRange, playerCoplayerResults, dates, fullModes, fullMaps, fullRegions }
 }
 
 export default connect(mapStateToProps, { updateTimeDensity, updateRustyStats, updateRustyGraphs, updateFullMode, updateFullMaps, updateFullRegions, updatePreferences, updateDateRange, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime, heroSearch, coplayerSearch, selectCoplayer })(DataFilters)

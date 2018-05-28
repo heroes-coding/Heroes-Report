@@ -27,6 +27,7 @@ export const UPDATE_DATE_RANGE = 'update_date_range'
 export const UPDATE_RUSTY_STATS = 'UPDATE_RUSTY_stats'
 export const UPDATE_RUSTY_GRAPHS= 'UPDATE_RUSTY_graphs'
 export const UPDATE_TIME_DENSITY = 'update_density'
+export const UPDATE_TOKEN = 'update_token'
 export const TEST_URL = 'https://heroes.report/stats/o/52351/3/10/99.json'
 export * from './filter_heroes'
 export * from './filter_dictionary'
@@ -40,6 +41,13 @@ export function updateMainSorting(id) {
   return {
     type: UPDATE_MAIN_SORTING,
     id
+  }
+}
+
+export function updateToken(token) {
+  return {
+    type: UPDATE_TOKEN,
+    token
   }
 }
 

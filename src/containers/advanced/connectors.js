@@ -163,7 +163,13 @@ const loadRustyReplays = () => {
       console.timeEnd("Get stats")
       const aTeamPtr = setMemoryU8(new Uint8Array([])) // setMemoryU8(allies)
       let floatPtr = window.rustyReplays.get_stats(aTeamPtr, alliesUsed, density)
-      // Get overall data, will modify this to also return lines for more than one hero soon
+      const nBuilds = new Float32Array(window.rustyReplays.memory.buffer.slice(floatPtr,floatPtr+4))[0]
+      floatPtr += 4
+      const buildData = Array.from(new Float32Array(window.rustyReplays.memory.buffer.slice(floatPtr,floatPtr+nBuilds*4*3)))
+      const builds = Array(nBuilds).fill().map((_,i) => { return [buildData[i*3],buildData[i*3+1],buildData[i*3+2]] })
+      floatPtr += nBuilds*4*3
+      console.log({nBuilds,builds})
+
       const nPoints = new Float32Array(window.rustyReplays.memory.buffer.slice(floatPtr,floatPtr+4))[0]
       floatPtr += 4
       console.log({nPoints})
@@ -172,7 +178,14 @@ const loadRustyReplays = () => {
       floatPtr += nPoints*4
       const data = Array(nPoints/2).fill().map((_,i) => { return [expArray[i],expArray[i+nPoints/2]] })
       let xArray, minDates
-      if (density > 0) xArray = data.map((_,i) => Math.max(minMSL, maxMSL-i*density)) // data based on minutes-density
+      if (density === 666) {
+        minDates = []
+        xArray = builds.map(x => {
+          minDates.push(x[1])
+          return x[2]
+        })
+        console.log({minDates,xArray})
+      } else if (density > 0) xArray = data.map((_,i) => Math.max(minMSL, maxMSL-i*density)) // data based on minutes-density
       else { // monthly data
         xArray = []
         minDates = []
@@ -193,11 +206,12 @@ const loadRustyReplays = () => {
         minDates.push(minMSL)
         window.dateStuff = {xArray, minDates}
         density = 1440*30 // hack for minimum date below
-
+      }
+      if (density !== 666) {
+        xArray.reverse()
+        if (minDates) minDates.reverse()
       }
       data.reverse() // reverses in place, now is in proper time order.  A little hacky like the rest of this loop but easier than doing in rust =0
-      xArray.reverse()
-      if (minDates) minDates.reverse()
       const errorBars = data.map((y,i) => {
         // console.log({y1: y[1], y1d5: y[1]/5})
         let [ wins, total ] = y
@@ -210,9 +224,12 @@ const loadRustyReplays = () => {
         const [ wins, total ] = y
         const val = roundedPercent(wins/total*1000)
         const MSL = xArray[i]
+        let desc = `The allied team won ${val} of ${total/5} matches (95% win rate confidence interval for all matches: ${roundedPercent(errorBars[i][1]*1000)}-${roundedPercent(errorBars[i][2]*1000)}) from ${MSLToDateString(minDates ? minDates[i] : Math.max(MSL-density,minMSL))} to ${MSLToDateString(MSL)}.`
+        const buildInfo = window.builds[window.buildDic[parseInt(builds[i*3])]]
+        if (density === 666 && buildInfo) desc = `${desc} (during build ${buildInfo.name})`
         return {
           name:`Win percent => ${val}`,
-          desc:`The allied team won ${val} of ${total/5} matches (95% win rate confidence interval for all matches: ${roundedPercent(errorBars[i][1]*1000)}-${roundedPercent(errorBars[i][2]*1000)}) from ${MSLToDateString(minDates ? minDates[i] : Math.max(MSL-density,minMSL))} to ${MSLToDateString(MSL)}.`,
+          desc,
           size:Math.max(total/meanTotal*5,2.5),
           color:"#ffffff",
           1:wins/total,

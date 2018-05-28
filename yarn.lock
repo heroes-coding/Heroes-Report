@@ -7315,6 +7315,10 @@ react-list@^0.8.8:
   dependencies:
     prop-types "15"
 
+react-oauth-popup@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/react-oauth-popup/-/react-oauth-popup-0.0.4.tgz#46d6aa49d4b02db12110d63a8df0d71c9556f1f5"
+
 react-onclickoutside@^6.7.1:
   version "6.7.1"
   resolved "https://registry.yarnpkg.com/react-onclickoutside/-/react-onclickoutside-6.7.1.tgz#6a5b5b8b4eae6b776259712c89c8a2b36b17be93"
@@ -7409,6 +7413,10 @@ react-scripts@1.0.17:
     whatwg-fetch "2.0.3"
   optionalDependencies:
     fsevents "1.1.2"
+
+react-simple-auth@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-simple-auth/-/react-simple-auth-1.0.0.tgz#adc2b6858c2cb0e1638036bc6c6307f1842cfdb4"
 
 react-table@^6.7.6:
   version "6.7.6"

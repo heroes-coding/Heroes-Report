@@ -1,14 +1,25 @@
+pm2 stop index
 git pull origin master
+yarn install
 yarn build
 rm -rf /var/www/reactbackup
 cp -r /var/www/react/ /var/www/reactbackup
 cp -r build/. /var/www/react/
 chown -R ubuntu /var/www/react
-
+pm2 start index
 
 git add .
 git commit -m "confidence interval in popup"
 git push origin master
+
+
+service nginx stop
+rm -rf /cache
+mkdir /cache
+chown ubuntu -R /cache
+service nginx start
+
+yarn auth
 
 
 Remember, you might need to set the homepage in package.json to "./"

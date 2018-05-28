@@ -187,7 +187,7 @@ const monitorAccount = function(account) {
     if (!parserPopup.saveInfo.fileNames.hasOwnProperty(path)) {
       setTimeout(() => {
         process.emit('addSingleReplay', {rPath:path, renameFiles})
-      },10000) // after ten seconds, send file info to parser.  Should be enough time, and half a second MAY have been causing issues before
+      },2000) // after 2 seconds, send file info to parser.  Should be enough time, and half a second MAY have been causing issues before
     }
   }))
   parseNewReplays(account,true)

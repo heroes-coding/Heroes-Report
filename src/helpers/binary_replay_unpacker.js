@@ -41,17 +41,20 @@ export default async function getReplayBinary(dates, modeTypes, partial=true) {
       }
     }
 
-    const data = `day=${days.join(",")}&mode=${modes.join(",")}&offset=${offsets.join(",")}`
+    // const data = `day=${days.join(",")}&mode=${modes.join(",")}&offset=${offsets.join(",")}`
+    const data = { day: days, mode: modes, offset: offsets, vip:0, id:123, pw: 'hiya' }
     console.log({data})
     // const result = await axios.post('http://localhost:3333/', params, { headers: { 'Content-Type':'text/plain' } })
     const result = await axios.request({
       responseType: 'arraybuffer',
       data,
-      url: 'http://localhost:3333/',
+      url: 'https://heroes.report/full', // 'http://localhost:3333/',
       method: 'post',
+      /*
       headers: {
         'Content-Type':'text/plain',
       },
+      */
     })
     window.result = result
     console.log({result})

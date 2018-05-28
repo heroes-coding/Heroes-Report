@@ -48,7 +48,7 @@ class Nav extends React.Component {
         {window.isElectron&&<div className="dragSpacerBottomLeft" />}
         {window.isElectron&&<div className="dragSpacerTop" />}
         <ul className="list-inline mx-auto justify-content-center">
-          {false &&<li className="nav-item list-inline-item">
+          {false&&<li className="nav-item list-inline-item">
             <NavLink
               to="/advanced"
               exact className="nav-link"

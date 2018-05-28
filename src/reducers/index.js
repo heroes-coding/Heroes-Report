@@ -30,9 +30,11 @@ import FullRegionsReducer from './full_regions_reducer'
 import RustyStatsReducer from './rusty_stats_reducer'
 import RustyGraphsReducer from './rusty_graphs_reducer'
 import FullTimeDensityReducer from './full_timedensity_reducer'
+import TokenReducer from './token_reducer'
 
 const rootReducer = combineReducers({
   HOTS: HOTSDictionaryReducer,
+  token: TokenReducer,
   searchTerm: SearchReducer,
   roles: RolesActiveReducer,
   timeDensity: FullTimeDensityReducer,

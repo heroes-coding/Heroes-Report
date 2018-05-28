@@ -246,7 +246,7 @@ const parsingLoop = async function() {
     await asleep(250)
   }
   parsingLimbo = false
-  process.emit('dispatchReplays', replaysReadyForDispatch.slice(0,replaysReadyForDispatch.length-1))
+  process.emit('dispatchReplays', replaysReadyForDispatch.slice(0,replaysReadyForDispatch.length))
   replaysReadyForDispatch = []
   saveSaveInfo()
   process.emit("replays:refresh",null)
