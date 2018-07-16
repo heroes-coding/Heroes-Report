@@ -17,7 +17,8 @@ const mapNicks = {
   15: 'Outpost',
   16: 'Checkpoint',
   17: 'Foundry',
-  18: 'Industrial'
+  18: 'Industrial',
+  19: 'Warhead'
 }
 
 const modeNicks = {

@@ -44,7 +44,7 @@ class DataTable extends Component {
             errorMessage = {errorMessage}
           />
         </div>
-        {nPages > 1 && <div className="rt-thead pagesDiv">
+        {nPages.length > 1 && <div className="rt-thead pagesDiv">
           {nPages.map(n => {
             return (
               <div

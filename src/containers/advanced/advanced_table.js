@@ -117,6 +117,7 @@ class RustyHeroTable extends Component {
                 yRatio={250}
                 xOff={70}
                 yOff={55}
+                singlePoint={true}
                 noArea={true}
                 formatter={MSLToDateString}
                 yFormatter={roundedPercentPercent}

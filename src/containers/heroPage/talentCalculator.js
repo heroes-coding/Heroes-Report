@@ -55,6 +55,13 @@ class TalentCalculator extends Component {
     })
   }
   render() {
+    if (!this.props.talentData) {
+      return (
+        <div className="container-fluid col-12 col-md-12 col-lg-9 order-lg-last" id="talentBox">
+          This talent data is currently unavailable
+        </div>
+      )
+    }
     const { filteredTalents, dataTime, talentCounts, hero } = this.props.talentData
     // I really wish there was a better way of doing this.  The problem is the old talents are passed back with the new hero id.  I don't know why props are being updated before the talent data is when I am only connecting to getHeroTalents
     let curHero = hero
@@ -136,7 +143,7 @@ class TalentCalculator extends Component {
 
 function mapStateToProps(state, ownProps) {
   const {prefs, HOTS} = state
-  return {...TalentsSelector(state), prefs, HOTS, ...ownProps}
+  return state.talentData ? {...TalentsSelector(state), prefs, HOTS, ...ownProps} : {prefs, HOTS, ...ownProps}
 }
 
 export default connect(mapStateToProps,{getHeroTalents, getHOTSDictionary, selectTalent})(TalentCalculator)

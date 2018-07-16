@@ -20,7 +20,7 @@ ipcMain.on('option:update',(e,args) => {
 const uploadOne = async function(fileToUpload,fileID) {
   try {
     let newAPIID = await postReplay(fileToUpload,fileID)
-    // console.log('new API ID: ',newAPIID)
+    console.log('new API ID: ',newAPIID)
   } catch (e) {
     console.log("ERROR CAUGHT?", e, "ERROR CAUGHT?")
   }
@@ -103,8 +103,10 @@ const postReplay = function(filePath,fileID) {
         updateFileStatus(fileID,5)
         return reject(new Error(resp.statusCode))
       } else {
+        console.log(body)
         const { id, status, success } = JSON.parse(body)
         if (status==='Duplicate') updateFileStatus(fileID,2)
+        else if (status==="UploadError") updateFileStatus(fileID,5)
         else if (success===true) updateFileStatus(fileID,1)
         else updateFileStatus(fileID,5)
         return resolve(id)

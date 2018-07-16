@@ -8,65 +8,6 @@ function makeTalentUnpacker() {
 }
 setTimeout(makeTalentUnpacker,500)
 
-/*
-function heapFromBytes(response, hero) {
-  let promise = new Promise(async function(resolve, reject) {
-    const dataTime = new Date(response[0])
-    let unpackTime = window.performance.now()
-    const data = [].concat.apply([1,2,3,4,5,6,7].map(x => response[x].length), response.slice(1,))
-    window.response = response
-    window.data = data
-    const nBuilds = response.length-8
-    // console.log('unpacking talents for... ', hero, nBuilds)
-    let realInts = new Int32Array(data)
-    window.realInts = realInts
-    // console.log(`It took ${Math.round(window.performance.now()*100 - 100*unpackTime)/100} ms to shift talents`)
-    while (!window.moduleLoaded) {
-      console.log('loading...')
-      await asleep(10)
-    }
-    // console.log('unpack talents called',window.moduleLoaded)
-    let buf, error, results
-    try {
-      // int32_t returneeBuilds [nFull*11+nPartial*9+nTalents*7+7]; // changed to buf
-      buf = window.Module._malloc(realInts.length*11*4+400,4) // needs enough space for above call
-      window.Module.HEAP32.set(realInts,buf >> 2)
-      let decodeTime = window.performance.now()
-      const replaysPointer = window.Module._decodeTalents(buf,nBuilds)
-
-      let o = replaysPointer/4
-      const nTalents = window.Module.HEAP32[o]
-      const nFull = window.Module.HEAP32[o+1]
-      const nPartial = window.Module.HEAP32[o+2]
-      const talentCounts = [3,4,5,6,7,8,9].map(x => window.Module.HEAP32[o+x])
-      o = o+10
-      const talents = []
-      for (let l=0;l<7;l++) {
-        talents.push([])
-        for (let c=0;c<talentCounts[l];c++) {
-          talents[l].push(window.Module.HEAPU32.slice(o,o+7))
-          o += 7
-        }
-      }
-      const fullBuilds = window.Module.HEAP32.slice(o,o+nFull*11)
-      const partialBuilds = window.Module.HEAP32.slice(o+nFull*11,o+nFull*11+nPartial*9)
-      // console.log(`It took ${Math.round(window.performance.now()*100 - 100*decodeTime)/100} ms to decode talents`)
-      window.timings['Talent decoding C++ for ' + hero] = Math.round(window.performance.now()*100 - 100*unpackTime)/100
-      results = {nTalents,nFull,nPartial,talentCounts,talents,fullBuilds,partialBuilds,dataTime, hero}
-      window.talentResults = results
-    } catch (e) {
-      error = e
-    } finally {
-      window.Module._free(buf)
-    }
-    if (error) throw error
-    // window.Module._free(buf)
-    resolve(results)
-  })
-  return promise
-}
-*/
-
 function getTalentsWithJavascript(response,hero) {
   const dataTime = new Date(response[0])
   const talentList = response.slice(1,8)
@@ -196,7 +137,7 @@ export default async function getPackedTalents(hero, prefs) {
       let response = binaryReq.response
       let wwResults
       let unpackTime
-      if (response) {
+      if (oEvent.target.status === 200) {
         wwResults = await messageTalentUnpacker(response,hero)
         unpackTime = window.performance.now()
         response = JSON.parse(response)
@@ -208,6 +149,9 @@ export default async function getPackedTalents(hero, prefs) {
             }
           }
         }
+      } else {
+        console.log({oEvent},'ERROR?')
+        resolve(false)
       }
       // let cppResult = await heapFromBytes(response,hero) // I don't know why this is broken.  Why is it broken?
       resolve(wwResults)

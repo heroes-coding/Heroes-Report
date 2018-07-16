@@ -13,12 +13,14 @@ export const UPDATE_MAIN_SORTING = 'update_main_sorting'
 export const UPDATE_STAT_CAT = 'update_stat_cat'
 export const UPDATE_REPLAY_PAGE = 'update_replay_page'
 export const ADD_HERO_FILTER = 'add_hero_filter'
+export const ADD_HERO_TALENT = 'add_hero_talent'
 export const SELECT_TALENT = 'select_talent'
 export const HERO_SEARCH = 'hero_search'
 export const SELECT_COPLAYER = 'select_coplayer'
 export const UPDATE_TIME = 'update_time'
 export const SEARCH_FOR_COPLAYER = 'search_for_coplayer'
 export const UPDATE_TALENT_HERO = 'update_talent_hero'
+export const UPDATE_ADVANCED_TALENT_HERO = 'update_advanced_talent_hero'
 export const UPDATE_FULL_MODE = 'update_full_mode'
 export const UPDATE_FULL_MAPS = 'update_full_maps'
 export const UPDATE_FULL_REGIONS = 'update_full_regions'
@@ -27,7 +29,12 @@ export const UPDATE_DATE_RANGE = 'update_date_range'
 export const UPDATE_RUSTY_STATS = 'UPDATE_RUSTY_stats'
 export const UPDATE_RUSTY_GRAPHS= 'UPDATE_RUSTY_graphs'
 export const UPDATE_TIME_DENSITY = 'update_density'
+export const UPDATE_FULL_DATA_STATUS = 'update_full_data_downloading_unpacking_status'
 export const UPDATE_TOKEN = 'update_token'
+export const SET_SHOW_MIRRORS_STATE = 'set_show_mirrors_state'
+export const UPDATE_LEVEL_RANGE = 'update_level_difference_range'
+export const UPDATE_MMR_RANGE = 'update_mmr_range'
+export const UPDATE_TALENT_POPUP_VISIBILITY = 'update_talent_popup_visibility'
 export const TEST_URL = 'https://heroes.report/stats/o/52351/3/10/99.json'
 export * from './filter_heroes'
 export * from './filter_dictionary'
@@ -37,10 +44,44 @@ export * from './get_talent_dictionary'
 export * from './get_hero_data'
 export * from './get_hero_timed_data'
 
+export const updateTalentPopupVisibility = (talentPopupOpen) => ({type: UPDATE_TALENT_POPUP_VISIBILITY, talentPopupOpen})
+
+export function updateLevelRange(left,right) {
+  return {
+    type: UPDATE_LEVEL_RANGE,
+    left,
+    right
+  }
+}
+
+export function updateMMRRange(left,right) {
+  return {
+    type: UPDATE_MMR_RANGE,
+    left,
+    right
+  }
+}
+
+export function updateFullDataStatus(downloading, percent) {
+  return {
+    type: UPDATE_FULL_DATA_STATUS,
+    downloading,
+    percent
+  }
+}
+
+
 export function updateMainSorting(id) {
   return {
     type: UPDATE_MAIN_SORTING,
     id
+  }
+}
+
+export function updateShowMirrorsState(show) {
+  return {
+    type: SET_SHOW_MIRRORS_STATE,
+    show
   }
 }
 
@@ -184,6 +225,13 @@ export function heroSearch(term) {
   }
 }
 
+export function updateAdvancedTalentHero(hero) {
+  return {
+    type: UPDATE_ADVANCED_TALENT_HERO,
+    hero
+  }
+}
+
 export function updateTalentHero(hero) {
   return {
     type: UPDATE_TALENT_HERO,
@@ -237,6 +285,16 @@ export function selectTalent(lev, tal, state, talentData) {
     type: SELECT_TALENT,
     newState,
     filteredTalents
+  }
+}
+
+export function addHeroTalent(team, index, talent, add) {
+  return {
+    type: ADD_HERO_TALENT,
+    team,
+    index,
+    talent,
+    add
   }
 }
 

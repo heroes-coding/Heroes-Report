@@ -70,6 +70,7 @@ export default (props) => {
           )
         })}
       </div>
+      {props.extraButton}
       {props.info && <i title={props.info} className="fa fa-info-circle infoButton" aria-hidden="true"></i>}
     </form>
   )

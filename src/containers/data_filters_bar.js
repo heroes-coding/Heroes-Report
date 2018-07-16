@@ -5,16 +5,19 @@ import ButtonLabeledSpacer from '../components/button_labeled_spacer'
 import IconList from '../containers/icon_list'
 import { modeChoices, modeDic, mmrChoices, mmrDic, timeDensityChoices } from '../helpers/definitions'
 import SearchBar from '../components/search_bar'
-import { renderTime, renderNothing, renderTinyMap, renderPeeps, renderTinyHero, renderTeam, renderPlayerData } from '../components/filterComponents'
+import ToggleButton from '../components/toggle_button'
+import { renderTime, renderNothing, renderTinyMap, renderPeeps, renderTinyHero, RenderedTeam, renderPlayerData } from '../components/filterComponents'
 import { connect } from 'react-redux'
-import { updateTimeDensity, updateRustyStats, updateRustyGraphs, updateFullMode, updateFullMaps, updateFullRegions, updateDateRange, updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime, heroSearch, coplayerSearch, selectCoplayer } from '../actions'
+import { updateLevelRange, updateMMRRange, updateShowMirrorsState, updateTimeDensity, updateRustyStats, updateRustyGraphs, updateFullMode, updateFullMaps, updateFullRegions, updateDateRange, updatePreferences, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime, heroSearch, coplayerSearch, selectCoplayer } from '../actions'
 import UpdateStatCat from './update_stat_cat'
 import PlayerReplaysSelector from '../selectors/player_replays_selector'
 import DatePicker from 'react-datepicker'
 import moment from 'moment'
+import OauthPopup from './advanced/oauth_popup'
 import 'react-datepicker/dist/react-datepicker.css'
 import getReplayBinary from '../helpers/binary_replay_unpacker'
-window.moment = moment
+import TalentPopup from './advanced/talent_popup'
+import DoubleSlider from '../components/double_slider'
 
 const roleDropdownData = ['Assassin','Warrior','Support','Specialist'].map(x => { return {name:x, id:x} })
 class DataFilters extends Component {
@@ -40,6 +43,12 @@ class DataFilters extends Component {
     this.getFullData = this.getFullData.bind(this)
     this.filterData = this.filterData.bind(this)
     this.updateTimeDensity = this.updateTimeDensity.bind(this)
+    this.switchTeams = this.switchTeams.bind(this)
+    this.deleteHero = this.deleteHero.bind(this)
+    this.showMirrors = this.showMirrors.bind(this)
+  }
+  showMirrors(previouslyShow) {
+    this.props.updateShowMirrorsState(!previouslyShow)
   }
   updateTimeDensity(timeDensity) {
     this.props.updateTimeDensity(timeDensity)
@@ -65,7 +74,11 @@ class DataFilters extends Component {
     this.props.updateFullRegions(newRegion)
   }
   updateAllies(hero) {
+    if (typeof hero === 'string' && hero !== "A") hero = {id: hero, count: "1"}
     this.props.addHeroFilter(0, hero)
+  }
+  switchTeams() {
+    this.props.addHeroFilter(4)
   }
   updateStartDate(newDate) {
     this.gotRusty = false
@@ -76,7 +89,11 @@ class DataFilters extends Component {
     this.props.updateDateRange("endDate",newDate)
   }
   updateEnemies(hero) {
+    if (typeof hero === 'string' && hero !== "A") hero = {id: hero, count: "1"}
     this.props.addHeroFilter(1, hero)
+  }
+  deleteHero(id, slot) {
+    this.props.addHeroFilter('D',{id, slot})
   }
   updateSelf(hero) {
     this.props.addHeroFilter(2, hero)
@@ -96,13 +113,12 @@ class DataFilters extends Component {
   }
   getFullData() {
     let promise = new Promise(async(resolve, reject) => {
-      console.log('get full data called')
       if (this.isRusty) return
       this.isRusty = true
       this.gotRusty = true
       const { dates, fullModes } = this.props
       const modesToUse = fullModes.filter(x => x.isActive).map(x => x.id)
-      const retrievedReplays = await getReplayBinary(dates,modesToUse)
+      const retrievedReplays = await getReplayBinary(dates,modesToUse, true, this.props.timeDensity)
       this.isRusty = undefined
       resolve(retrievedReplays)
     })
@@ -134,7 +150,7 @@ class DataFilters extends Component {
   }
 
   render() {
-    console.log({token: this.props.token})
+    window.token = this.props.token
     const heroSearch = _.debounce((term) => {
       this.heroSearch(term)
     }, 500)
@@ -149,10 +165,15 @@ class DataFilters extends Component {
         }, 200)
       }
     }, 500)
-    const [allies, enemies, self] = this.props.filterHeroes
+    const [allies, enemies, self] = this.isMenu(0b1000) ? this.props.filterTalentHeroes : this.props.filterHeroes
     const { startDate, endDate } = this.props.dates
-
-    window.sortedMaps = this.props.HOTS.sortedMaps
+    let timeRange
+    if (this.isMenu(0b1000)) {
+      timeRange = {startDate: startDate._d, endDate: endDate._d}
+      window.timeRange = timeRange
+    }
+    const { downloading, percent } = this.props.fullDataStatus
+    const VIP = this.props.token.vip==="true"
     return (
       <div>
         <div className="row dataFilters">
@@ -161,14 +182,14 @@ class DataFilters extends Component {
             <DatePicker
               selected={startDate}
               onChange={(res) => { this.updateStartDate(res) }}
-              minDate={moment().subtract(6, "month")}
+              minDate={VIP ? moment().subtract(12, "month") : moment().subtract(14, "d") }
               maxDate={moment(Math.min(moment(), endDate))}
             />
             <span className="dateText2">---</span>
             <DatePicker
-              selected={this.props.dates.endDate}
+              selected={endDate}
               onChange={(res) => { this.updateEndDate(res) }}
-              minDate={moment(Math.max(moment().subtract(6, "month"), startDate))}
+              minDate={moment(Math.max(moment().subtract(12, "month"), startDate))}
               maxDate={moment()}
             />
           </form>}
@@ -183,7 +204,7 @@ class DataFilters extends Component {
             renderDropdownName={true}
             currentID={1}
           />}
-          {this.isMenu(0b1000) && <ButtonLabeledSpacer
+          {false && this.isMenu(0b1000) && <ButtonLabeledSpacer
             info="Load all replays that fit the filters to the left / above"
             filterName='Get Individual Replay Data'
             faIcon='fa-refresh'
@@ -262,7 +283,16 @@ class DataFilters extends Component {
                   <i className="fa fa-user-circle self" aria-hidden="true"></i>
                   <span className="filterLabel">Player</span>
                 </div>
-                {renderTeam(self)}
+              </div>
+            }
+            extraButton={
+              <div className="teamFilterHolder">
+                <RenderedTeam
+                  teamArray={self}
+                  deleteHero={this.deleteHero}
+                  id={2}
+                  timeRange={timeRange}
+                />
               </div>
             }
             name=''
@@ -277,51 +307,115 @@ class DataFilters extends Component {
             hideArrow={true}
           />}
           {this.isMenu(0b0011) && <SearchBar formClass={`${this.isMenu(0b0010) ? 'halfy' : ''} input-group filterGroup buttonSpacer blackButton`} placeholder="Hero search" overClass="btn btn-small btn-link iconFilter" onSearchTermChange={heroSearch} noautoclear={true} />}
-          {this.isMenu(0b1010) && <FilterDropDown
-            currentSelection=""
-            resetFunction={this.updateAllies}
-            buttonLabel={
-              <div className="teamFilterHolder">
-                <div className="leftTeamFilter">
-                  <i className="fa fa-user-plus allies" aria-hidden="true"></i>
-                  <span className="filterLabel">Allies</span>
+
+          <div id="invisibleTeamHolder">
+            {this.isMenu(0b1010) && <div id="allyHolder"><FilterDropDown
+              currentSelection=""
+              resetFunction={this.updateAllies}
+              buttonLabel={
+                <div className="teamFilterHolder">
+                  <div className="leftTeamFilter">
+                    <i className="fa fa-user-plus allies" aria-hidden="true"></i>
+                    <span className="filterLabel">Allies</span>
+                  </div>
                 </div>
-                {renderTeam(allies)}
-              </div>
-            }
-            name=''
-            id='Allies'
-            dropdowns={this.props.HOTS.sortedHeroes ? [...roleDropdownData,...this.props.HOTS.sortedHeroes] : []}
-            updateFunction={this.updateAllies}
-            leftComponentRenderer={renderTinyHero}
-            rightComponentRenderer={renderNothing}
-            renderDropdownName={true}
-            currentID={99}
-            containerClass='halfy input-group filterGroup'
-            hideArrow={true}
+              }
+              extraButton={
+                <div className="teamFilterHolder">
+                  <RenderedTeam
+                    teamArray={allies}
+                    deleteHero={this.deleteHero}
+                    id={0}
+                    updateTeam={this.updateAllies}
+                    timeRange={timeRange}
+                  />
+                </div>
+              }
+              name=''
+              id='Allies'
+              dropdowns={this.props.HOTS.sortedHeroes ? [...roleDropdownData,...this.props.HOTS.sortedHeroes] : []}
+              updateFunction={this.updateAllies}
+              leftComponentRenderer={renderTinyHero}
+              rightComponentRenderer={renderNothing}
+              renderDropdownName={true}
+              currentID={99}
+              containerClass='input-group filterGroup'
+              hideArrow={true}
+            /></div>}
+            {this.isMenu(0b1010) && <div id="teamSwitcher"><ButtonLabeledSpacer
+              filterName=''
+              noSpace={true}
+              faIcon='fa-arrows-h fa-2x'
+              overclass='teamSwitcher'
+              onPress={() => { this.switchTeams() }}
+            /></div>}
+            {this.isMenu(0b1010) && <div id="enemyHolder"><FilterDropDown
+              currentSelection=""
+              resetFunction={this.updateEnemies}
+              buttonLabel={
+                <div className="teamFilterHolder">
+                  <div className="leftTeamFilter">
+                    <i className="fa fa-user-plus enemies" aria-hidden="true"></i>
+                    <span className="filterLabel">Enemies</span>
+                  </div>
+                </div>
+              }
+              extraButton={
+                <div className="teamFilterHolder">
+                  <RenderedTeam
+                    teamArray={enemies}
+                    deleteHero={this.deleteHero}
+                    id={1}
+                    updateTeam={this.updateEnemies}
+                    timeRange={timeRange}
+                  />
+                </div>
+              }
+              name=''
+              id='Enemies'
+              dropdowns={this.props.HOTS.sortedHeroes ? [...roleDropdownData,...this.props.HOTS.sortedHeroes] : []}
+              updateFunction={this.updateEnemies}
+              leftComponentRenderer={renderTinyHero}
+              rightComponentRenderer={renderNothing}
+              renderDropdownName={true}
+              currentID={99}
+              containerClass='input-group filterGroup'
+              hideArrow={true}
+            /></div>}
+            {this.isMenu(0b1000)&&<TalentPopup />}
+          </div>
+          {this.isMenu(0b1000)&&<ToggleButton
+            toggleText='Mirrors '
+            toggleFunction={this.showMirrors}
+            active = {this.props.showMirrors}
+            containerClass='mirrorsToggle'
+            info='Include (not limit to) mirror matchups'
+            activeIcon={<i className="fa fa-toggle-on" aria-hidden="true"></i>}
+            inactiveIcon={<i className="fa fa-toggle-off" aria-hidden="true"></i>}
           />}
-          {this.isMenu(0b1010) && <FilterDropDown
-            currentSelection=""
-            resetFunction={this.updateEnemies}
-            buttonLabel={
-              <div className="teamFilterHolder">
-                <div className="leftTeamFilter">
-                  <i className="fa fa-user-plus enemies" aria-hidden="true"></i>
-                  <span className="filterLabel">Enemies</span>
-                </div>
-                {renderTeam(enemies)}
-              </div>
-            }
-            name=''
-            id='Enemies'
-            dropdowns={this.props.HOTS.sortedHeroes ? [...roleDropdownData,...this.props.HOTS.sortedHeroes] : []}
-            updateFunction={this.updateEnemies}
-            leftComponentRenderer={renderTinyHero}
-            rightComponentRenderer={renderNothing}
-            renderDropdownName={true}
-            currentID={99}
-            containerClass='halfy input-group filterGroup'
-            hideArrow={true}
+          {this.isMenu(0b1000)&&<DoubleSlider
+            updateFunction={this.props.updateLevelRange}
+            min={-3.5}
+            max={3.5}
+            xTicks={[-4,-3,-2,-1,0,1,2,3]}
+            title="Avg. Level Difference"
+            className="levDiffSVG"
+            holderClass="levSlider"
+            left={Math.round(10*this.props.levelRange.left)/10}
+            right={Math.round(10*this.props.levelRange.right)/10}
+            info="The average level difference of the allied team throughout the match.  -3.5 also catches all matches below -3.5 and 3.5 also catches all matches above.  Resetting means no filtering for average level difference."
+          />}
+          {this.isMenu(0b1000)&&<DoubleSlider
+            updateFunction={this.props.updateMMRRange}
+            min={0}
+            max={100}
+            xTicks={[0,15, 30, 45, 60, 75, 90]}
+            holderClass="mmrSlider"
+            title="MMR Range (Percentile)"
+            className="mmrDiffSVG"
+            left={`${Math.round(this.props.MMRRange.left)}%`}
+            right={`${Math.round(this.props.MMRRange.right)}%`}
+            info="The MMR of the match, equally divided into 100 percentiles based on the average mmr of the match. Resetting means no filtering for average match mmr"
           />}
           {this.isMenu(0b1000) && <FilterDropDown
             currentSelection={timeDensityChoices.filter(x => x.id === this.props.timeDensity)[0].name}
@@ -336,7 +430,7 @@ class DataFilters extends Component {
           />}
           {this.isMenu(0b1000) && <ButtonLabeledSpacer
             info="Filter loaded data"
-            filterName='Filter Individual Replay Data'
+            filterName={downloading ? 'Downloading Individual Replay Data now...' : percent !== 0 ? `Finished Unpacking ${percent}% of the Data...` : 'Get and/or Filter Individual Replay Data'}
             faIcon='fa-refresh'
             onPress={() => { this.filterData() }}
           />}
@@ -358,6 +452,7 @@ class DataFilters extends Component {
             />
             <SearchBar placeholder="Coplayer Search" id="playerSearch" overClass="btn btn-small btn-link iconFilter" onSearchTermChange={playerSearch} noautoclear={true} />
           </div>}
+          {this.isMenu(0b1000) && <OauthPopup loggedIn={VIP}/>}
         </div>
       </div>
     )
@@ -365,8 +460,8 @@ class DataFilters extends Component {
 }
 
 function mapStateToProps(state) {
-  const { HOTS, token, timeDensity, prefs, status, roles, franchises, filterHeroes, timeRange, playerCoplayerResults, dates, fullModes, fullMaps, fullRegions } = state
-  return { ...PlayerReplaysSelector(state), token, HOTS, timeDensity, prefs, status, roles, franchises, filterHeroes, timeRange, playerCoplayerResults, dates, fullModes, fullMaps, fullRegions }
+  const { levelRange, MMRRange, fullDataStatus, showMirrors, HOTS, token, timeDensity, prefs, status, roles, franchises, filterTalentHeroes, filterHeroes, timeRange, playerCoplayerResults, dates, fullModes, fullMaps, fullRegions } = state
+  return { ...PlayerReplaysSelector(state), levelRange, MMRRange, fullDataStatus, showMirrors, token, HOTS, timeDensity, prefs, status, roles, franchises, filterTalentHeroes, filterHeroes, timeRange, playerCoplayerResults, dates, fullModes, fullMaps, fullRegions }
 }
 
-export default connect(mapStateToProps, { updateTimeDensity, updateRustyStats, updateRustyGraphs, updateFullMode, updateFullMaps, updateFullRegions, updatePreferences, updateDateRange, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime, heroSearch, coplayerSearch, selectCoplayer })(DataFilters)
+export default connect(mapStateToProps, { updateLevelRange, updateMMRRange, updateShowMirrorsState, updateTimeDensity, updateRustyStats, updateRustyGraphs, updateFullMode, updateFullMaps, updateFullRegions, updatePreferences, updateDateRange, getMainData, getHeroTalents, rollbackState, updateFilter, selectTalent, addHeroFilter, getTimedData, updateTime, heroSearch, coplayerSearch, selectCoplayer })(DataFilters)

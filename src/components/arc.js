@@ -1,8 +1,8 @@
-import * as d3 from "d3"
+import { arc } from "d3"
 import React from 'react'
 
 let drawArc = function(iRad,oRad,endPercent) {
-  return d3.arc().innerRadius(iRad).outerRadius(oRad).startAngle(0).endAngle(Math.PI*2*endPercent)()
+  return arc().innerRadius(iRad).outerRadius(oRad).startAngle(0).endAngle(Math.PI*2*endPercent)()
 }
 export default (props) => {
   const half = Math.round(props.dim/2)

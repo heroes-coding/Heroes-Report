@@ -127,16 +127,17 @@ class HeroStatList extends Component {
     if (!this.props[0] || !this.props.HOTS) {
       return <div></div>
     }
+    const buildData = this.props[0].builds
+    const buildTimeFrame = this.props.prefs.time
+    const [ buildType, buildIndex ] = this.props[0].dict[buildTimeFrame]
+    const lastBuild = this.props[0][buildType][buildIndex]
+    if (!lastBuild) return <div></div>
     let hero = this.props.curHero
     hero = window.HOTS ? window.HOTS.nHeroes[hero] : hero
     this.hero = hero
-    const buildData = this.props[0].builds
-    const buildTimeFrame = this.props.prefs.time
     if (!this.props[0].dict.hasOwnProperty(buildTimeFrame)) {
       return <div></div>
     }
-    const [ buildType, buildIndex ] = this.props[0].dict[buildTimeFrame]
-    const lastBuild = this.props[0][buildType][buildIndex]
     const [ Kills, Assists, Deaths ] = lastBuild.slice(14,17)
     const winRate = lastBuild[12]
     const matches = lastBuild[2]
@@ -382,7 +383,7 @@ class MatchupTable extends Component {
     }
     const [ buildType, buildIndex ] = this.props[0].dict[build]
     const buildData = this.props[0][buildType][buildIndex]
-    const matchupData = !ready ? [] : buildData.heroes.map((x,i) => {
+    const matchupData = !ready || !buildData ? [] : buildData.heroes.map((x,i) => {
       const [ winsW, matchesW, winsA, matchesA ] = x
       return {
         name: window.HOTS.nHeroes[i],

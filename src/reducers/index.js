@@ -14,6 +14,7 @@ import StatCatReducer from './stat_cat_reducer'
 import PlayerSearchList from './player_search_reducer'
 import UpdateReplayPage from './replay_page_reducer'
 import AddHeroFilter from './filter_heroes_reducer'
+import AddTalentHeroFilter from './filter_hero_talents_reducer'
 import AddHeroTalents from './player_talents_reducer'
 import SelectTalent from './select_talent_reducer'
 import GetFilteredTalents from './filtered_talents_reducer'
@@ -31,8 +32,23 @@ import RustyStatsReducer from './rusty_stats_reducer'
 import RustyGraphsReducer from './rusty_graphs_reducer'
 import FullTimeDensityReducer from './full_timedensity_reducer'
 import TokenReducer from './token_reducer'
+import SelectTalentHeroAdvancedReducer from './advanced_talent_hero_reducer'
+import talentPopupOpen from './advanced_talent_popup_reducer'
+import showMirrors from './show_mirrors_reducer'
+import fullDataStatus from './full_data_reducer'
+import levelRange from './level_range_reducer'
+import MMRRange from './mmr_range_reducer'
+
+import { createStore, applyMiddleware } from 'redux'
+import ReduxPromise from 'redux-promise'
+
 
 const rootReducer = combineReducers({
+  MMRRange,
+  levelRange,
+  fullDataStatus,
+  showMirrors,
+  talentPopupOpen,
   HOTS: HOTSDictionaryReducer,
   token: TokenReducer,
   searchTerm: SearchReducer,
@@ -63,8 +79,14 @@ const rootReducer = combineReducers({
   talentHero: UpdateTalentHero,
   timedData: GetTimedData,
   filterHeroes: AddHeroFilter,
+  filterTalentHeroes: AddTalentHeroFilter,
+  advancedTalentHero: SelectTalentHeroAdvancedReducer,
   playerSearchResults: PlayerSearchList,
-  replayPage: UpdateReplayPage
+  replayPage: UpdateReplayPage,
 })
 
-export default rootReducer
+// making store here so I can access it outside of react components elsewhere
+const createStoreWithMiddleware = applyMiddleware(ReduxPromise)(createStore)
+const store = createStoreWithMiddleware(rootReducer)
+
+export default store

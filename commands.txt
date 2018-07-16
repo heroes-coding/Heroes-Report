@@ -24,7 +24,7 @@ yarn auth
 
 Remember, you might need to set the homepage in package.json to "./"
 "homepage": "./" (top level directive)
-*** AND REMEMBER, YOU MUST REMOVE THIS WHEN BUILDING FOR THE WEB ***
+*** AND REMEMBER, YOU MUST REMOVE THIS ("homepage": "./") WHEN BUILDING FOR THE WEB ***
 
 rm -rf /var/www/react/
 cp -r /var/www/reactbackup /var/www/react/
@@ -35,8 +35,9 @@ Mac build:
 export CSC_IDENTITY_AUTO_DISCOVERY=false
 GH_TOKEN=XXX-REPLACETHISWITHREALNUMBER-XXX electron-builder build -m -p onTagOrDraft
 
-Windows build:
-set GH_TOKEN=XXX-REPLACETHISWITHREALNUMBER-XXX electron-builder build -w -p onTagOrDraft
+Windows build (only works on normal command line, not PowerShell?):
+set GH_TOKEN=XXX-REPLACETHISWITHREALNUMBER-XXX
+electron-builder build -w -p onTagOrDraft
 
 
 Building a rust file:

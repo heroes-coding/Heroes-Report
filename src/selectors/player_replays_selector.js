@@ -38,9 +38,12 @@ const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises,
     roleDic = {}
     roles.map(x => { roleDic[x.name] = x.id })
   }
-  const allyRoles = getCounts(filterHeroes[0].filter(x => isNaN(x)).map(x => roleDic[x]))
+  const allyRoles = {}
+  filterHeroes[0].filter(x => isNaN(x)).map(x => { allyRoles[roleDic[x.id]] = x.count })
+  const enemyRoles = {}
+  filterHeroes[1].filter(x => isNaN(x)).map(x => { enemyRoles[roleDic[x.id]] = x.count })
   const aRoleKeys = Object.keys(allyRoles)
-  const enemyRoles = getCounts(filterHeroes[1].filter(x => isNaN(x)).map(x => roleDic[x]))
+  // const enemyRoles = getCounts(filterHeroes[1].filter(x => isNaN(x)).map(x => roleDic[x]))
   const eRoleKeys = Object.keys(enemyRoles)
   const allies = filterHeroes[0].filter(x => !isNaN(x))
   const aKeys = Object.keys(allies)
@@ -59,11 +62,14 @@ const getPlayerBaseData = (playerData, playerInfo, talentDic, prefs, franchises,
       const count = counts[c]
       for (let k=0;k<KEYS.length;k++) {
         const key = KEYS[k]
-        if (repCount[key] < count[key]) {
+        const parts = count[key].split(" ")
+        const operator = parts.length > 1 ? parts[0] : null
+        const cnt = parseInt(parts.length > 1 ? parts[1] : parts[0])
+        if (!operator) {
+          if (repCount[key] !== cnt) return true
+        } else if (operator === "<" && repCount[key] >= cnt) {
           return true
-        } else if (count[key] > 3) {
-          console.log(repCount,count,key,rep)
-        }
+        } else if (operator === ">" && repCount[key] <= cnt) return true
       }
     }
     for (let a=0;a<allies.length;a++) {

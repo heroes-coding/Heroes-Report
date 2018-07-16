@@ -51,6 +51,61 @@ div#playerPageHolder {
   border: none;
 }
 
+.sliderHolder {
+  display: flex;
+  flex-direction: row;
+  height: 33px;
+  margin: 2px 2px 0 4px;
+  background: lighten($Dark,2%);
+}
+
+.sliderTextRange {
+  display: flex;
+  margin: 0px;
+  padding: 5px;
+  flex-direction: row;
+  white-space: nowrap;
+  flex-wrap: nowrap;
+  font-size: 0.8em;
+  text-align: center;
+  background: lighten($Dark,20%);
+  border-radius: 5px;
+
+}
+
+.mmrSlider, .levSlider {
+  width: 150px;
+  height: 30px;
+  margin: 1px 0 4px 0;
+  overflow: visible;
+  fill: white;
+  border: 1px solid black;
+}
+
+.sliderTitle {
+  width: 70px;
+  height: 30px;
+  margin: -1px;
+  font-size: 0.7em;
+  word-wrap: normal;
+  text-align: center;
+}
+
+.sliderResetHolder {
+  padding: 5px 0 0 5px;
+  cursor: pointer;
+}
+
+.sliderTicks {
+  fill: $Light;
+  font-size: .7em;
+  opacity:1;
+  font-family: $NumbersFont;
+  @include  unselectable;
+}
+
+
+
 .timelineHolder {
     width: 100%;
     height: 45px;

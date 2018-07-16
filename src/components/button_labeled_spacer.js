@@ -14,7 +14,7 @@ export default (props) => {
       <button
         className='btn btn-small btn-link iconFilter'
       >
-        {props.filterName}&nbsp;&nbsp;&nbsp;
+        {props.filterName}{!props.noSpace &&<span>&nbsp;&nbsp;&nbsp;</span>}
         <span className="iconOnButton">
           <i className={`fa ${props.faIcon}`} aria-hidden="true"></i>
         </span>

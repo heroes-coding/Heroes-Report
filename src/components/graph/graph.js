@@ -29,17 +29,6 @@ class Graph extends React.Component {
 
     x = x*xPerc
     y = y*height/yRatio+85
-    /*
-    x = x*width/xRatio-width/2
-    y = y*height/yRatio+height/2
-    */
-    /*
-    const bRect = this.div.getBoundingClientRect()
-    const { width, height } = bRect
-    x = Math.min(x-bRect.x,window.innerWidth-250-bRect.x)
-    console.log(x,y,window.scrollY,bRect)
-    y = y-bRect.top
-    */
     this.setState({
       ...this.state,
       popupOpen:true,
@@ -67,7 +56,7 @@ class Graph extends React.Component {
   }
   render() {
     const props = this.props
-    let { midline, points, linePoints, graphClass, yLabel, xLabel, xRatio, yRatio, xOff, yOff, title, formatter, noArea, yFormatter, multiLines, colors, lineLabels, bars, yMax, step, xMin, xMax, yMin, containerClass, labelPoints, stackedBars, errorBars } = props
+    let { singlePoint, midline, points, linePoints, graphClass, yLabel, xLabel, xRatio, yRatio, xOff, yOff, title, formatter, noArea, yFormatter, multiLines, colors, lineLabels, bars, yMax, step, xMin, xMax, yMin, containerClass, labelPoints, stackedBars, errorBars } = props
     let toMap = points || bars || linePoints || [].concat(...multiLines)
     toMap = toMap.filter(x => x)
     if (!toMap.length) {
@@ -94,9 +83,9 @@ class Graph extends React.Component {
     const yRange = yMax-yMin
     const xPad = xRange*0.025
     const yPad = yRange*0.025
-    const xScale = d3.scaleLinear().range([xOff+1, xRatio]).domain([xMin-xPad,xMax+xPad])
+    const xScale = d3.scaleLinear().range([toMap.length === 1 ? xRatio/2 : xOff+1, xRatio]).domain([xMin-xPad,xMax+xPad])
     const xTicks = xScale.ticks(8)
-    if (xTicks.length < 3) {
+    if (xTicks.length < 3 && !singlePoint) {
       return <div></div>
     }
     const xTickOffset = xTicks[xTicks.length-1].toString().length > 2 ? 5 : 0
@@ -118,6 +107,7 @@ class Graph extends React.Component {
         )
       })
     }
+    window.xScale = xScale
     return (
       <div ref={div => { this.div = div }} className={containerClass || "graphHolder"}>
         {labelPoints&&<Popup
@@ -250,6 +240,7 @@ class Graph extends React.Component {
             const { name, desc, size, color } = p
             const style={fill: color, r:size, cursor: "pointer"}
             const x = xScale(p[0])
+
             const y = yScale(p[1])
             return (
               <circle

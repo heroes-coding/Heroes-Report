@@ -137,7 +137,7 @@ let left = (props,div, getReplay) => {
         <img
           onMouseEnter={(event) => {
             const mapName = window.HOTS.nMaps[props.map]
-            const pName = props.handle.split('#')[0]
+            const pName = props.handle ? props.handle.split('#')[0] : 'Still getting player info'
             const name = `${mapName} | ${props.won ? 'Victory' : 'Defeat'}`
             const desc = `${pName} ${props.won ? 'won' : 'lost'} a${props.mode === 2 ? 'n' :''} ${window.HOTS.nModes[props.mode]}${props.mode === 1 || props.mode === 5 ? '' : ' match'} on ${mapName} as ${window.HOTS.nHeroes[props.hero]} in ${formatLength(props.Length,true)} on ${props.date.toString().slice(0,10)} at ${formatTime(props.date)}.`
             event.preventDefault()

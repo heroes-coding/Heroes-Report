@@ -2,7 +2,7 @@ import { UPDATE_DATE_RANGE } from '../actions'
 import moment from 'moment'
 
 const initialDateRange = {
-  startDate: moment().subtract(7, "days"),
+  startDate: moment().subtract(14, "days"),
   endDate:moment()
 }
 

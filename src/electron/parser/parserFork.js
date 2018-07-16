@@ -7,7 +7,10 @@ const hasher = require('fnv-plus')
 const fs = require('fs')
 const md5 = require('md5')
 const { asleep } = require('../helpers/asleep')
-const { Tomb, Temple, Shrines, Hanamura, Hollow, Holdout, Battlefield, Garden, Doom, Shire, Bay, Mines, Warhead, Cavern, City, Outpost, Industrial, Checkpoint, Foundry } = require('./mapParsers')
+const { Alterac, Tomb, Temple, Shrines, Hanamura, Hollow, Holdout, Battlefield, Garden, Doom, Shire, Bay, Mines, Warhead, Cavern, City, Outpost, Industrial, Checkpoint, Foundry } = require('./mapParsers')
+const Stopwatch = require("node-stopwatch").Stopwatch
+const archiveWatch = Stopwatch.create()
+
 let HOTS
 let thisWorkerIndex
 
@@ -18,7 +21,7 @@ const loopsToS = function(time) {
 const HS = (hash,index) => hash.slice(index*2,(index+1)*2)
 const md5HashConverter = (h) => `${HS(h,3)}${HS(h,2)}${HS(h,1)}${HS(h,0)}-${HS(h,5)}${HS(h,4)}-${HS(h,7)}${HS(h,6)}-${HS(h,8)}${HS(h,9)}-${HS(h,10)}${HS(h,11)}${HS(h,12)}${HS(h,13)}${HS(h,14)}${HS(h,15)}`
 
-const nickMaps = {'BraxisOutpost': 15, 'ControlPoints': 1, 'Shrines': 2, 'Crypts': 0, 'BattlefieldOfEternity': 5, 'Warhead Junction': 6, 'BlackheartsBay': 10, 'CursedHollow': 3, 'LostCavern': 11, 'HanamuraPayloadPush': 16, 'TowersOfDoom': 8, 'HauntedWoods': 7, 'Hanamura': 14, 'BraxisHoldout': 4, 'DragonShire': 9, 'HauntedMines': 12, 'SilverCity': 13, 'Volskaya': 17, 'IndustrialDistrict':18}
+const nickMaps = {'AlteracPass': 19, 'BraxisOutpost': 15, 'ControlPoints': 1, 'Shrines': 2, 'Crypts': 0, 'BattlefieldOfEternity': 5, 'Warhead Junction': 6, 'BlackheartsBay': 10, 'CursedHollow': 3, 'LostCavern': 11, 'HanamuraPayloadPush': 16, 'TowersOfDoom': 8, 'HauntedWoods': 7, 'Hanamura': 14, 'BraxisHoldout': 4, 'DragonShire': 9, 'HauntedMines': 12, 'SilverCity': 13, 'Volskaya': 17, 'IndustrialDistrict':18}
 const protoProto = require('./proto.json')
 
 let getTalentN = function(talentName,heroN,talentN,HOTS) {
@@ -26,17 +29,28 @@ let getTalentN = function(talentName,heroN,talentN,HOTS) {
   return talentName
 }
 
+const timedExtraction = (archive, key) => {
+  archiveWatch.start()
+  const data = archive.readFile(key)
+  archiveWatch.stop()
+  return data
+}
+
 function parseFile(replayPath,HOTS, getProto=null, summaryOnly=null) {
   let promise = new Promise(async function(resolve, reject) {
+    archiveWatch.restart()
     try {
       const file = fs.readFileSync(replayPath)
+      const parsingStart = process.hrtime()
+      archiveWatch.start()
       const archive = new MPQArchive(file)
+      archiveWatch.stop()
 
       let thisReplay = {}
       let proto = protoProto
       let header = Protocol.decodeReplayHeader(archive.header.userDataHeader.content,proto.typeInfos,proto.hID)
       let build = header['m_version']['m_build']
-      let details = Protocol.decodeReplayDetails(archive.readFile('replay.details'),proto.typeInfos,proto.dID)
+      let details = Protocol.decodeReplayDetails(timedExtraction(archive,'replay.details'),proto.typeInfos,proto.dID)
       if (!summaryOnly && !(details['m_playerList'][0]['m_toon']['m_programId'].toString() === "Hero" && details['m_playerList'][9]['m_toon']['m_programId'].toString() === "Hero")) { // computer players}
         console.log('has computer players')
         return resolve(2)
@@ -61,13 +75,13 @@ function parseFile(replayPath,HOTS, getProto=null, summaryOnly=null) {
       // proto = await getProto(build)
       if (proto===undefined) return resolve(4)
       for (let i=0; i<10; i++) bnetIDs.push(details['m_playerList'][i]['m_toon']['m_id'])
-      let atts = Protocol.decodeReplayAttributesEvents(archive.readFile('replay.attributes.events'))
+      let atts = Protocol.decodeReplayAttributesEvents(timedExtraction(archive,'replay.attributes.events'))
       let initData
 
       let apiHash, gameMode
       if (build >= 43905) {
         try { // For some builds initData doesn't work in javascript.  This is a problem.
-          initData = Protocol.decodeReplayInitdata(archive.readFile('replay.initData'),proto.typeInfos,proto.iID)
+          initData = Protocol.decodeReplayInitdata(timedExtraction(archive,'replay.initData'),proto.typeInfos,proto.iID)
           const randomValue = initData.m_syncLobbyState.m_gameDescription.m_randomValue
           apiHash = md5(`${bnetIDs.slice(0,10).sort((x,y) => x > y).join("")}${randomValue}`)
           apiHash = md5HashConverter(apiHash)
@@ -108,7 +122,7 @@ function parseFile(replayPath,HOTS, getProto=null, summaryOnly=null) {
         hashKey = MN + RN + GM + bnetIDs.join("") + heroes.join("") + BN + WN
         hashCode = hasher.hash(hashKey,64).str()
       }
-      let messages = Protocol.decodeReplayMessageEvents(archive.readFile('replay.message.events'),proto.typeInfos,1,proto.mTypes)
+      let messages = Protocol.decodeReplayMessageEvents(timedExtraction(archive,'replay.message.events'),proto.typeInfos,1,proto.mTypes)
       let pings = [[],[],[],[],[],[],[],[],[],[]]
       let chats = []
       while (true) {
@@ -128,7 +142,7 @@ function parseFile(replayPath,HOTS, getProto=null, summaryOnly=null) {
       const teamNumbers = [0,0,0,0,0,0,0,0,0,0]
       let numberPattern = /\d+/g
       let battleTags = []
-      const lobbyFile = archive.readFile('replay.server.battlelobby')
+      const lobbyFile = timedExtraction(archive,'replay.server.battlelobby')
       const uniqueTeams = []
       if (!lobbyFile) {
         battleTags = Array(10).fill(null)
@@ -189,7 +203,7 @@ function parseFile(replayPath,HOTS, getProto=null, summaryOnly=null) {
         return resolve(thisReplay)
       }
 
-      let trackers = Protocol.decodeReplayTrackerEvents(archive.readFile('replay.tracker.events'),proto.typeInfos,proto.tID,proto.tTypes)
+      let trackers = Protocol.decodeReplayTrackerEvents(timedExtraction(archive,'replay.tracker.events'),proto.typeInfos,proto.tID,proto.tTypes)
 
       let uniqueDic = {}
       let scoreResultValues
@@ -212,8 +226,10 @@ function parseFile(replayPath,HOTS, getProto=null, summaryOnly=null) {
       let payload = 1
       let mechCaptures = []
       let pickOrder = []
+      let trackerEvents = []
       while (true) {
         let event = trackers.next().value
+        if (getProto) trackerEvents.push(event)
         if (event) {
           let id = event._eventid
           if (id===1) {
@@ -332,11 +348,14 @@ function parseFile(replayPath,HOTS, getProto=null, summaryOnly=null) {
           mapName = nickMaps[nickMap]
           console.log('Found the map: ',mapName)
         } else if (nickMap) console.log({nickMap})
+        if (getProto) thisReplay.nickMap = nickMap
       }
       if (build>=43571) {
+        if (getProto) thisReplay.nickHeroes = []
         for (let p=0;p<10;p++) {
           if (isNaN(heroes[p])) {
             let nickHero = uniqueDic['EndOfGameTalentChoices'][p]['m_stringData'][0]['m_value'].toString()
+            if (getProto) thisReplay.nickHeroes.push(`${nickHero}: ${atts.scopes[p+1][4002][0]['value'].toString()}`)
             if (HOTS.nickDic.hasOwnProperty(nickHero)) {
               console.log(`heroDic missing {$heroes[p]}, but able to add it anyway (${HOTS.nickDic[nickHero]})`)
               heroes[p] = HOTS.nickDic[nickHero]
@@ -526,6 +545,7 @@ function parseFile(replayPath,HOTS, getProto=null, summaryOnly=null) {
         case 16: Checkpoint(scoreResults,uniqueDic,mapStats,mapObjectives);break
         case 17: Foundry(scoreResults,uniqueDic,mapStats,mapObjectives, mechCaptures);break
         case 18: Industrial(scoreResults,uniqueDic,mapStats,mapObjectives);break
+        case 19: Alterac(scoreResults,uniqueDic,mapStats,mapObjectives);break
         default: break
       }
 
@@ -537,32 +557,16 @@ function parseFile(replayPath,HOTS, getProto=null, summaryOnly=null) {
       thisReplay['h'] = {}
       for (let p=0;p<10;p++) thisReplay['h'][p] = [heroes[p],p,Math.floor(p/5)===winners,heroNames[p],battleTags[p],awards[p],full[p].Deaths, full[p].TownKills,full[p].Takedowns, full[p].SoloKill,full[p].Assists,full[p].HighestKillStreak, full[p].Level, full[p].ExperienceContribution, full[p].HeroDamage, full[p].DamageTaken, full[p].StructureDamage, full[p].SiegeDamage, full[p].Healing, full[p].SelfHealing, full[p].TimeSpentDead, full[p].TimeCCdEnemyHeroes, full[p].CreepDamage, full[p].SummonDamage, full[p].MercCampCaptures, full[p].WatchTowerCaptures, full[p].MinionDamage, full[p].nGlobes, full[p].silenced, full[p].TierIDs[0], full[p].TierTalents[0], full[p].TierIDs[1], full[p].TierTalents[1], full[p].TierIDs[2], full[p].TierTalents[2], full[p].TierIDs[3], full[p].TierTalents[3], full[p].TierIDs[4], full[p].TierTalents[4], full[p].TierIDs[5], full[p].TierTalents[5], full[p].TierIDs[6], full[p].TierTalents[6], full[p].TeamfightDamageTaken, full[p].TeamfightEscapesPerformed, full[p].TimeSilencingEnemyHeroes, full[p].ClutchHealsPerformed, full[p].OutnumberedDeaths, full[p].EscapesPerformed, full[p].TimeStunningEnemyHeroes, full[p].VengeancesPerformed, full[p].TeamfightHeroDamage, full[p].TimeRootingEnemyHeroes, full[p].ProtectionGivenToAllies, full[p].TeamTakedowns, full[p].nPings, full[p].nChat,full[p].voteN, full[p].votee, full[p].TimeOnFire,heroMapStats[p]]
 
-      let bans = [['null','null'],['null','null']]
+      let bans = [['null','null', 'null'],['null','null', 'null']]
+
       if ([2,3,4].includes(gameMode)) {
-        if (!atts) atts = Protocol.decodeReplayAttributesEvents(archive.readFile('replay.attributes.events'))
-        let ban00 = atts.scopes[16][4023][0]['value'].toString()
-        if (HOTS.nickDic.hasOwnProperty(ban00)) bans[0][0] = HOTS.nickDic[ban00]
-        else if (ban00) {
-          console.log(ban00)
-          return resolve(1)
-        }
-        let ban01 = atts.scopes[16][4025][0]['value'].toString()
-        if (HOTS.nickDic.hasOwnProperty(ban01)) bans[0][1] = HOTS.nickDic[ban01]
-        else if (ban01) {
-          console.log(ban01)
-          return resolve(1)
-        }
-        let ban10 = atts.scopes[16][4028][0]['value'].toString()
-        if (HOTS.nickDic.hasOwnProperty(ban10)) bans[1][0] = HOTS.nickDic[ban10]
-        else if (ban10) {
-          console.log(ban10)
-          return resolve(1)
-        }
-        let ban11 = atts.scopes[16][4030][0]['value'].toString()
-        if (HOTS.nickDic.hasOwnProperty(ban11)) bans[1][1] = HOTS.nickDic[ban11]
-        else if (ban11) {
-          console.log(ban11)
-          return resolve(1)
+        if (!atts) atts = Protocol.decodeReplayAttributesEvents(timedExtraction(archive,'replay.attributes.events'))
+
+        const banIndexes = [4023,4025,4043, 4028,4030,4045]
+        for (let i=0;i<6;i++) {
+          if (i%3 === 2 && build < 66488) continue
+          const ok = addBanAndIsOK(atts,banIndexes[i],HOTS, bans, Math.floor(i/3), i%3)
+          if (!ok) return resolve(1)
         }
       }
       thisReplay['b'] = bans
@@ -602,7 +606,13 @@ function parseFile(replayPath,HOTS, getProto=null, summaryOnly=null) {
         thisReplay.init = initData
         thisReplay.messages = messages
         thisReplay.lobby = lobbyFile
+        thisReplay.trackers = trackerEvents
+        thisReplay.uniqueDic = uniqueDic
+        thisReplay.trackersUniqueNames = new Set(trackerEvents.filter(x => x && x._event === "NNet.Replay.Tracker.SScoreResultEvent")[0].m_instanceList.map(x => x.m_name.toString()))
       }
+      const parsingEnd = process.hrtime()
+      console.log(`It took ${Math.round(archiveWatch.elapsedMilliseconds)}/${Math.round((parsingEnd[0]-parsingStart[0])*1000 + (parsingEnd[1]-parsingStart[1])/1000000)}ms to do MPQ extraction`)
+
       return resolve(thisReplay)
     } catch (err) {
       if (err.name!=="CorruptedError") console.log(err)
@@ -610,6 +620,13 @@ function parseFile(replayPath,HOTS, getProto=null, summaryOnly=null) {
     } // continue code
   })
   return promise
+}
+
+const addBanAndIsOK = (atts, value,HOTS, bans, team, slot) => {
+  let ban = atts.scopes[16][value][0]['value'].toString()
+  if (HOTS.nickDic.hasOwnProperty(ban)) bans[team][slot] = HOTS.nickDic[ban]
+  else if (ban) return false
+  return true
 }
 
 process.on('message', async(msg) => {

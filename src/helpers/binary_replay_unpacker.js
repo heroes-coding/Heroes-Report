@@ -3,11 +3,14 @@ import { loadRustyReplays } from '../containers/advanced/connectors'
 import asleep from './asleep'
 import { dateToDSL } from './smallHelpers'
 import axios from 'axios'
+import { updateFullDataStatus } from '../actions'
+import store from '../reducers'
 let rustyPromise
 let retrievedReplays = 0
 const retrievedData = []
 
-export default async function getReplayBinary(dates, modeTypes, partial=true) {
+
+export default async function getReplayBinary(dates, modeTypes, partial=true, density) {
   // gets local copy of data, if exists, and augments it with call to your partial file server
   const start = dateToDSL(dates.startDate)
   const end = dateToDSL(dates.endDate)
@@ -43,12 +46,13 @@ export default async function getReplayBinary(dates, modeTypes, partial=true) {
 
     // const data = `day=${days.join(",")}&mode=${modes.join(",")}&offset=${offsets.join(",")}`
     const data = { day: days, mode: modes, offset: offsets, vip:0, id:123, pw: 'hiya' }
-    console.log({data})
     // const result = await axios.post('http://localhost:3333/', params, { headers: { 'Content-Type':'text/plain' } })
+
+    store.dispatch(updateFullDataStatus(true,0))
     const result = await axios.request({
       responseType: 'arraybuffer',
       data,
-      url: 'https://heroes.report/full', // 'http://localhost:3333/',
+      url: 'https://heroes.report/full', // 'http://localhost:3210/full'
       method: 'post',
       /*
       headers: {
@@ -57,7 +61,6 @@ export default async function getReplayBinary(dates, modeTypes, partial=true) {
       */
     })
     window.result = result
-    console.log({result})
     const arrayBuffer = result.data
     window.aBuffer = arrayBuffer
     let realInts = []
@@ -75,18 +78,19 @@ export default async function getReplayBinary(dates, modeTypes, partial=true) {
     await rustyPromise
     while (!window.HOTS) await asleep(50)
     window.rustyReplays.addBasics(window.HOTS)
-    console.time(`${partial ? "Partial" : "Full"} Replay Adding`)
+    const nCohorts = realInts.length
     if (partial) {
-      for (let i=0;i<realInts.length;i++) {
+      for (let i=0;i<nCohorts;i++) {
         if (realInts[i].length === 0 || realInts[i].length % 16 !== 0) continue
-        console.log({DSL: days[i]})
-        retrievedReplays += window.rustyReplays.addReplays(realInts[i],days[i],modes[i])
+        retrievedReplays += window.rustyReplays.addReplays(realInts[i],days[i],modes[i], density)
+        store.dispatch(updateFullDataStatus(false,Math.round(100*i/nCohorts)))
+        await asleep(1)
       }
     } else {
       retrievedReplays += window.rustyReplays.addManyReplays(realInts,days,modes)
     }
-    console.timeEnd(`${partial ? "Partial" : "Full"} Replay Adding`)
-    console.log({retrievedReplays})
+    store.dispatch(updateFullDataStatus(false,0))
+    console.timeEnd(`Replay adding and unpacking`)
     resolve(retrievedReplays)
   })
   return promise
