@@ -38,7 +38,6 @@ const unpackTalentBuilder = (talentBuilder) => {
   let previousBuild
   for (let b=0;b<builds.length;b++) {
     const build = parseInt(builds[b])
-    console.log({build})
     const buildN = talentBuilder.builds[build]
     for (let h=0;h<heroes.length;h++) {
       const hero = heroes[h]

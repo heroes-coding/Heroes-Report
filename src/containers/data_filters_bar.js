@@ -118,7 +118,7 @@ class DataFilters extends Component {
       this.gotRusty = true
       const { dates, fullModes } = this.props
       const modesToUse = fullModes.filter(x => x.isActive).map(x => x.id)
-      const retrievedReplays = await getReplayBinary(dates,modesToUse, true, this.props.timeDensity)
+      const retrievedReplays = await getReplayBinary(dates,modesToUse, true, this.props.timeDensity,this.props.token)
       this.isRusty = undefined
       resolve(retrievedReplays)
     })

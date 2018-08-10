@@ -1,12 +1,14 @@
-pm2 stop index
 git pull origin master
 yarn install
 yarn build
 rm -rf /var/www/reactbackup
 cp -r /var/www/react/ /var/www/reactbackup
 cp -r build/. /var/www/react/
+
+rm -rf /var/www/react
+cp -r /var/www/reactbackup /var/www/react
+
 chown -R ubuntu /var/www/react
-pm2 start index
 
 git add .
 git commit -m "confidence interval in popup"

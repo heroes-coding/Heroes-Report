@@ -183,7 +183,7 @@ class PlayerMatchupTable extends Component {
       for (let p=0;p<5;p++) {
         const ally = allies[p]
         const enemy = enemies[p]
-        if (ally > nHeroes - 1 || enemy > nHeroes -1) {
+        if (ally > nHeroes - 1 || enemy > nHeroes -1 || isNaN(ally) || isNaN(enemy) ) {
           // console.log('replay data corrupt', ally, enemy,MSLToDateString(MSL))
           continue
         }

@@ -10,7 +10,7 @@ let retrievedReplays = 0
 const retrievedData = []
 
 
-export default async function getReplayBinary(dates, modeTypes, partial=true, density) {
+export default async function getReplayBinary(dates, modeTypes, partial=true, density, token) {
   // gets local copy of data, if exists, and augments it with call to your partial file server
   const start = dateToDSL(dates.startDate)
   const end = dateToDSL(dates.endDate)
@@ -45,7 +45,8 @@ export default async function getReplayBinary(dates, modeTypes, partial=true, de
     }
 
     // const data = `day=${days.join(",")}&mode=${modes.join(",")}&offset=${offsets.join(",")}`
-    const data = { day: days, mode: modes, offset: offsets, vip:0, id:123, pw: 'hiya' }
+    const data = { day: days, mode: modes, offset: offsets, vip:token.vip == "true" ? 1 : 0, id:parseInt(token.id), pw: token.temppassword }
+    // console.log({data,token})
     // const result = await axios.post('http://localhost:3333/', params, { headers: { 'Content-Type':'text/plain' } })
 
     store.dispatch(updateFullDataStatus(true,0))
