@@ -5,6 +5,8 @@ rm -rf /var/www/reactbackup
 cp -r /var/www/react/ /var/www/reactbackup
 cp -r build/. /var/www/react/
 
+
+
 rm -rf /var/www/react
 cp -r /var/www/reactbackup /var/www/react
 

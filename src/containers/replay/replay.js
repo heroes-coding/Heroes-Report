@@ -34,17 +34,26 @@ const header = () => {
 }
 
 const draftNames = [
-  ['1st Ban', '1st Pick', '4th Pick', '5th Pick', '4th Ban', '8th Pick', '9th Pick'],
-  ['2nd Ban', '2nd Pick', '3rd Pick', '3rd Ban', '6th Pick', '7th Pick', '10th Pick']
+  [
+    ['1st Ban', '1st Pick', '4th Pick', '5th Pick', '4th Ban', '8th Pick', '9th Pick'],
+    ['2nd Ban', '2nd Pick', '3rd Pick', '3rd Ban', '6th Pick', '7th Pick', '10th Pick']
+  ],
+  [
+    ['1st Ban', '4th Ban', '1st Pick', '4th Pick', '5th Pick', '6th Ban', '8th Pick', '9th Pick'],
+    ['2nd Ban', '3rd Ban', '2nd Pick', '3rd Pick', '5th Ban', '6th Pick', '7th Pick', '10th Pick']
+  ]
 ]
-const picks = [1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0]
+const picks = [[1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0],[1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0]]
+
+
 
 const teamDraftRow = (draft, teamName, teamNumber) => {
+  const twoDrafts = draft.length == 7
   return (
     <div className="draftRow">
       <div className={`${teamName}Pick draftBoxTeam`}>{teamName} Draft ({teamNumber ? '2nd' : '1st'})</div>
       {draft.map((h,i) => {
-        const dName = draftNames[teamNumber][i]
+        const dName = draftNames[twoDrafts ? 0 : 1][teamNumber][i]
         return (
           <div key={i} className={`draftBox ${dName.includes('Ban') ? 'banBox' :''}`}>
             <img

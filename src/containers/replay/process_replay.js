@@ -22,11 +22,16 @@ export default function processReplay(replay, bnetID) {
     const ho = e.po.map(h => heroes[h][0])
     const firstPick = Math.floor(e.po[0]/5)
     replay.firstPick = firstPick
-    replay.draftOrder = [b[firstPick][0],b[1-firstPick][0]].concat(e.po.slice(0,5).map(h => heroes[h][0]),[b[firstPick][1],b[1-firstPick][1]],e.po.slice(5,10).map(h => heroes[h][0]))
+    const twoBans = b[0].length == 2
+    replay.draftOrder = twoBans ? [b[firstPick][0],b[1-firstPick][0]].concat(e.po.slice(0,5).map(h => heroes[h][0]),[b[firstPick][1],b[1-firstPick][1]],e.po.slice(5,10).map(h => heroes[h][0])) :
+    [b[firstPick][0],b[1-firstPick][0],b[1-firstPick][1],b[firstPick][1]].concat(e.po.slice(0,5).map(h => heroes[h][0]),[b[firstPick][2],b[1-firstPick][2]],e.po.slice(5,10).map(h => heroes[h][0]))
     replay.draftOrder = replay.draftOrder.map(h => isNaN(h) ? null : h)
-    replay.drafts = [
+    replay.drafts = twoBans ? [
       [b[firstPick][0],ho[0],ho[3],ho[4],b[firstPick][1],ho[7],ho[8]].map(h => isNaN(h) ? null : h),
       [b[1-firstPick][0],ho[1],ho[2],b[1-firstPick][1],ho[5],ho[6],ho[9]].map(h => isNaN(h) ? null : h)
+    ] : [
+      [b[firstPick][0],b[firstPick][1],ho[0],ho[3],ho[4],b[firstPick][2],ho[7],ho[8]].map(h => isNaN(h) ? null : h),
+      [b[1-firstPick][0],b[1-firstPick][1],ho[1],ho[2],b[1-firstPick][2],ho[5],ho[6],ho[9]].map(h => isNaN(h) ? null : h)
     ]
   }
   const handles = heroes.map(x => `${x[3]}#${x[4]}`)
