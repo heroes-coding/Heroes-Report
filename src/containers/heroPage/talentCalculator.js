@@ -62,7 +62,7 @@ class TalentCalculator extends Component {
         </div>
       )
     }
-    const { filteredTalents, dataTime, talentCounts, hero } = this.props.talentData
+    const { filteredTalents, dataTime, talentCounts, hero, wrongDates } = this.props.talentData
     // I really wish there was a better way of doing this.  The problem is the old talents are passed back with the new hero id.  I don't know why props are being updated before the talent data is when I am only connecting to getHeroTalents
     let curHero = hero
     return (
@@ -89,7 +89,7 @@ class TalentCalculator extends Component {
           const maxWR = d3.max(winRates)
           return (
             <div key={l} className={`${window.isElectron ? 'talentRowElectron' : 'talentRow'} row`}>
-              {tals.filter(tal => window.HOTS.cTalents[hero].hasOwnProperty(tal[0])).map((tal,i) => {
+              {tals.map((tal,i) => {
                 const [ id, adjustedWins, adjustedTotal, wins, total ] = tal.slice(0,5)
                 const key = window.HOTS.nTalents[id]
                 const picLoc = window.HOTS.talentPics[id]
@@ -99,6 +99,7 @@ class TalentCalculator extends Component {
                 const percent = roundedPercent(Math.round(adjustedWins/adjustedTotal*1000))
                 return (
                   <div
+                    className={wrongDates[l][i] ? "hidden" : ""}
                     key={key}
                     onClick={(event) => {
                       event.preventDefault()

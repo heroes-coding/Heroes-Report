@@ -31,7 +31,7 @@ const buildTalentOptions = (data, menuHeroes, dates) => {
         if (talents[t].hasOwnProperty(talent)) {slot++; continue}
         if (talentList[t].hasOwnProperty(talent) && talentList[t][talent].slot === slot) {
           talentList[t][talent].builds.push(buildIndex)
-        } else {
+        } else if (window.HOTS.cTalents[hero] && window.HOTS.cTalents[hero].hasOwnProperty(talent)) {
           talentList[t][talent] = { builds: [buildIndex], slot }
           const [ name, desc ] = window.HOTS.cTalents[hero][talent]
           talentPopupData[t].push({talent, name, desc, pic: window.HOTS.talentPics[talent] })

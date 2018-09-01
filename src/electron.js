@@ -141,7 +141,6 @@ const getPreviewFromPath = function(path) {
   try {
     let file = fs.readFileSync(path)
     let results = returnIDs(file.toString())
-    console.log(path,' added!',results)
     mainWindow.webContents.send('getPreviewPlayerInfo',results)
   } catch (e) {
     console.log(e,'Problem with preview info')
@@ -154,6 +153,7 @@ const monitorForLobby = function() {
   // getPreviewFromPath('./public/replay.server.battlelobby')
   // main window is already loaded when calling this function
   const tempPath = path.join(app.getPath('temp'),'Heroes of the Storm')
+  console.log(`Should be watching ${tempPath} for previews...`)
   const watcher = chokidar.watch(tempPath, {
     ignored: /(^|[\/\\])\../,
     persistent: true

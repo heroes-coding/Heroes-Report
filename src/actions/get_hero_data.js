@@ -4,6 +4,7 @@ export { GET_HERO_TALENTS, getHeroTalents }
 
 async function getHeroTalents(hero, prefs) {
   const talentData = await unpackTalents(hero, prefs)
+  talentData.wrongDates = talentData.talents.map(x => x.map(y => y[4] < 10))
   return {
     type: GET_HERO_TALENTS,
     talentData
