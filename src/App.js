@@ -25,6 +25,7 @@ let ParserAndUpdater, OptionsMenu, ipcRenderer, PreviewMenu
 let IDBPromise = createIDB()
 window.IDBPromise = IDBPromise
 
+console.log(`Current React version is: ${React.version}`)
 
 if (window.isElectron && window.windowID === 'parser') ParserAndUpdater = require('./electron/containers/parsingLogger/parserAndUpdater').default
 else if (window.isElectron && window.windowID === 'preview') PreviewMenu = require('./electron/containers/preview/previewer').default
