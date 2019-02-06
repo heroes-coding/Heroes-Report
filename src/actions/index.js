@@ -27,7 +27,7 @@ export const UPDATE_FULL_REGIONS = 'update_full_regions'
 export const SELECT_YOUR_ACCOUNT = 'select_your_account'
 export const UPDATE_DATE_RANGE = 'update_date_range'
 export const UPDATE_RUSTY_STATS = 'UPDATE_RUSTY_stats'
-export const UPDATE_RUSTY_GRAPHS= 'UPDATE_RUSTY_graphs'
+export const UPDATE_RUSTY_GRAPHS = 'UPDATE_RUSTY_graphs'
 export const UPDATE_TIME_DENSITY = 'update_density'
 export const UPDATE_FULL_DATA_STATUS = 'update_full_data_downloading_unpacking_status'
 export const UPDATE_TOKEN = 'update_token'
@@ -44,9 +44,10 @@ export * from './get_talent_dictionary'
 export * from './get_hero_data'
 export * from './get_hero_timed_data'
 
-export const updateTalentPopupVisibility = (talentPopupOpen) => ({type: UPDATE_TALENT_POPUP_VISIBILITY, talentPopupOpen})
+export const updateTalentPopupVisibility = talentPopupOpen =>
+  ({type: UPDATE_TALENT_POPUP_VISIBILITY, talentPopupOpen})
 
-export function updateLevelRange(left,right) {
+export function updateLevelRange (left, right) {
   return {
     type: UPDATE_LEVEL_RANGE,
     left,
@@ -54,7 +55,7 @@ export function updateLevelRange(left,right) {
   }
 }
 
-export function updateMMRRange(left,right) {
+export function updateMMRRange (left, right) {
   return {
     type: UPDATE_MMR_RANGE,
     left,
@@ -62,7 +63,7 @@ export function updateMMRRange(left,right) {
   }
 }
 
-export function updateFullDataStatus(downloading, percent) {
+export function updateFullDataStatus (downloading, percent) {
   return {
     type: UPDATE_FULL_DATA_STATUS,
     downloading,
@@ -70,58 +71,56 @@ export function updateFullDataStatus(downloading, percent) {
   }
 }
 
-
-export function updateMainSorting(id) {
+export function updateMainSorting (id) {
   return {
     type: UPDATE_MAIN_SORTING,
     id
   }
 }
 
-export function updateShowMirrorsState(show) {
+export function updateShowMirrorsState (show) {
   return {
     type: SET_SHOW_MIRRORS_STATE,
     show
   }
 }
 
-export function updateToken(token) {
+export function updateToken (token) {
   return {
     type: UPDATE_TOKEN,
     token
   }
 }
 
-export function selectCoplayer(coplayerData) {
+export function selectCoplayer (coplayerData) {
   return {
     type: SELECT_COPLAYER,
     coplayerData
   }
 }
 
-export function updateRustyStats(payload) {
+export function updateRustyStats (payload) {
   return {
     type: UPDATE_RUSTY_STATS,
     payload
   }
 }
 
-export function updateTimeDensity(payload) {
+export function updateTimeDensity (payload) {
   return {
     type: UPDATE_TIME_DENSITY,
     payload
   }
 }
 
-
-export function updateRustyGraphs(payload) {
+export function updateRustyGraphs (payload) {
   return {
     type: UPDATE_RUSTY_GRAPHS,
     payload
   }
 }
 
-export function updateDateRange(rangeType, payload) {
+export function updateDateRange (rangeType, payload) {
   return {
     rangeType,
     type: UPDATE_DATE_RANGE,
@@ -129,38 +128,38 @@ export function updateDateRange(rangeType, payload) {
   }
 }
 
-export function updateFullMode(payload) {
+export function updateFullMode (payload) {
   return {
     type: UPDATE_FULL_MODE,
     payload
   }
 }
 
-export function updateFullMaps(payload) {
+export function updateFullMaps (payload) {
   return {
     type: UPDATE_FULL_MAPS,
     payload
   }
 }
 
-export function updateFullRegions(payload) {
+export function updateFullRegions (payload) {
   return {
     type: UPDATE_FULL_REGIONS,
     payload
   }
 }
 
-export function selectYourAccount(account) {
+export function selectYourAccount (account) {
   return {
     type: SELECT_YOUR_ACCOUNT,
     account
   }
 }
 
-export function coplayerSearch(term) {
+export function coplayerSearch (term) {
   let results = [{handle: 'All Players', bnetID: 'All'}]
-  if ((!term || term==='All') && window.matchupResults) results = results.concat(window.matchupResults.slice(0,15))
-  else if (window.matchupResults) results = results.concat(window.playerFuse.search(term).slice(0,15))
+  if ((!term || term === 'All') && window.matchupResults) results = results.concat(window.matchupResults.slice(0, 15))
+  else if (window.matchupResults) results = results.concat(window.playerFuse.search(term).slice(0, 15))
   results = results.map(i => { return {name: i.handle, id: i.bnetID, data: i} })
   return {
     type: SEARCH_FOR_COPLAYER,
@@ -168,7 +167,7 @@ export function coplayerSearch(term) {
   }
 }
 
-export function heroSearch(term) {
+export function heroSearch (term) {
   let heroSearchTerm = null
   if (!window.HOTS) {
     return {
@@ -179,8 +178,8 @@ export function heroSearch(term) {
   if (!window.HOTS.searchDic) {
     window.HOTS.searchDic = []
     const heroNames = []
-    for (let h=0;h<window.HOTS.fullHeroNames.length;h++) {
-      const invis = window.HOTS.invisText[h].split(" ")
+    for (let h = 0; h < window.HOTS.fullHeroNames.length; h++) {
+      const invis = window.HOTS.invisText[h].split(' ')
       const [role, franchise] = invis
       const nick = window.HOTS.nickNames[h]
       window.HOTS.searchDic.push({id: h, role, franchise, nick})
@@ -192,18 +191,18 @@ export function heroSearch(term) {
       heroNames[hero].push(k)
     })
     const maxNames = max(heroNames.map(x => x.length))
-    window.HOTS.fullHeroNames.map((h,i) => {
-      for (let n=0;n<maxNames;n++) {
-        window.HOTS.searchDic[i][n] = ""
+    window.HOTS.fullHeroNames.map((h, i) => {
+      for (let n = 0; n < maxNames; n++) {
+        window.HOTS.searchDic[i][n] = ''
       }
     })
-    heroNames.map((names,i) => {
-      names.map((name,j) => {
+    heroNames.map((names, i) => {
+      names.map((name, j) => {
         window.HOTS.searchDic[i][j] = name
       })
     })
-    const ids = Array.from({length:maxNames},(v,k) => (k).toString())
-    const keys = [].concat(["role","franchise","nick"],ids)
+    const ids = Array.from({length: maxNames}, (v, k) => (k).toString())
+    const keys = [].concat(['role', 'franchise', 'nick'], ids)
     const options = {
       shouldSort: true,
       threshold: 0.25,
@@ -225,21 +224,21 @@ export function heroSearch(term) {
   }
 }
 
-export function updateAdvancedTalentHero(hero) {
+export function updateAdvancedTalentHero (hero) {
   return {
     type: UPDATE_ADVANCED_TALENT_HERO,
     hero
   }
 }
 
-export function updateTalentHero(hero) {
+export function updateTalentHero (hero) {
   return {
     type: UPDATE_TALENT_HERO,
     hero
   }
 }
 
-export function updateTime(startMSL,endMSL) {
+export function updateTime (startMSL, endMSL) {
   return {
     type: UPDATE_TIME,
     startMSL,
@@ -247,16 +246,16 @@ export function updateTime(startMSL,endMSL) {
   }
 }
 
-export function selectTalent(lev, tal, state, talentData) {
+export function selectTalent (lev, tal, state, talentData) {
   // moving state manipulation here so I can do some async stuff... a little messy
   let newState
   let ignoreStuff = true
-  if (lev==='reset') {
-    newState = [[],[],[],[],[],[],[]]
+  if (lev === 'reset') {
+    newState = [[], [], [], [], [], [], []]
     ignoreStuff = false
   } else if (state[lev].includes(tal)) {
     newState = [...state]
-    newState[lev].splice(newState[lev].indexOf(tal),1)
+    newState[lev].splice(newState[lev].indexOf(tal), 1)
   } else {
     newState = [...state]
     newState[lev] = [...newState[lev], tal]
@@ -264,10 +263,10 @@ export function selectTalent(lev, tal, state, talentData) {
   }
   const toIgnore = []
   const ignoreCounts = []
-  for (let l=0;l<7;l++) {
+  for (let l = 0; l < 7; l++) {
     let c = 0
     if (newState[l].length) {
-      for (let t=0;t<talentData.talentCounts[l];t++) {
+      for (let t = 0; t < talentData.talentCounts[l]; t++) {
         const tal = talentData.talents[l][t][0]
         if (!newState[l].includes(tal)) {
           toIgnore.push(tal)
@@ -279,7 +278,7 @@ export function selectTalent(lev, tal, state, talentData) {
   }
   let filteredTalents = null
   if (ignoreStuff) {
-    filteredTalents = refilterTalents(talentData,toIgnore,ignoreCounts)
+    filteredTalents = refilterTalents(talentData, toIgnore, ignoreCounts)
   }
   return {
     type: SELECT_TALENT,
@@ -288,7 +287,7 @@ export function selectTalent(lev, tal, state, talentData) {
   }
 }
 
-export function addHeroTalent(team, index, talent, add) {
+export function addHeroTalent (team, index, talent, add) {
   return {
     type: ADD_HERO_TALENT,
     team,
@@ -298,7 +297,7 @@ export function addHeroTalent(team, index, talent, add) {
   }
 }
 
-export function addHeroFilter(team,hero) {
+export function addHeroFilter (team, hero) {
   return {
     type: ADD_HERO_FILTER,
     team,
@@ -306,7 +305,7 @@ export function addHeroFilter(team,hero) {
   }
 }
 
-export function getTalentData() {
+export function getTalentData () {
   const request = axios.get(TEST_URL)
   return {
     type: GET_TALENT_DATA,
@@ -314,21 +313,21 @@ export function getTalentData() {
   }
 }
 
-export function updateReplayPage(page) {
+export function updateReplayPage (page) {
   return {
     type: UPDATE_REPLAY_PAGE,
     page
   }
 }
 
-export function dispatchPlayerSearch(playerID) {
+export function dispatchPlayerSearch (playerID) {
   let request
   if (playerID !== '' && playerID.length > 2) {
-    request = axios.get(`https://heroes.report/api/players/${playerID.replace('#','_')}`)
+    request = axios.get(`https://heroes.report/api/players/${playerID.replace('#', '_')}`)
   } else if (playerID.length < 3) {
-    request = {data:{status:400}}
+    request = {data: {status: 400}}
   } else {
-    request = {data:[]}
+    request = {data: []}
   }
   return {
     type: SEARCH_FOR_PLAYER,
@@ -336,14 +335,14 @@ export function dispatchPlayerSearch(playerID) {
   }
 }
 
-export function updateStatCat(newCat) {
+export function updateStatCat (newCat) {
   return {
     type: UPDATE_STAT_CAT,
     payload: newCat
   }
 }
 
-export function rollbackState() {
+export function rollbackState () {
   console.log('rollback state called')
   return {
     type: ROLLBACK_PREFERENCES,
@@ -351,7 +350,7 @@ export function rollbackState() {
   }
 }
 
-export function updatePreferences(prefType, prefID) {
+export function updatePreferences (prefType, prefID) {
   return {
     type: UPDATE_PREFERENCES,
     prefID: isNaN(prefID) ? prefID : parseInt(prefID),
@@ -359,7 +358,7 @@ export function updatePreferences(prefType, prefID) {
   }
 }
 
-export function updateFilter(id, filterType) {
+export function updateFilter (id, filterType) {
   return {
     type: UPDATE_FILTER,
     payload: id,
