@@ -27,8 +27,8 @@ yarn auth
 
 
 Remember, you might need to set the homepage in package.json to "./"
-"homepage": "./" (top level directive)
-*** AND REMEMBER, YOU MUST REMOVE THIS ("homepage": "./") WHEN BUILDING FOR THE WEB ***
+"homepage": "./" (top level directive) (Don't need ./ homepage for )
+*** AND REMEMBER, YOU MUST ADD THIS ?? ("homepage": "./") WHEN BUILDING FOR THE WEB ***
 
 rm -rf /var/www/react/
 cp -r /var/www/reactbackup /var/www/react/
