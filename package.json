@@ -101,10 +101,10 @@
   "scripts": {
     "build-css": "node-sass-chokidar src/ -o src/",
     "watch-css": "yarn run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
-    "start-js": "react-scripts start",
+    "start-js": "react-scripts --max-old-space-size=8192 start",
     "grunt": "grunt",
     "start-full": "nf start -p 3000",
-    "start": "npm-run-all -p watch-css start-js grunt --max-old-space-size=4096",
+    "start": "npm-run-all -p watch-css start-js grunt",
     "build-js": "react-scripts build",
     "build": "npm-run-all build-css build-js",
     "pack": "electron-builder --dir",
