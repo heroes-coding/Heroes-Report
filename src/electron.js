@@ -18,7 +18,15 @@ const electron = require("electron");
 const fs = require("fs");
 const path = require("path");
 const url = require("url");
-const { app, BrowserWindow, Menu, Tray, ipcMain, globalShortcut } = electron;
+const {
+  app,
+  BrowserWindow,
+  Menu,
+  Tray,
+  ipcMain,
+  globalShortcut,
+  protocol,
+} = electron;
 const dataPath = app.getPath("userData");
 if (!fs.existsSync(dataPath)) fs.mkdirSync(dataPath);
 const windowStateKeeper = require("electron-window-state");
@@ -314,6 +322,7 @@ function createWindow() {
       protocol: "file:",
       slashes: true,
     });
+
   mainWindow.loadURL(startUrl);
   showParsingMenu();
   loadOptionsMenu(options);
@@ -386,6 +395,10 @@ const toggleWindow = window => {
 };
 // This method will be called when Electron has finished initialization and is ready to create browser windows.
 app.on("ready", () => {
+  protocol.interceptFileProtocol("file", (request, callback) => {
+    const url = request.url.substr(7);
+    const args = { path: path.normalize(`${__dirname}/${url}`) };
+  });
   showLoadingWindow();
   globalShortcut.register("CommandOrControl+D", () => {
     for (let w = 0; w < 4; w++)

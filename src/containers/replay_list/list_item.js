@@ -122,7 +122,6 @@ let firsts = (first, text) => {
 };
 
 let left = (props, div, getReplay) => {
-  console.log({ props });
   let {
     hero,
     coplayer,
@@ -135,7 +134,9 @@ let left = (props, div, getReplay) => {
     hasCoplayer,
   } = props;
   if (mode === 3) {
-    if (build >= 73016) mode = 6;
+    if (build >= 73016) {
+      mode = 6;
+    }
   }
   return (
     <div
