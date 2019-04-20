@@ -395,10 +395,6 @@ const toggleWindow = window => {
 };
 // This method will be called when Electron has finished initialization and is ready to create browser windows.
 app.on("ready", () => {
-  protocol.interceptFileProtocol("file", (request, callback) => {
-    const url = request.url.substr(7);
-    const args = { path: path.normalize(`${__dirname}/${url}`) };
-  });
   showLoadingWindow();
   globalShortcut.register("CommandOrControl+D", () => {
     for (let w = 0; w < 4; w++)

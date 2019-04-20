@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="theme-color" content="#000000">
+    <base href="./" />
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="theme-color" content="#000000" />
     <!--
       manifest.json provides metadata used when your web app is added to the
       homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
     -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
-    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -21,60 +25,60 @@
     -->
     <title>Heroes Report</title>
     <style media="screen" type="text/css">
-    body {
-      overflow-x: hidden;
-      overflow-y: hidden;
-      margin: 0px;
-    }
-    #loadingText {
-      color: white;
-      margin-top: auto;
-      text-align: center;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 470px;
-    }
-    #loadingWrapper {
+      body {
+        overflow-x: hidden;
+        overflow-y: hidden;
+        margin: 0px;
+      }
+      #loadingText {
+        color: white;
+        margin-top: auto;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 470px;
+      }
+      #loadingWrapper {
         position: absolute;
-        # background: black !important;
+        #background: black !important;
         background: black url(tinyLogo.png) no-repeat center !important;
         width: 100%;
         margin-top: -30px;
         top: 0;
         bottom: 0;
         z-index: 5;
-    }
+      }
 
-      .profile-main-loader{
-          left: 50% !important;
-          margin-left:-100px;
-          position: fixed !important;
-          top: 50% !important;
-          margin-top: -115px;
-          width: 45px;
-          z-index: 9000 !important;
+      .profile-main-loader {
+        left: 50% !important;
+        margin-left: -100px;
+        position: fixed !important;
+        top: 50% !important;
+        margin-top: -115px;
+        width: 45px;
+        z-index: 9000 !important;
       }
 
       .profile-main-loader .loader {
         position: relative;
         margin: 0px auto;
         width: 200px;
-        height:200px;
+        height: 200px;
       }
       .profile-main-loader .loader:before {
-        content: '';
+        content: "";
         display: block;
         padding-top: 100%;
       }
 
       .circular-loader {
         -webkit-animation: rotate 2s linear infinite;
-                animation: rotate 2s linear infinite;
+        animation: rotate 2s linear infinite;
         height: 100%;
         -webkit-transform-origin: center center;
-            -ms-transform-origin: center center;
-                transform-origin: center center;
+        -ms-transform-origin: center center;
+        transform-origin: center center;
         width: 100%;
         position: absolute;
         top: 0;
@@ -83,157 +87,202 @@
       }
 
       .loader-path {
-        stroke-dasharray: 150,200;
+        stroke-dasharray: 150, 200;
         stroke-dashoffset: -10;
-        -webkit-animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
-                animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+        -webkit-animation: dash 1.5s ease-in-out infinite,
+          color 6s ease-in-out infinite;
+        animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
         stroke-linecap: round;
       }
 
       @-webkit-keyframes rotate {
         100% {
           -webkit-transform: rotate(360deg);
-                  transform: rotate(360deg);
+          transform: rotate(360deg);
         }
       }
 
       @keyframes rotate {
         100% {
           -webkit-transform: rotate(360deg);
-                  transform: rotate(360deg);
+          transform: rotate(360deg);
         }
       }
       @-webkit-keyframes dash {
         0% {
-          stroke-dasharray: 1,200;
+          stroke-dasharray: 1, 200;
           stroke-dashoffset: 0;
         }
         50% {
-          stroke-dasharray: 89,200;
+          stroke-dasharray: 89, 200;
           stroke-dashoffset: -35;
         }
         100% {
-          stroke-dasharray: 89,200;
+          stroke-dasharray: 89, 200;
           stroke-dashoffset: -124;
         }
       }
       @keyframes dash {
         0% {
-          stroke-dasharray: 1,200;
+          stroke-dasharray: 1, 200;
           stroke-dashoffset: 0;
         }
         50% {
-          stroke-dasharray: 89,200;
+          stroke-dasharray: 89, 200;
           stroke-dashoffset: -35;
         }
         100% {
-          stroke-dasharray: 89,200;
+          stroke-dasharray: 89, 200;
           stroke-dashoffset: -124;
         }
       }
       @-webkit-keyframes color {
         0% {
-          stroke: #8C5F8C ;
+          stroke: #8c5f8c;
         }
         40% {
-          stroke: #6383C4  ;
+          stroke: #6383c4;
         }
         66% {
-          stroke: #51A1A7 ;
+          stroke: #51a1a7;
         }
-        80%, 90% {
-          stroke: #6383C4 ;
+        80%,
+        90% {
+          stroke: #6383c4;
         }
       }
       @keyframes color {
         0% {
-          stroke: #8C5F8C ;
+          stroke: #8c5f8c;
         }
         40% {
-          stroke: #6383C4  ;
+          stroke: #6383c4;
         }
         66% {
-          stroke: #51A1A7 ;
+          stroke: #51a1a7;
         }
-        80%, 90% {
-          stroke: #6383C4 ;
+        80%,
+        90% {
+          stroke: #6383c4;
         }
       }
     </style>
-    <script type='text/javascript'>
-      window.isElectron = window.process ? true : false
+    <script type="text/javascript">
+      window.isElectron = window.process ? true : false;
       if (window.isElectron) {
-        window.remote = window.require('electron').remote
-        window.windowID = window.remote.getCurrentWindow().windowID
+        window.remote = window.require("electron").remote;
+        window.windowID = window.remote.getCurrentWindow().windowID;
       }
-      window.isProduction = window.process && window.process.execPath.includes('Heroes Report')
+      window.isProduction =
+        window.process && window.process.execPath.includes("Heroes Report");
       if (window.isElectron) {
-        const { webFrame } = require('electron');
-        webFrame.registerURLSchemeAsPrivileged('file');
+        const { webFrame } = require("electron");
+        webFrame.registerURLSchemeAsPrivileged("file");
       }
       // This is so that the WASM script is not loaded for extra Electron windows
-      if (typeof module === 'object') {window.module = module; module = undefined;}
-      if (!['parser','options','preview','loading'].includes(window.windowID)) {
-        window.moduleLoaded = false
+      if (typeof module === "object") {
+        window.module = module;
+        module = undefined;
+      }
+      if (
+        !["parser", "options", "preview", "loading"].includes(window.windowID)
+      ) {
+        window.moduleLoaded = false;
         var Module = {
           preRun: [],
-          postRun: [() => {window.moduleLoaded=true}],
+          postRun: [
+            () => {
+              window.moduleLoaded = true;
+            },
+          ],
           print: (function() {
             return function(text) {
-              if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+              if (arguments.length > 1)
+                text = Array.prototype.slice.call(arguments).join(" ");
               console.log(text);
             };
           })(),
           printErr: function(text) {
-            if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
-            if (!text.includes('wasm streaming') && !text.includes('falling back')) console.error(text);
+            if (arguments.length > 1)
+              text = Array.prototype.slice.call(arguments).join(" ");
+            if (
+              !text.includes("wasm streaming") &&
+              !text.includes("falling back")
+            )
+              console.error(text);
           },
-          setStatus: function(text) {
-          },
+          setStatus: function(text) {},
           totalDependencies: 0,
           monitorRunDependencies: function(left) {
             this.totalDependencies = Math.max(this.totalDependencies, left);
-            Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
-          }
+            Module.setStatus(
+              left
+                ? "Preparing... (" +
+                    (this.totalDependencies - left) +
+                    "/" +
+                    this.totalDependencies +
+                    ")"
+                : "All downloads complete."
+            );
+          },
         };
-        Module.setStatus('Downloading...');
+        Module.setStatus("Downloading...");
         window.onerror = function(event) {
           // TODO: do not warn on ok events like simulating an infinite loop or exitStatus
-          Module.setStatus('Exception thrown, see JavaScript console');
+          Module.setStatus("Exception thrown, see JavaScript console");
           Module.setStatus = function(text) {
-            if (text) Module.printErr('[post-exception status] ' + text);
+            if (text) Module.printErr("[post-exception status] " + text);
           };
         };
-        const head = document.getElementsByTagName('head')[0]
-        let script = document.createElement('script')
-        script.type = 'text/javascript'
-        const source = "../appWASM.js"
-        script.src = source
+        const head = document.getElementsByTagName("head")[0];
+        let script = document.createElement("script");
+        script.type = "text/javascript";
+        const source = "../appWASM.js";
+        script.src = source;
         head.appendChild(script);
 
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-        ga('create', 'UA-105706120-1', 'auto');
-        ga('send', 'pageview');
+        (function(i, s, o, g, r, a, m) {
+          i["GoogleAnalyticsObject"] = r;
+          (i[r] =
+            i[r] ||
+            function() {
+              (i[r].q = i[r].q || []).push(arguments);
+            }),
+            (i[r].l = 1 * new Date());
+          (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
+          a.async = 1;
+          a.src = g;
+          m.parentNode.insertBefore(a, m);
+        })(
+          window,
+          document,
+          "script",
+          "https://www.google-analytics.com/analytics.js",
+          "ga"
+        );
+        ga("create", "UA-105706120-1", "auto");
+        ga("send", "pageview");
       }
-      if (!['loading'].includes(window.windowID)) {
+      if (!["loading"].includes(window.windowID)) {
         // you need all of these scripts for electron windows, but not loading or other 'empty' windows
-        const head = document.getElementsByTagName('head')[0]
-        const sources = ["https://code.jquery.com/jquery-3.2.1.slim.min.js",
-        "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js",
-        "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"]
-        const integrities = ["sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN",
-        "sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh",
-        "sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"]
-        for (let s=0;s<3;s++) {
-          let script = document.createElement('script')
-          script.src = sources[s]
-          script.integrity = integrities[s]
-          script.crossOrigin = "anonymous"
-          script.async = false
-          head.appendChild(script)
+        const head = document.getElementsByTagName("head")[0];
+        const sources = [
+          "https://code.jquery.com/jquery-3.2.1.slim.min.js",
+          "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js",
+          "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js",
+        ];
+        const integrities = [
+          "sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN",
+          "sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh",
+          "sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ",
+        ];
+        for (let s = 0; s < 3; s++) {
+          let script = document.createElement("script");
+          script.src = sources[s];
+          script.integrity = integrities[s];
+          script.crossOrigin = "anonymous";
+          script.async = false;
+          head.appendChild(script);
         }
       }
     </script>
@@ -242,8 +291,16 @@
     <div id="loadingWrapper">
       <div class="profile-main-loader">
         <div class="loader">
-          <svg class="circular-loader"viewBox="25 25 50 50" >
-            <circle class="loader-path" cx="50" cy="50" r="20" fill="none" stroke="#70c542" stroke-width="2" />
+          <svg class="circular-loader" viewBox="25 25 50 50">
+            <circle
+              class="loader-path"
+              cx="50"
+              cy="50"
+              r="20"
+              fill="none"
+              stroke="#70c542"
+              stroke-width="2"
+            />
           </svg>
         </div>
       </div>
@@ -267,13 +324,15 @@
   </body>
 
   <script>
-    if (['loading'].includes(window.windowID)) {
-      const asleep = (sleepTime) => {
+    if (["loading"].includes(window.windowID)) {
+      const asleep = sleepTime => {
         let promise = new Promise(function(resolve, reject) {
-          setTimeout(() => {resolve(true)}, sleepTime)
-        })
-        return promise
-      }
+          setTimeout(() => {
+            resolve(true);
+          }, sleepTime);
+        });
+        return promise;
+      };
 
       function getRandomInt(max) {
         return Math.floor(Math.random() * Math.floor(max));
@@ -296,24 +355,29 @@
         "Solo laning as Lúcio",
         "Chasing Murky",
         "Chasing Lunara",
-        "Focusing tank"
-      ]
-      const nSayings = carouselText.length
-      document.getElementById('loadingText').innerHTML = carouselText[getRandomInt(nSayings)]
-      const rotateText = async() => {
+        "Focusing tank",
+      ];
+      const nSayings = carouselText.length;
+      document.getElementById("loadingText").innerHTML =
+        carouselText[getRandomInt(nSayings)];
+      const rotateText = async () => {
         while (true) {
-          await asleep(500)
-          document.getElementById('loadingText').innerHTML = carouselText[getRandomInt(nSayings)]
+          await asleep(500);
+          document.getElementById("loadingText").innerHTML =
+            carouselText[getRandomInt(nSayings)];
         }
-      }
-      rotateText()
+      };
+      rotateText();
     }
   </script>
   <!-- <link rel="stylesheet" href="scripts/font-awesome/css/font-awesome.min.css"> -->
-  <link href="https://fonts.googleapis.com/css?family=Magra|Roboto+Condensed|Ubuntu+Mono" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css?family=Magra|Roboto+Condensed|Ubuntu+Mono"
+    rel="stylesheet"
+  />
   <!--
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
   -->
-  </html>
+</html>
